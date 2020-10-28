@@ -1,15 +1,23 @@
 {
   "name": "vscode",
-  "package-specs": [{
-    "module": "commonjs",
-    "in-source": true
-  }],
+  "package-specs": [
+    {
+      "module": "commonjs",
+      "in-source": true
+    }
+  ],
   "sources": {
     "dir": "src",
     "subdirs": true
   },
   "suffix": ".bs.js",
   "namespace": false,
-  "bsc-flags": ["-bs-g"],
-  "refmt": 3
+  "bsc-flags": [
+    "-bs-g"
+  ],
+  "refmt": 3,
+  "bs-dependencies": [
+    "bs-webapi",
+    "reason-promise"
+  ]
 }
