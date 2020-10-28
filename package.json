@@ -1,0 +1,29 @@
+{
+  "name": "bs-vscode",
+  "version": "0.0.1",
+  "description": "VS Code bindings for BuckleScript",
+  "main": "index.js",
+  "scripts": {
+    "start": "bsb -make-world -w"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/banacorn/bs-vscode.git"
+  },
+  "keywords": [
+    "reason",
+    "bucklescript",
+    "vscode",
+    "package",
+    "bindings"
+  ],
+  "author": "Ting-Gian LUA (banacorn)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/banacorn/bs-vscode/issues"
+  },
+  "homepage": "https://github.com/banacorn/bs-vscode#readme",
+  "devDependencies": {
+    "bs-platform": "^8.3.1"
+  }
+}

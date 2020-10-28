@@ -1,0 +1,15 @@
+{
+  "name": "vscode",
+  "package-specs": [{
+    "module": "commonjs",
+    "in-source": true
+  }],
+  "sources": {
+    "dir": "src",
+    "subdirs": true
+  },
+  "suffix": ".bs.js",
+  "namespace": false,
+  "bsc-flags": ["-bs-g"],
+  "refmt": 3
+}
