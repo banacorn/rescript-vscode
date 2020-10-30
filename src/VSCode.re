@@ -2263,7 +2263,6 @@ module DiagnosticCollection = {
 
 module ProviderResult = {
   type t('a) = option(Promise.t('a));
-
   let map = (x, f) => x->Belt.Option.map(result => result->Promise.map(f));
 };
 
@@ -2315,7 +2314,13 @@ module CodeActionProviderMetadata = {
 
 // https://code.visualstudio.com/api/references/vscode-api#CodeLensProvider
 module CodeLensProvider = {
-  type t;
+  type t('a) = {
+    onDidChangeCodeLenses: option((unit => unit) => Disposable.t),
+    resolveCodeLens:
+      (TextDocument.t, CancellationToken.t) => ProviderResult.t('a),
+    provideCodeLenses:
+      (TextDocument.t, CancellationToken.t) => ProviderResult.t('a),
+  };
 };
 
 // https://code.visualstudio.com/api/references/vscode-api#DocumentColorProvider
@@ -2486,7 +2491,7 @@ module Languages = {
     "registerCodeActionsProvider";
   [@bs.module "vscode"] [@bs.scope "languages"]
   external registerCodeLensProvider:
-    (DocumentSelector.t, CodeLensProvider.t) => Disposable.t =
+    (DocumentSelector.t, CodeLensProvider.t('a)) => Disposable.t =
     "registerCodeLensProvider";
   [@bs.module "vscode"] [@bs.scope "languages"]
   external registerColorProvider:

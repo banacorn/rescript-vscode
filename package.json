@@ -1,6 +1,6 @@
 {
   "name": "bs-vscode",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "VS Code bindings for BuckleScript",
   "main": "index.js",
   "scripts": {
@@ -23,7 +23,7 @@
     "url": "https://github.com/banacorn/bs-vscode/issues"
   },
   "homepage": "https://github.com/banacorn/bs-vscode#readme",
-  "devDependencies": {
+  "dependencies": {
     "bs-platform": "^8.3.1",
     "bs-webapi": "^0.19.1",
     "reason-promise": "^1.1.2"
