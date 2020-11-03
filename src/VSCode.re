@@ -2312,14 +2312,36 @@ module CodeActionProviderMetadata = {
   type t;
 };
 
+// https://code.visualstudio.com/api/references/vscode-api#Command
+module Command = {
+  type t('a) = {
+    arguments: option(array('a)),
+    command: string,
+    title: string,
+    tooltip: option(string),
+  };
+};
+
+// https://code.visualstudio.com/api/references/vscode-api#CodeLens
+module CodeLens = {
+  type t;
+  // constructors
+  [@bs.module "vscode"] [@bs.new] external make: Range.t => t = "CodeLens";
+  [@bs.module "vscode"] [@bs.new]
+  external makeWithCommand: (Range.t, Command.t('a)) => t = "CodeLens";
+  // properties
+  [@bs.get] external command: t => option(Command.t('a)) = "command";
+  [@bs.get] external isResolved: t => bool = "isResolved";
+  [@bs.get] external range: t => Range.t = "range";
+};
+
 // https://code.visualstudio.com/api/references/vscode-api#CodeLensProvider
 module CodeLensProvider = {
   type t('a) = {
     onDidChangeCodeLenses: option((unit => unit) => Disposable.t),
-    resolveCodeLens:
-      (TextDocument.t, CancellationToken.t) => ProviderResult.t('a),
+    resolveCodeLens: ('a, CancellationToken.t) => ProviderResult.t('a),
     provideCodeLenses:
-      (TextDocument.t, CancellationToken.t) => ProviderResult.t('a),
+      (TextDocument.t, CancellationToken.t) => ProviderResult.t(array('a)),
   };
 };
 
