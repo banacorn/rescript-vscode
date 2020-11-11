@@ -886,6 +886,10 @@ var CodeActionProvider = {};
 
 var CodeActionProviderMetadata = {};
 
+var Command = {};
+
+var CodeLens = {};
+
 var CodeLensProvider = {};
 
 var DocumentColorProvider = {};
@@ -1060,6 +1064,8 @@ exports.CallHierarchyIncomingCall = CallHierarchyIncomingCall;
 exports.CallHierarchyProvider = CallHierarchyProvider;
 exports.CodeActionProvider = CodeActionProvider;
 exports.CodeActionProviderMetadata = CodeActionProviderMetadata;
+exports.Command = Command;
+exports.CodeLens = CodeLens;
 exports.CodeLensProvider = CodeLensProvider;
 exports.DocumentColorProvider = DocumentColorProvider;
 exports.CompletionItemProvider = CompletionItemProvider;
