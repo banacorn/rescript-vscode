@@ -735,7 +735,37 @@ var TextDocumentWillSaveEvent = {
   reason: reason
 };
 
-var GlobPattern = {};
+var RelativePattern = {};
+
+function string$2(v) {
+  return v;
+}
+
+function relativePattern(v) {
+  return v;
+}
+
+function classify$2(v) {
+  if (typeof v === "string") {
+    return {
+            TAG: 0,
+            _0: v,
+            [Symbol.for("name")]: "String"
+          };
+  } else {
+    return {
+            TAG: 1,
+            _0: v,
+            [Symbol.for("name")]: "RelativePattern"
+          };
+  }
+}
+
+var GlobPattern = {
+  string: string$2,
+  relativePattern: relativePattern,
+  classify: classify$2
+};
 
 var FileSystemWatcher = {};
 
@@ -836,11 +866,11 @@ function documentFilter(v) {
   return v;
 }
 
-function string$2(v) {
+function string$3(v) {
   return v;
 }
 
-function classify$2(v) {
+function classify$3(v) {
   if (typeof v === "string") {
     return {
             TAG: 1,
@@ -858,8 +888,8 @@ function classify$2(v) {
 
 var DocumentFilterOrString = {
   documentFilter: documentFilter,
-  string: string$2,
-  classify: classify$2
+  string: string$3,
+  classify: classify$3
 };
 
 var DocumentSelector = {};
@@ -912,7 +942,7 @@ function locationLinks(v) {
   return v;
 }
 
-function classify$3(v) {
+function classify$4(v) {
   if ((function (a) { return a.targetRange === undefined})(v)) {
     return {
             TAG: 0,
@@ -931,7 +961,7 @@ function classify$3(v) {
 var LocationLinkOrLocation = {
   locations: locations,
   locationLinks: locationLinks,
-  classify: classify$3
+  classify: classify$4
 };
 
 var DefinitionProvider = {};
@@ -1038,6 +1068,7 @@ exports.FileWillDeleteEvent = FileWillDeleteEvent;
 exports.FileWillRenameEvent = FileWillRenameEvent;
 exports.TextDocumentSaveReason = TextDocumentSaveReason;
 exports.TextDocumentWillSaveEvent = TextDocumentWillSaveEvent;
+exports.RelativePattern = RelativePattern;
 exports.GlobPattern = GlobPattern;
 exports.FileSystemWatcher = FileSystemWatcher;
 exports.WorkspaceConfiguration = WorkspaceConfiguration;

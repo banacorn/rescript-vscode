@@ -1,6 +1,6 @@
 {
   "name": "bs-vscode",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "VS Code bindings for BuckleScript",
   "main": "index.js",
   "scripts": {

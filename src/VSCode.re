@@ -1164,19 +1164,34 @@ module SaveDialogOptions = {
 // https://code.visualstudio.com/api/references/vscode-api#WorkspaceFolderPickOptions
 module WorkspaceFolderPickOptions = {
   type t;
+  // properties
+  [@bs.get] external ignoreFocusOut: t => option(bool) = "ignoreFocusOut";
+  [@bs.get] external placeHolder: t => option(string) = "placeHolder";
 };
+
 // https://code.visualstudio.com/api/references/vscode-api#WorkspaceFolder
 module WorkspaceFolder = {
   type t;
+  // properties
+  [@bs.get] external index: t => int = "index";
+  [@bs.get] external name: t => string = "name";
+  [@bs.get] external uri: t => Uri.t = "uri";
 };
 
 // https://code.visualstudio.com/api/references/vscode-api#ProgressOptions
 module ProgressOptions = {
   type t;
+  // properties
+  [@bs.get] external cancellable: t => option(bool) = "cancellable";
+  // location: ProgressLocation | {viewId: string}
+  [@bs.get] external title: t => option(string) = "title";
 };
+
 // https://code.visualstudio.com/api/references/vscode-api#Progress
 module Progress = {
   type t('a);
+  // methods
+  [@bs.send] external report: (t('a), 'a) => unit = "report";
 };
 
 // https://code.visualstudio.com/api/references/vscode-api#TextDocumentShowOptions;
@@ -1787,9 +1802,44 @@ module TextDocumentWillSaveEvent = {
   [@bs.send] external waitUntil: (t, Promise.t('a)) => unit = "waitUntil";
 };
 
-// https://code.visualstudio.com/api/references/vscode-api#GlobPattern
-module GlobPattern = {
+// https://code.visualstudio.com/api/references/vscode-api#RelativePattern
+module RelativePattern = {
   type t;
+  // constructors
+  [@bs.module "vscode"] [@bs.new]
+  external make: (string, string) => t = "RelativePattern";
+  [@bs.module "vscode"] [@bs.new]
+  external makeWithWorkspaceFolder: (WorkspaceFolder.t, string) => t =
+    "RelativePattern";
+  // properties
+  [@bs.get] external base: t => string = "base";
+  [@bs.get] external pattern: t => string = "pattern";
+};
+
+// https://code.visualstudio.com/api/references/vscode-api#GlobPattern
+module GlobPattern: {
+  type t;
+  type case =
+    | String(string)
+    | RelativePattern(RelativePattern.t);
+  let string: string => t;
+  let relativePattern: RelativePattern.t => t;
+  let classify: t => case;
+} = {
+  [@unboxed]
+  type t =
+    | Any('a): t;
+  type case =
+    | String(string)
+    | RelativePattern(RelativePattern.t);
+  let string = (v: string) => Any(v);
+  let relativePattern = (v: RelativePattern.t) => Any(v);
+  let classify = (Any(v): t): case =>
+    if (Js.typeof(v) == "string") {
+      String(Obj.magic(v): string);
+    } else {
+      RelativePattern(Obj.magic(v): RelativePattern.t);
+    };
 };
 
 // https://code.visualstudio.com/api/references/vscode-api#FileSystemWatcher
@@ -1871,7 +1921,7 @@ module FileSystemProvider = {
 
 // https://code.visualstudio.com/api/references/vscode-api#Event
 module Event = {
-  type t('a) = ('a => unit) => Disposable.t;
+  type t('a) = (. ('a => unit)) => Disposable.t;
 };
 
 // https://code.visualstudio.com/api/references/vscode-api#workspace
