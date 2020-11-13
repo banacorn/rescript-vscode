@@ -747,6 +747,8 @@ var TaskProvider = {};
 
 var FileSystemProvider = {};
 
+var $$Event = {};
+
 var Workspace = {};
 
 function toEnum$9(param) {
@@ -1042,6 +1044,7 @@ exports.WorkspaceConfiguration = WorkspaceConfiguration;
 exports.TextDocumentContentProvider = TextDocumentContentProvider;
 exports.TaskProvider = TaskProvider;
 exports.FileSystemProvider = FileSystemProvider;
+exports.$$Event = $$Event;
 exports.Workspace = Workspace;
 exports.ExtensionKind = ExtensionKind;
 exports.Extension = Extension;

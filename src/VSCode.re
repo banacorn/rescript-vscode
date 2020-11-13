@@ -1869,6 +1869,11 @@ module FileSystemProvider = {
   type t;
 };
 
+// https://code.visualstudio.com/api/references/vscode-api#Event
+module Event = {
+  type t('a) = ('a => unit) => Disposable.t;
+};
+
 // https://code.visualstudio.com/api/references/vscode-api#workspace
 module Workspace = {
   // variables
@@ -1888,56 +1893,40 @@ module Workspace = {
 
   // events
   [@bs.module "vscode"] [@bs.scope "workspace"]
-  external onDidChangeConfiguration:
-    (option(ConfigurationChangeEvent.t) => unit) => Disposable.t =
+  external onDidChangeConfiguration: Event.t(ConfigurationChangeEvent.t) =
     "onDidChangeConfiguration";
   [@bs.module "vscode"] [@bs.scope "workspace"]
-  external onDidChangeTextDocument:
-    (option(TextDocumentChangeEvent.t) => unit) => Disposable.t =
+  external onDidChangeTextDocument: Event.t(TextDocumentChangeEvent.t) =
     "onDidChangeTextDocument";
   [@bs.module "vscode"] [@bs.scope "workspace"]
-  external onDidChangeWorkspaceFolders:
-    (option(WorkspaceFoldersChangeEvent.t) => unit) => Disposable.t =
+  external onDidChangeWorkspaceFolders: Event.t(WorkspaceFoldersChangeEvent.t) =
     "onDidChangeWorkspaceFolders";
   [@bs.module "vscode"] [@bs.scope "workspace"]
-  external onDidCloseTextDocument:
-    (option(TextDocument.t) => unit) => Disposable.t =
+  external onDidCloseTextDocument: Event.t(TextDocument.t) =
     "onDidCloseTextDocument";
   [@bs.module "vscode"] [@bs.scope "workspace"]
-  external onDidCreateFiles:
-    (option(FileCreateEvent.t) => unit) => Disposable.t =
-    "onDidCreateFiles";
+  external onDidCreateFiles: Event.t(FileCreateEvent.t) = "onDidCreateFiles";
   [@bs.module "vscode"] [@bs.scope "workspace"]
-  external onDidDeleteFiles:
-    (option(FileDeleteEvent.t) => unit) => Disposable.t =
-    "onDidDeleteFiles";
+  external onDidDeleteFiles: Event.t(FileDeleteEvent.t) = "onDidDeleteFiles";
   [@bs.module "vscode"] [@bs.scope "workspace"]
-  external onDidOpenTextDocument:
-    (option(TextDocument.t) => unit) => Disposable.t =
+  external onDidOpenTextDocument: Event.t(TextDocument.t) =
     "onDidOpenTextDocument";
   [@bs.module "vscode"] [@bs.scope "workspace"]
-  external onDidRenameFiles:
-    (option(FileRenameEvent.t) => unit) => Disposable.t =
-    "onDidRenameFiles";
+  external onDidRenameFiles: Event.t(FileRenameEvent.t) = "onDidRenameFiles";
   [@bs.module "vscode"] [@bs.scope "workspace"]
-  external onDidSaveTextDocument:
-    (option(TextDocument.t) => unit) => Disposable.t =
+  external onDidSaveTextDocument: Event.t(TextDocument.t) =
     "onDidSaveTextDocument";
   [@bs.module "vscode"] [@bs.scope "workspace"]
-  external onWillCreateFiles:
-    (option(FileWillCreateEvent.t) => unit) => Disposable.t =
+  external onWillCreateFiles: Event.t(FileWillCreateEvent.t) =
     "onWillCreateFiles";
   [@bs.module "vscode"] [@bs.scope "workspace"]
-  external onWillDeleteFiles:
-    (option(FileWillDeleteEvent.t) => unit) => Disposable.t =
+  external onWillDeleteFiles: Event.t(FileWillDeleteEvent.t) =
     "onWillDeleteFiles";
   [@bs.module "vscode"] [@bs.scope "workspace"]
-  external onWillRenameFiles:
-    (option(FileWillRenameEvent.t) => unit) => Disposable.t =
+  external onWillRenameFiles: Event.t(FileWillRenameEvent.t) =
     "onWillRenameFiles";
   [@bs.module "vscode"] [@bs.scope "workspace"]
-  external onWillSaveTextDocument:
-    (option(TextDocumentWillSaveEvent.t) => unit) => Disposable.t =
+  external onWillSaveTextDocument: Event.t(TextDocumentWillSaveEvent.t) =
     "onWillSaveTextDocument";
   // functions
   [@bs.module "vscode"] [@bs.scope "workspace"]
