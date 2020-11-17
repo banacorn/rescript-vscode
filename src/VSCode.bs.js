@@ -8,11 +8,13 @@ var Js_dict = require("bs-platform/lib/js/js_dict.js");
 var $$Promise = require("reason-promise/src/js/promise.bs.js");
 var Belt_Option = require("bs-platform/lib/js/belt_Option.js");
 
-function themeColor(v) {
+var ThemeColor = {};
+
+function string(v) {
   return v;
 }
 
-function string(v) {
+function others(v) {
   return v;
 }
 
@@ -27,23 +29,18 @@ function classify(v) {
     return {
             TAG: 1,
             _0: v,
-            [Symbol.for("name")]: "ThemeColor"
+            [Symbol.for("name")]: "Others"
           };
   }
 }
 
-var StringOrThemeColor = {
-  themeColor: themeColor,
+var StringOr = {
   string: string,
+  others: others,
   classify: classify
 };
 
-var ThemeColor = {
-  StringOrThemeColor: StringOrThemeColor,
-  string: string,
-  themeColor: themeColor,
-  classify: classify
-};
+var ThemeColorOrString = {};
 
 function onMessage(callback) {
   window.addEventListener("message", (function (_event) {
@@ -87,43 +84,11 @@ function makeChange(authority, fragment, path, prompt, scheme, param) {
         };
 }
 
-function uri(v) {
-  return v;
-}
-
-function string$1(v) {
-  return v;
-}
-
-function classify$1(v) {
-  if (typeof v === "string") {
-    return {
-            TAG: 0,
-            _0: v,
-            [Symbol.for("name")]: "String"
-          };
-  } else {
-    return {
-            TAG: 1,
-            _0: v,
-            [Symbol.for("name")]: "Uri"
-          };
-  }
-}
-
-var StringOrUri = {
-  uri: uri,
-  string: string$1,
-  classify: classify$1
-};
-
 var Uri = {
-  makeChange: makeChange,
-  StringOrUri: StringOrUri,
-  string: string$1,
-  uri: uri,
-  classify: classify$1
+  makeChange: makeChange
 };
+
+var UriOrString = {};
 
 var Clipboard = {};
 
@@ -737,35 +702,7 @@ var TextDocumentWillSaveEvent = {
 
 var RelativePattern = {};
 
-function string$2(v) {
-  return v;
-}
-
-function relativePattern(v) {
-  return v;
-}
-
-function classify$2(v) {
-  if (typeof v === "string") {
-    return {
-            TAG: 0,
-            _0: v,
-            [Symbol.for("name")]: "String"
-          };
-  } else {
-    return {
-            TAG: 1,
-            _0: v,
-            [Symbol.for("name")]: "RelativePattern"
-          };
-  }
-}
-
-var GlobPattern = {
-  string: string$2,
-  relativePattern: relativePattern,
-  classify: classify$2
-};
+var GlobPattern = {};
 
 var FileSystemWatcher = {};
 
@@ -862,36 +799,6 @@ var Diagnostic = {};
 
 var DocumentFilter = {};
 
-function documentFilter(v) {
-  return v;
-}
-
-function string$3(v) {
-  return v;
-}
-
-function classify$3(v) {
-  if (typeof v === "string") {
-    return {
-            TAG: 1,
-            _0: v,
-            [Symbol.for("name")]: "String"
-          };
-  } else {
-    return {
-            TAG: 0,
-            _0: v,
-            [Symbol.for("name")]: "DocumentFilter"
-          };
-  }
-}
-
-var DocumentFilterOrString = {
-  documentFilter: documentFilter,
-  string: string$3,
-  classify: classify$3
-};
-
 var DocumentSelector = {};
 
 var DiagnosticCollection = {};
@@ -942,7 +849,7 @@ function locationLinks(v) {
   return v;
 }
 
-function classify$4(v) {
+function classify$1(v) {
   if ((function (a) { return a.targetRange === undefined})(v)) {
     return {
             TAG: 0,
@@ -961,7 +868,7 @@ function classify$4(v) {
 var LocationLinkOrLocation = {
   locations: locations,
   locationLinks: locationLinks,
-  classify: classify$4
+  classify: classify$1
 };
 
 var DefinitionProvider = {};
@@ -977,12 +884,15 @@ var DocumentSemanticTokensProvider = {};
 var Languages = {};
 
 exports.ThemeColor = ThemeColor;
+exports.StringOr = StringOr;
+exports.ThemeColorOrString = ThemeColorOrString;
 exports.Api = Api;
 exports.Disposable = Disposable;
 exports.Memento = Memento;
 exports.ExtensionContext = ExtensionContext;
 exports.Commands = Commands;
 exports.Uri = Uri;
+exports.UriOrString = UriOrString;
 exports.Clipboard = Clipboard;
 exports.UIKind = UIKind;
 exports.Env = Env;
@@ -1088,7 +998,6 @@ exports.DiagnosticSeverity = DiagnosticSeverity;
 exports.DiagnosticTag = DiagnosticTag;
 exports.Diagnostic = Diagnostic;
 exports.DocumentFilter = DocumentFilter;
-exports.DocumentFilterOrString = DocumentFilterOrString;
 exports.DocumentSelector = DocumentSelector;
 exports.DiagnosticCollection = DiagnosticCollection;
 exports.ProviderResult = ProviderResult;

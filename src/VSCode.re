@@ -3,38 +3,36 @@ module ThemeColor = {
   type t;
   // constructors
   [@bs.module "vscode"] [@bs.new] external make: string => t = "ThemeColor";
+};
 
-  module StringOrThemeColor: {
-    type themeColor = t;
-    type t;
-    type case =
-      | String(string)
-      | ThemeColor(themeColor);
-    let themeColor: themeColor => t;
-    let string: string => t;
-    let classify: t => case;
-  } = {
-    type themeColor = t;
-    [@unboxed]
-    type t =
-      | Any('a): t;
-    type case =
-      | String(string)
-      | ThemeColor(themeColor);
-    let themeColor = (v: themeColor) => Any(v);
-    let string = (v: string) => Any(v);
-    let classify = (Any(v): t): case =>
-      if (Js.typeof(v) == "string") {
-        String(Obj.magic(v): string);
-      } else {
-        ThemeColor(Obj.magic(v): themeColor);
-      };
-  };
+// "string | xxx", for modeling union type of String and something else
+module StringOr: {
+  type t('a);
+  type case('a) =
+    | String(string)
+    | Others('a);
+  let string: string => t('a);
+  let others: 'a => t('a);
+  let classify: t('a) => case('a);
+} = {
+  [@unboxed]
+  type t('a) =
+    | Any('x): t('a);
+  type case('a) =
+    | String(string)
+    | Others('a);
+  let string = (v: string) => Any(v);
+  let others = (v: 'a) => Any(v);
+  let classify = (Any(v): t('a)): case('a) =>
+    if (Js.typeof(v) == "string") {
+      String(Obj.magic(v): string);
+    } else {
+      Others(Obj.magic(v): 'a);
+    };
+};
 
-  let string = StringOrThemeColor.string;
-  let themeColor = StringOrThemeColor.themeColor;
-  let classify = StringOrThemeColor.classify;
-  type stringOrThemeColor = StringOrThemeColor.t;
+module ThemeColorOrString = {
+  type t = StringOr.t(ThemeColor.t);
 };
 
 [@unboxed]
@@ -177,38 +175,10 @@ module Uri = {
     scheme,
   };
   [@bs.send] external with_: (t, change) => t = "with";
+};
 
-  module StringOrUri: {
-    type uri = t;
-    type t;
-    type case =
-      | String(string)
-      | Uri(uri);
-    let uri: uri => t;
-    let string: string => t;
-    let classify: t => case;
-  } = {
-    type uri = t;
-    [@unboxed]
-    type t =
-      | Any('a): t;
-    type case =
-      | String(string)
-      | Uri(uri);
-    let uri = (v: uri) => Any(v);
-    let string = (v: string) => Any(v);
-    let classify = (Any(v): t): case =>
-      if (Js.typeof(v) == "string") {
-        String(Obj.magic(v): string);
-      } else {
-        Uri(Obj.magic(v): uri);
-      };
-  };
-
-  let string = StringOrUri.string;
-  let uri = StringOrUri.uri;
-  let classify = StringOrUri.classify;
-  type stringOrUri = StringOrUri.t;
+module UriOrString = {
+  type t = StringOr.t(Uri.t);
 };
 
 // https://code.visualstudio.com/api/references/vscode-api#Clipboard
@@ -695,15 +665,15 @@ module ThemableDecorationAttachmentRenderOptions = {
   [@bs.deriving abstract]
   type t = {
     [@bs.optional]
-    backgroundColor: ThemeColor.stringOrThemeColor,
+    backgroundColor: StringOr.t(ThemeColor.t),
     [@bs.optional]
     border: string,
     [@bs.optional]
-    borderColor: ThemeColor.stringOrThemeColor,
+    borderColor: StringOr.t(ThemeColor.t),
     [@bs.optional]
-    color: ThemeColor.stringOrThemeColor,
+    color: StringOr.t(ThemeColor.t),
     [@bs.optional]
-    contentIconPath: Uri.stringOrUri,
+    contentIconPath: StringOr.t(Uri.t),
     [@bs.optional]
     contentText: string,
     [@bs.optional]
@@ -992,13 +962,13 @@ module DecorationRenderOptions = {
     [@bs.optional]
     after: ThemableDecorationAttachmentRenderOptions.t,
     [@bs.optional]
-    backgroundColor: ThemeColor.stringOrThemeColor,
+    backgroundColor: StringOr.t(ThemeColor.t),
     [@bs.optional]
     before: ThemableDecorationAttachmentRenderOptions.t,
     [@bs.optional]
     border: string,
     [@bs.optional]
-    borderColor: ThemeColor.stringOrThemeColor,
+    borderColor: StringOr.t(ThemeColor.t),
     [@bs.optional]
     borderRadius: string,
     [@bs.optional]
@@ -1008,7 +978,7 @@ module DecorationRenderOptions = {
     [@bs.optional]
     borderWidth: string,
     [@bs.optional]
-    color: ThemeColor.stringOrThemeColor,
+    color: StringOr.t(ThemeColor.t),
     [@bs.optional]
     cursor: string,
     [@bs.optional]
@@ -1018,7 +988,7 @@ module DecorationRenderOptions = {
     [@bs.optional]
     fontWeight: string,
     [@bs.optional]
-    gutterIconPath: Uri.stringOrUri,
+    gutterIconPath: StringOr.t(Uri.t),
     [@bs.optional]
     gutterIconSize: string,
     [@bs.optional]
@@ -1032,13 +1002,13 @@ module DecorationRenderOptions = {
     [@bs.optional]
     outline: string,
     [@bs.optional]
-    outlineColor: ThemeColor.stringOrThemeColor,
+    outlineColor: StringOr.t(ThemeColor.t),
     [@bs.optional]
     outlineStyle: string,
     [@bs.optional]
     outlineWidth: string,
     [@bs.optional]
-    overviewRulerColor: ThemeColor.stringOrThemeColor,
+    overviewRulerColor: StringOr.t(ThemeColor.t),
     [@bs.optional]
     overviewRulerLane: OverviewRulerLane.t,
     [@bs.optional]
@@ -1817,29 +1787,8 @@ module RelativePattern = {
 };
 
 // https://code.visualstudio.com/api/references/vscode-api#GlobPattern
-module GlobPattern: {
-  type t;
-  type case =
-    | String(string)
-    | RelativePattern(RelativePattern.t);
-  let string: string => t;
-  let relativePattern: RelativePattern.t => t;
-  let classify: t => case;
-} = {
-  [@unboxed]
-  type t =
-    | Any('a): t;
-  type case =
-    | String(string)
-    | RelativePattern(RelativePattern.t);
-  let string = (v: string) => Any(v);
-  let relativePattern = (v: RelativePattern.t) => Any(v);
-  let classify = (Any(v): t): case =>
-    if (Js.typeof(v) == "string") {
-      String(Obj.magic(v): string);
-    } else {
-      RelativePattern(Obj.magic(v): RelativePattern.t);
-    };
+module GlobPattern = {
+  type t = StringOr.t(RelativePattern.t);
 };
 
 // https://code.visualstudio.com/api/references/vscode-api#FileSystemWatcher
@@ -2248,33 +2197,8 @@ module DocumentFilter = {
 };
 
 // https://code.visualstudio.com/api/references/vscode-api#DocumentSelector
-module DocumentFilterOrString: {
-  type t;
-  type case =
-    | DocumentFilter(DocumentFilter.t)
-    | String(string);
-  let documentFilter: DocumentFilter.t => t;
-  let string: string => t;
-  let classify: t => case;
-} = {
-  [@unboxed]
-  type t =
-    | Any('a): t;
-  type case =
-    | DocumentFilter(DocumentFilter.t)
-    | String(string);
-  let documentFilter = (v: DocumentFilter.t) => Any(v);
-  let string = (v: string) => Any(v);
-  let classify = (Any(v): t): case =>
-    if (Js.typeof(v) == "string") {
-      String(Obj.magic(v): string);
-    } else {
-      DocumentFilter(Obj.magic(v): DocumentFilter.t);
-    };
-};
-
 module DocumentSelector = {
-  type t = array(DocumentFilterOrString.t);
+  type t = array(StringOr.t(DocumentFilter.t));
 };
 
 // https://code.visualstudio.com/api/references/vscode-api#DiagnosticCollection
