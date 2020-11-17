@@ -14,6 +14,8 @@ module StringOr: {
   let string: string => t('a);
   let others: 'a => t('a);
   let classify: t('a) => case('a);
+
+  let map: ('a => 'b, t('a)) => t('b);
 } = {
   [@unboxed]
   type t('a) =
@@ -28,6 +30,11 @@ module StringOr: {
       String(Obj.magic(v): string);
     } else {
       Others(Obj.magic(v): 'a);
+    };
+  let map = (f: 'a => 'b, xs: t('a)): t('b) =>
+    switch (classify(xs)) {
+    | String(s) => string(s)
+    | Others(x) => others(f(x))
     };
 };
 
@@ -1469,9 +1476,88 @@ module Window = {
     "withScmProgress";
 };
 
+// https://code.visualstudio.com/api/references/vscode-api#FileType
+module FileType = {
+  type raw = int;
+  type t =
+    | Unknown
+    | File
+    | Directory
+    | SymbolicLink;
+
+  let toEnum =
+    fun
+    | Unknown => 0
+    | File => 1
+    | Directory => 2
+    | SymbolicLink => 64;
+  let fromEnum =
+    fun
+    | 0 => Unknown
+    | 1 => File
+    | 2 => Directory
+    | 64 => SymbolicLink
+    | _ => Unknown;
+};
+
+// https://code.visualstudio.com/api/references/vscode-api#FileStat
+module FileStat = {
+  type t;
+  [@bs.get] external ctime: t => int = "ctime";
+  [@bs.get] external mtime: t => int = "mtime";
+  [@bs.get] external size: t => int = "size";
+  [@bs.get] external type_raw: t => FileType.raw = "type";
+  let type_ = (self: t): FileType.t => type_raw(self)->FileType.fromEnum;
+};
+
 // https://code.visualstudio.com/api/references/vscode-api#FileSystem
 module FileSystem = {
   type t;
+  // methods
+  [@bs.send] external copy: (t, Uri.t, Uri.t) => Promise.t(unit) = "copy";
+  [@bs.send]
+  external copyWithOptions:
+    (t, Uri.t, Uri.t, {. "overwrite": bool}) => Promise.t(unit) =
+    "copy";
+  [@bs.send]
+  external createDirectory: (t, Uri.t) => Promise.t(unit) = "createDirectory";
+  [@bs.send] external delete: (t, Uri.t) => Promise.t(unit) = "delete";
+  [@bs.send]
+  external deleteWithOptions:
+    (
+      t,
+      Uri.t,
+      {
+        .
+        "recursive": bool,
+        "useTrash": bool,
+      }
+    ) =>
+    Promise.t(unit) =
+    "delete";
+  [@bs.send]
+  external readDirectory_raw:
+    (t, Uri.t) => Promise.t(array(StringOr.t(FileType.raw))) =
+    "readDirectory";
+  let readDirectory =
+      (self: t, uri: Uri.t): Promise.t(array(StringOr.t(FileType.t))) => {
+    readDirectory_raw(self, uri)
+    ->Promise.map(xs => xs->Belt.Array.map(StringOr.map(FileType.fromEnum)));
+  };
+
+  [@bs.send]
+  external readFile: (t, Uri.t) => Promise.t(Js.TypedArray2.Int8Array.t) =
+    "readFile";
+  [@bs.send] external rename: (t, Uri.t, Uri.t) => Promise.t(unit) = "rename";
+  [@bs.send]
+  external renameWithOptions:
+    (t, Uri.t, Uri.t, {. "overwrite": bool}) => Promise.t(unit) =
+    "rename";
+  [@bs.send] external stat: (t, Uri.t) => Promise.t(FileStat.t) = "stat";
+  [@bs.send]
+  external stwriteFileat:
+    (t, Uri.t, Js.TypedArray2.Uint8Array.t) => Promise.t(unit) =
+    "writeFile";
 };
 
 // https://code.visualstudio.com/api/references/vscode-api#ConfigurationChangeEvent

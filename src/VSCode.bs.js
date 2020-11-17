@@ -6,6 +6,7 @@ var Curry = require("bs-platform/lib/js/curry.js");
 var Vscode = require("vscode");
 var Js_dict = require("bs-platform/lib/js/js_dict.js");
 var $$Promise = require("reason-promise/src/js/promise.bs.js");
+var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var Belt_Option = require("bs-platform/lib/js/belt_Option.js");
 
 var ThemeColor = {};
@@ -34,10 +35,20 @@ function classify(v) {
   }
 }
 
+function map(f, xs) {
+  var s = classify(xs);
+  if (s.TAG) {
+    return Curry._1(f, s._0);
+  } else {
+    return s._0;
+  }
+}
+
 var StringOr = {
   string: string,
   others: others,
-  classify: classify
+  classify: classify,
+  map: map
 };
 
 function onMessage(callback) {
@@ -606,7 +617,58 @@ var CustomTextEditorProvider = {};
 
 var $$Window = {};
 
-var FileSystem = {};
+function toEnum$9(param) {
+  switch (param) {
+    case /* Unknown */0 :
+        return 0;
+    case /* File */1 :
+        return 1;
+    case /* Directory */2 :
+        return 2;
+    case /* SymbolicLink */3 :
+        return 64;
+    
+  }
+}
+
+function fromEnum$9(param) {
+  if (param >= 3) {
+    if (param !== 64) {
+      return /* Unknown */0;
+    } else {
+      return /* SymbolicLink */3;
+    }
+  } else if (param >= 0) {
+    return param;
+  } else {
+    return /* Unknown */0;
+  }
+}
+
+var FileType = {
+  toEnum: toEnum$9,
+  fromEnum: fromEnum$9
+};
+
+function type_(self) {
+  return fromEnum$9(self.type);
+}
+
+var FileStat = {
+  type_: type_
+};
+
+function readDirectory(self, uri) {
+  return $$Promise.map(self.readDirectory(uri), (function (xs) {
+                return Belt_Array.map(xs, (function (param) {
+                              return map(fromEnum$9, param);
+                            }));
+              }));
+}
+
+var FileSystem = {
+  readDirectory: readDirectory
+};
 
 var ConfigurationChangeEvent = {};
 
@@ -653,7 +715,7 @@ var FileWillDeleteEvent = {};
 
 var FileWillRenameEvent = {};
 
-function toEnum$9(param) {
+function toEnum$10(param) {
   switch (param) {
     case /* AfterDelay */0 :
         return 2;
@@ -665,7 +727,7 @@ function toEnum$9(param) {
   }
 }
 
-function fromEnum$9(param) {
+function fromEnum$10(param) {
   if (param !== 2) {
     if (param !== 3) {
       return /* Manual */2;
@@ -678,12 +740,12 @@ function fromEnum$9(param) {
 }
 
 var TextDocumentSaveReason = {
-  toEnum: toEnum$9,
-  fromEnum: fromEnum$9
+  toEnum: toEnum$10,
+  fromEnum: fromEnum$10
 };
 
 function reason(self) {
-  return fromEnum$9(self.reason);
+  return fromEnum$10(self.reason);
 }
 
 var TextDocumentWillSaveEvent = {
@@ -708,7 +770,7 @@ var $$Event = {};
 
 var Workspace = {};
 
-function toEnum$10(param) {
+function toEnum$11(param) {
   if (param) {
     return 2;
   } else {
@@ -716,7 +778,7 @@ function toEnum$10(param) {
   }
 }
 
-function fromEnum$10(param) {
+function fromEnum$11(param) {
   if (param !== 1) {
     return /* Workspace */1;
   } else {
@@ -725,12 +787,12 @@ function fromEnum$10(param) {
 }
 
 var ExtensionKind = {
-  toEnum: toEnum$10,
-  fromEnum: fromEnum$10
+  toEnum: toEnum$11,
+  fromEnum: fromEnum$11
 };
 
 function extensionKind(self) {
-  return fromEnum$10(self.extensionKind);
+  return fromEnum$11(self.extensionKind);
 }
 
 var Extension = {
@@ -747,11 +809,11 @@ var LocationLink = {};
 
 var DiagnosticRelatedInformation = {};
 
-function toEnum$11(param) {
+function toEnum$12(param) {
   return param;
 }
 
-function fromEnum$11(param) {
+function fromEnum$12(param) {
   if (param > 2 || param < 0) {
     return /* Hint */3;
   } else {
@@ -760,11 +822,11 @@ function fromEnum$11(param) {
 }
 
 var DiagnosticSeverity = {
-  toEnum: toEnum$11,
-  fromEnum: fromEnum$11
+  toEnum: toEnum$12,
+  fromEnum: fromEnum$12
 };
 
-function toEnum$12(param) {
+function toEnum$13(param) {
   if (param) {
     return 2;
   } else {
@@ -772,7 +834,7 @@ function toEnum$12(param) {
   }
 }
 
-function fromEnum$12(param) {
+function fromEnum$13(param) {
   if (param !== 1) {
     return /* Deprecated */1;
   } else {
@@ -781,8 +843,8 @@ function fromEnum$12(param) {
 }
 
 var DiagnosticTag = {
-  toEnum: toEnum$12,
-  fromEnum: fromEnum$12
+  toEnum: toEnum$13,
+  fromEnum: fromEnum$13
 };
 
 var Diagnostic = {};
@@ -793,14 +855,14 @@ var DocumentSelector = {};
 
 var DiagnosticCollection = {};
 
-function map(x, f) {
+function map$1(x, f) {
   return Belt_Option.map(x, (function (result) {
                 return $$Promise.map(result, f);
               }));
 }
 
 var ProviderResult = {
-  map: map
+  map: map$1
 };
 
 var CallHierarchyItem = {};
@@ -950,6 +1012,8 @@ exports.CustomDocumentOpenContext = CustomDocumentOpenContext;
 exports.CustomReadonlyEditorProvider = CustomReadonlyEditorProvider;
 exports.CustomTextEditorProvider = CustomTextEditorProvider;
 exports.$$Window = $$Window;
+exports.FileType = FileType;
+exports.FileStat = FileStat;
 exports.FileSystem = FileSystem;
 exports.ConfigurationChangeEvent = ConfigurationChangeEvent;
 exports.TextDocumentContentChangeEvent = TextDocumentContentChangeEvent;
