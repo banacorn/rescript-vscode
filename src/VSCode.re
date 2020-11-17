@@ -31,13 +31,9 @@ module StringOr: {
     };
 };
 
-module ThemeColorOrString = {
-  type t = StringOr.t(ThemeColor.t);
-};
-
-[@unboxed]
-type any =
-  | Any('a): any;
+// [@unboxed]
+// type any =
+//   | Any('a): any;
 
 module Api = {
   type t;
@@ -175,10 +171,6 @@ module Uri = {
     scheme,
   };
   [@bs.send] external with_: (t, change) => t = "with";
-};
-
-module UriOrString = {
-  type t = StringOr.t(Uri.t);
 };
 
 // https://code.visualstudio.com/api/references/vscode-api#Clipboard
@@ -526,42 +518,13 @@ module TextEditorOptions = {
   [@bs.get] external cursorStyle_raw: t => option(int) = "cursorStyle";
   let cursorStyle = (self: t): option(TextEditorCursorStyle.t) =>
     cursorStyle_raw(self)->Belt.Option.map(TextEditorCursorStyle.fromEnum);
-
-  type boolOrString =
-    | Bool(bool)
-    | String(string);
-  type numberOrString =
-    | Number(int)
-    | String(string);
-
-  [@bs.get] external insertSpaces_raw: t => option(any) = "insertSpaces";
-  let insertSpaces = (self): option(boolOrString) => {
-    insertSpaces_raw(self)
-    ->Belt.Option.map(case =>
-        if (Js.typeof(case) == "boolean") {
-          Bool(Obj.magic(case): bool);
-        } else {
-          String(Obj.magic(case): string);
-        }
-      );
-  };
+  [@bs.get]
+  external insertSpaces: t => option(StringOr.t(bool)) = "insertSpaces";
   [@bs.get] external lineNumbers_raw: t => option(int) = "lineNumbers";
-
   let lineNumbers = (self: t): option(TextEditorLineNumbersStyle.t) =>
     lineNumbers_raw(self)
     ->Belt.Option.map(TextEditorLineNumbersStyle.fromEnum);
-
-  [@bs.get] external tabSize_raw: t => option(any) = "tabSize";
-  let tabSize = (self): option(numberOrString) => {
-    tabSize_raw(self)
-    ->Belt.Option.map(case =>
-        if (Js.typeof(case) == "number") {
-          Number(Obj.magic(case): int);
-        } else {
-          String(Obj.magic(case): string);
-        }
-      );
-  };
+  [@bs.get] external tabSize: t => option(StringOr.t(int)) = "tabSize";
 };
 
 // https://code.visualstudio.com/api/references/vscode-api#Selection
@@ -929,7 +892,24 @@ module ExtensionTerminalOptions = {
 
 // https://code.visualstudio.com/api/references/vscode-api#OverviewRulerLane;
 module OverviewRulerLane = {
-  type t;
+  type raw = int;
+  type t =
+    | Left
+    | Center
+    | Right
+    | Full;
+  let toEnum =
+    fun
+    | Left => 1
+    | Center => 2
+    | Right => 4
+    | Full => 7;
+  let fromEnum =
+    fun
+    | 1 => Left
+    | 2 => Center
+    | 4 => Right
+    | _ => Full;
 };
 
 // https://code.visualstudio.com/api/references/vscode-api#DecorationRangeBehavior;
@@ -1010,7 +990,7 @@ module DecorationRenderOptions = {
     [@bs.optional]
     overviewRulerColor: StringOr.t(ThemeColor.t),
     [@bs.optional]
-    overviewRulerLane: OverviewRulerLane.t,
+    overviewRulerLane: OverviewRulerLane.raw,
     [@bs.optional]
     rangeBehavior: DecorationRangeBehavior.raw,
     [@bs.optional]

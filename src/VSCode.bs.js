@@ -40,8 +40,6 @@ var StringOr = {
   classify: classify
 };
 
-var ThemeColorOrString = {};
-
 function onMessage(callback) {
   window.addEventListener("message", (function (_event) {
           return Curry._1(callback, _event.data);
@@ -87,8 +85,6 @@ function makeChange(authority, fragment, path, prompt, scheme, param) {
 var Uri = {
   makeChange: makeChange
 };
-
-var UriOrString = {};
 
 var Clipboard = {};
 
@@ -313,51 +309,13 @@ function cursorStyle(self) {
   return Belt_Option.map(self.cursorStyle, fromEnum$2);
 }
 
-function insertSpaces(self) {
-  return Belt_Option.map(self.insertSpaces, (function ($$case) {
-                if (typeof $$case === "boolean") {
-                  return {
-                          TAG: 0,
-                          _0: $$case,
-                          [Symbol.for("name")]: "Bool"
-                        };
-                } else {
-                  return {
-                          TAG: 1,
-                          _0: $$case,
-                          [Symbol.for("name")]: "String"
-                        };
-                }
-              }));
-}
-
 function lineNumbers(self) {
   return Belt_Option.map(self.lineNumbers, fromEnum$3);
 }
 
-function tabSize(self) {
-  return Belt_Option.map(self.tabSize, (function ($$case) {
-                if (typeof $$case === "number") {
-                  return {
-                          TAG: 0,
-                          _0: $$case,
-                          [Symbol.for("name")]: "Number"
-                        };
-                } else {
-                  return {
-                          TAG: 1,
-                          _0: $$case,
-                          [Symbol.for("name")]: "String"
-                        };
-                }
-              }));
-}
-
 var TextEditorOptions = {
   cursorStyle: cursorStyle,
-  insertSpaces: insertSpaces,
-  lineNumbers: lineNumbers,
-  tabSize: tabSize
+  lineNumbers: lineNumbers
 };
 
 var $$Selection = {};
@@ -494,13 +452,45 @@ var TerminalOptions = {};
 
 var ExtensionTerminalOptions = {};
 
-var OverviewRulerLane = {};
-
 function toEnum$6(param) {
-  return param;
+  switch (param) {
+    case /* Left */0 :
+        return 1;
+    case /* Center */1 :
+        return 2;
+    case /* Right */2 :
+        return 4;
+    case /* Full */3 :
+        return 7;
+    
+  }
 }
 
 function fromEnum$6(param) {
+  switch (param) {
+    case 1 :
+        return /* Left */0;
+    case 2 :
+        return /* Center */1;
+    case 3 :
+        return /* Full */3;
+    case 4 :
+        return /* Right */2;
+    default:
+      return /* Full */3;
+  }
+}
+
+var OverviewRulerLane = {
+  toEnum: toEnum$6,
+  fromEnum: fromEnum$6
+};
+
+function toEnum$7(param) {
+  return param;
+}
+
+function fromEnum$7(param) {
   if (param > 3 || param < 0) {
     return /* OpenOpen */0;
   } else {
@@ -509,8 +499,8 @@ function fromEnum$6(param) {
 }
 
 var DecorationRangeBehavior = {
-  toEnum: toEnum$6,
-  fromEnum: fromEnum$6
+  toEnum: toEnum$7,
+  fromEnum: fromEnum$7
 };
 
 var DecorationRenderOptions = {};
@@ -579,11 +569,11 @@ var TextDocumentShowOptions = {
   make: make$1
 };
 
-function toEnum$7(param) {
+function toEnum$8(param) {
   return param + 1 | 0;
 }
 
-function fromEnum$7(param) {
+function fromEnum$8(param) {
   if (param !== 1) {
     if (param !== 2) {
       return /* HighContrast */2;
@@ -596,12 +586,12 @@ function fromEnum$7(param) {
 }
 
 var ColorThemeKind = {
-  toEnum: toEnum$7,
-  fromEnum: fromEnum$7
+  toEnum: toEnum$8,
+  fromEnum: fromEnum$8
 };
 
 function kind$1(self) {
-  return fromEnum$7(self.kind);
+  return fromEnum$8(self.kind);
 }
 
 var ColorTheme = {
@@ -663,7 +653,7 @@ var FileWillDeleteEvent = {};
 
 var FileWillRenameEvent = {};
 
-function toEnum$8(param) {
+function toEnum$9(param) {
   switch (param) {
     case /* AfterDelay */0 :
         return 2;
@@ -675,7 +665,7 @@ function toEnum$8(param) {
   }
 }
 
-function fromEnum$8(param) {
+function fromEnum$9(param) {
   if (param !== 2) {
     if (param !== 3) {
       return /* Manual */2;
@@ -688,12 +678,12 @@ function fromEnum$8(param) {
 }
 
 var TextDocumentSaveReason = {
-  toEnum: toEnum$8,
-  fromEnum: fromEnum$8
+  toEnum: toEnum$9,
+  fromEnum: fromEnum$9
 };
 
 function reason(self) {
-  return fromEnum$8(self.reason);
+  return fromEnum$9(self.reason);
 }
 
 var TextDocumentWillSaveEvent = {
@@ -718,7 +708,7 @@ var $$Event = {};
 
 var Workspace = {};
 
-function toEnum$9(param) {
+function toEnum$10(param) {
   if (param) {
     return 2;
   } else {
@@ -726,7 +716,7 @@ function toEnum$9(param) {
   }
 }
 
-function fromEnum$9(param) {
+function fromEnum$10(param) {
   if (param !== 1) {
     return /* Workspace */1;
   } else {
@@ -735,12 +725,12 @@ function fromEnum$9(param) {
 }
 
 var ExtensionKind = {
-  toEnum: toEnum$9,
-  fromEnum: fromEnum$9
+  toEnum: toEnum$10,
+  fromEnum: fromEnum$10
 };
 
 function extensionKind(self) {
-  return fromEnum$9(self.extensionKind);
+  return fromEnum$10(self.extensionKind);
 }
 
 var Extension = {
@@ -757,11 +747,11 @@ var LocationLink = {};
 
 var DiagnosticRelatedInformation = {};
 
-function toEnum$10(param) {
+function toEnum$11(param) {
   return param;
 }
 
-function fromEnum$10(param) {
+function fromEnum$11(param) {
   if (param > 2 || param < 0) {
     return /* Hint */3;
   } else {
@@ -770,11 +760,11 @@ function fromEnum$10(param) {
 }
 
 var DiagnosticSeverity = {
-  toEnum: toEnum$10,
-  fromEnum: fromEnum$10
+  toEnum: toEnum$11,
+  fromEnum: fromEnum$11
 };
 
-function toEnum$11(param) {
+function toEnum$12(param) {
   if (param) {
     return 2;
   } else {
@@ -782,7 +772,7 @@ function toEnum$11(param) {
   }
 }
 
-function fromEnum$11(param) {
+function fromEnum$12(param) {
   if (param !== 1) {
     return /* Deprecated */1;
   } else {
@@ -791,8 +781,8 @@ function fromEnum$11(param) {
 }
 
 var DiagnosticTag = {
-  toEnum: toEnum$11,
-  fromEnum: fromEnum$11
+  toEnum: toEnum$12,
+  fromEnum: fromEnum$12
 };
 
 var Diagnostic = {};
@@ -885,14 +875,12 @@ var Languages = {};
 
 exports.ThemeColor = ThemeColor;
 exports.StringOr = StringOr;
-exports.ThemeColorOrString = ThemeColorOrString;
 exports.Api = Api;
 exports.Disposable = Disposable;
 exports.Memento = Memento;
 exports.ExtensionContext = ExtensionContext;
 exports.Commands = Commands;
 exports.Uri = Uri;
-exports.UriOrString = UriOrString;
 exports.Clipboard = Clipboard;
 exports.UIKind = UIKind;
 exports.Env = Env;
