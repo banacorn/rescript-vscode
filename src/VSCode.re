@@ -38,21 +38,18 @@ module StringOr: {
     };
 };
 
-// [@unboxed]
-// type any =
-//   | Any('a): any;
-
 module Api = {
   type t;
 
   [@bs.val] external acquireVsCodeApi: unit => t = "acquireVsCodeApi";
 
   [@bs.send] external postMessage: (t, 'a) => unit = "postMessage";
+
   let onMessage = (callback: 'a => unit): unit => {
-    Webapi.Dom.window
-    |> Webapi.Dom.Window.addEventListener("message", _event => {
-         callback([%raw "_event.data"])
-       });
+    let onMessage = [%raw
+      "callback => window.addEventListener('message', event => callback(event.data))"
+    ];
+    onMessage(callback);
   };
 };
 

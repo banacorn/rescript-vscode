@@ -52,10 +52,8 @@ var StringOr = {
 };
 
 function onMessage(callback) {
-  window.addEventListener("message", (function (_event) {
-          return Curry._1(callback, _event.data);
-        }));
-  
+  var onMessage$1 = (callback => window.addEventListener('message', event => callback(event.data)));
+  return onMessage$1(callback);
 }
 
 var Api = {
