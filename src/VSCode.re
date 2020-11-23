@@ -67,6 +67,7 @@ module Disposable = {
 // https://code.visualstudio.com/api/references/vscode-api#Event
 module Event = {
   type t('a) = (. ('a => unit)) => Disposable.t;
+  type t2('a) = ('a => unit) => Disposable.t;
 };
 
 // https://code.visualstudio.com/api/references/vscode-api#Memento
@@ -274,7 +275,7 @@ module Webview = {
   type t;
   // events
   [@bs.send]
-  external onDidReceiveMessage: t => Event.t('a) = "onDidReceiveMessage";
+  external onDidReceiveMessage: t => Event.t2('a) = "onDidReceiveMessage";
   // properties
   [@bs.get] external cspSource: t => string = "cspSource";
   [@bs.get] external html: t => string = "html";
