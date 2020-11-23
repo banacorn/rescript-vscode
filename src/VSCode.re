@@ -64,6 +64,11 @@ module Disposable = {
   [@bs.send] external dispose: t => 'a = "dispose";
 };
 
+// https://code.visualstudio.com/api/references/vscode-api#Event
+module Event = {
+  type t('a) = (. ('a => unit)) => Disposable.t;
+};
+
 // https://code.visualstudio.com/api/references/vscode-api#Memento
 module Memento = {
   type t;
@@ -269,8 +274,7 @@ module Webview = {
   type t;
   // events
   [@bs.send]
-  external onDidReceiveMessage: (t, 'a) => Disposable.t =
-    "onDidReceiveMessage";
+  external onDidReceiveMessage: t => Event.t('a) = "onDidReceiveMessage";
   // properties
   [@bs.get] external cspSource: t => string = "cspSource";
   [@bs.get] external html: t => string = "html";
@@ -305,11 +309,9 @@ module WebviewPanel = {
 
   // events
   [@bs.send]
-  external onDidChangeViewState:
-    (t, OnDidChangeViewStateEvent.t => unit) => Disposable.t =
+  external onDidChangeViewState: t => Event.t(OnDidChangeViewStateEvent.t) =
     "onDidChangeViewState";
-  [@bs.send]
-  external onDidDispose: (t, unit => unit) => Disposable.t = "onDidDispose";
+  [@bs.send] external onDidDispose: t => Event.t(unit) = "onDidDispose";
 
   // properties
   [@bs.get] external active: t => bool = "active";
@@ -1087,7 +1089,7 @@ module CancellationToken = {
   [@bs.get]
   external isCancellationRequested: t => bool = "isCancellationRequested";
   [@bs.send]
-  external onCancellationRequested: (t, 'a => unit) => Disposable.t =
+  external onCancellationRequested: t => Event.t('a) =
     "onCancellationRequested";
 };
 
@@ -1249,6 +1251,21 @@ module CustomTextEditorProvider = {
     "resolveCustomTextEditor";
 };
 
+// https://code.visualstudio.com/api/references/vscode-api#CustomEditorProvider
+module CustomEditorProvider = {
+  type t('a);
+};
+
+// https://code.visualstudio.com/api/references/vscode-api#TerminalLinkProvider
+module TerminalLinkProvider = {
+  type t;
+};
+
+// https://code.visualstudio.com/api/references/vscode-api#WebviewViewProvider
+module WebviewViewProvider = {
+  type t;
+};
+
 // https://code.visualstudio.com/api/references/vscode-api#window
 module Window = {
   // variables
@@ -1266,42 +1283,41 @@ module Window = {
   external visibleTextEditors: array(TextEditor.t) = "visibleTextEditors";
   // events
   [@bs.module "vscode"] [@bs.scope "window"]
-  external onDidChangeActiveTerminal:
-    (option(Terminal.t) => unit) => Disposable.t =
+  external onDidChangeActiveColorTheme: Event.t(ColorTheme.t) =
+    "onDidChangeActiveColorTheme";
+  [@bs.module "vscode"] [@bs.scope "window"]
+  external onDidChangeActiveTerminal: Event.t(option(Terminal.t)) =
     "onDidChangeActiveTerminal";
   [@bs.module "vscode"] [@bs.scope "window"]
-  external onDidChangeActiveTextEditor:
-    (option(TextEditor.t) => unit) => Disposable.t =
+  external onDidChangeActiveTextEditor: Event.t(option(TextEditor.t)) =
     "onDidChangeActiveTextEditor";
   [@bs.module "vscode"] [@bs.scope "window"]
   external onDidChangeTextEditorOptions:
-    (TextEditorOptionsChangeEvent.t => unit) => Disposable.t =
+    Event.t(TextEditorOptionsChangeEvent.t) =
     "onDidChangeTextEditorOptions";
   [@bs.module "vscode"] [@bs.scope "window"]
   external onDidChangeTextEditorSelection:
-    (TextEditorSelectionChangeEvent.t => unit) => Disposable.t =
+    Event.t(TextEditorSelectionChangeEvent.t) =
     "onDidChangeTextEditorSelection";
   [@bs.module "vscode"] [@bs.scope "window"]
   external onDidChangeTextEditorViewColumn:
-    (TextEditorViewColumnChangeEvent.t => unit) => Disposable.t =
+    Event.t(TextEditorViewColumnChangeEvent.t) =
     "onDidChangeTextEditorViewColumn";
   [@bs.module "vscode"] [@bs.scope "window"]
   external onDidChangeTextEditorVisibleRanges:
-    (TextEditorVisibleRangesChangeEvent.t => unit) => Disposable.t =
+    Event.t(TextEditorVisibleRangesChangeEvent.t) =
     "onDidChangeTextEditorVisibleRanges";
   [@bs.module "vscode"] [@bs.scope "window"]
-  external onDidChangeVisibleTextEditors:
-    (array(TextEditor.t) => unit) => Disposable.t =
+  external onDidChangeVisibleTextEditors: Event.t(array(TextEditor.t)) =
     "onDidChangeVisibleTextEditors";
   [@bs.module "vscode"] [@bs.scope "window"]
-  external onDidChangeWindowState: (WindowState.t => unit) => Disposable.t =
+  external onDidChangeWindowState: Event.t(WindowState.t) =
     "onDidChangeWindowState";
   [@bs.module "vscode"] [@bs.scope "window"]
-  external onDidCloseTerminal: (Terminal.t => unit) => Disposable.t =
-    "onDidCloseTerminal";
+  external onDidCloseTerminal: Event.t(Terminal.t) = "onDidCloseTerminal";
   [@bs.module "vscode"] [@bs.scope "window"]
-  external onDidOpenTerminal: (Terminal.t => unit) => Disposable.t =
-    "onDidOpenTerminal";
+  external onDidOpenTerminal: Event.t(Terminal.t) = "onDidOpenTerminal";
+
   // functions
   [@bs.module "vscode"] [@bs.scope "window"]
   external createInputBox: unit => InputBox.t = "createInputBox";
@@ -1312,7 +1328,11 @@ module Window = {
   external createQuickPick: QuickPickItem.t => QuickPick.t = "createQuickPick";
   [@bs.module "vscode"] [@bs.scope "window"]
   external createStatusBarItem:
-    (~alignment: [@bs.int] [ | `Left | `Right]=?, ~priority: int=?, unit) =>
+    (
+      ~alignment: [@bs.int] [ | [@bs.as 1] `Left | `Right]=?,
+      ~priority: int=?,
+      unit
+    ) =>
     StatusBarItem.t =
     "createStatusBarItem";
   [@bs.module "vscode"] [@bs.scope "window"]
@@ -1349,10 +1369,64 @@ module Window = {
     ) =>
     WebviewPanel.t =
     "createWebviewPanel";
-  // [@bs.module "vscode"] [@bs.scope "window"]
-  // external registerCustomEditorProvider:
-  //   (string, TreeDataProvider.t) => Disposable.t =
-  //   "registerCustomEditorProvider";
+  [@bs.module "vscode"] [@bs.scope "window"]
+  external registerCustomTextEditorProvider:
+    (string, CustomTextEditorProvider.t) => Disposable.t =
+    "registerCustomEditorProvider";
+  [@bs.module "vscode"] [@bs.scope "window"]
+  external registerCustomTextEditorProviderWithOptions:
+    (
+      string,
+      CustomTextEditorProvider.t,
+      {
+        .
+        "supportsMultipleEditorsPerDocument": bool,
+        "webviewOption": WebviewPanel.Options.t,
+      }
+    ) =>
+    Disposable.t =
+    "registerCustomEditorProvider";
+
+  [@bs.module "vscode"] [@bs.scope "window"]
+  external registerCustomReadonlyEditorProvider:
+    (string, CustomReadonlyEditorProvider.t('a)) => Disposable.t =
+    "registerCustomEditorProvider";
+  [@bs.module "vscode"] [@bs.scope "window"]
+  external registerCustomReadonlyEditorProviderWithOptions:
+    (
+      string,
+      CustomReadonlyEditorProvider.t('a),
+      {
+        .
+        "supportsMultipleEditorsPerDocument": bool,
+        "webviewOption": WebviewPanel.Options.t,
+      }
+    ) =>
+    Disposable.t =
+    "registerCustomEditorProvider";
+
+  [@bs.module "vscode"] [@bs.scope "window"]
+  external registerCustomEditorProvider:
+    (string, CustomEditorProvider.t('a)) => Disposable.t =
+    "registerCustomEditorProvider";
+  [@bs.module "vscode"] [@bs.scope "window"]
+  external registerCustomEditorProviderWithOptions:
+    (
+      string,
+      CustomEditorProvider.t('a),
+      {
+        .
+        "supportsMultipleEditorsPerDocument": bool,
+        "webviewOption": WebviewPanel.Options.t,
+      }
+    ) =>
+    Disposable.t =
+    "registerCustomEditorProvider";
+
+  [@bs.module "vscode"] [@bs.scope "window"]
+  external registerTerminalLinkProvider:
+    (string, TerminalLinkProvider.t) => Disposable.t =
+    "registerTerminalLinkProvider";
   [@bs.module "vscode"] [@bs.scope "window"]
   external registerTreeDataProvider:
     (string, TreeDataProvider.t) => Disposable.t =
@@ -1364,6 +1438,19 @@ module Window = {
   external registerWebviewPanelSerializer:
     (string, WebviewPanelSerializer.t) => Disposable.t =
     "registerWebviewPanelSerializer";
+  [@bs.module "vscode"] [@bs.scope "window"]
+  external registerWebviewViewProvider:
+    (string, WebviewViewProvider.t) => Disposable.t =
+    "registerWebviewViewProvider";
+  [@bs.module "vscode"] [@bs.scope "window"]
+  external registerWebviewViewProviderWithOptions:
+    (
+      string,
+      WebviewViewProvider.t,
+      {. "webviewOptions": {. "retainContextWhenHidden": bool}}
+    ) =>
+    Disposable.t =
+    "registerWebviewViewProvider";
   [@bs.module "vscode"] [@bs.scope "window"]
   external setStatusBarMessageAndHideAfterTimeout:
     (string, int) => Disposable.t =
@@ -1390,19 +1477,6 @@ module Window = {
   external showInformationMessageWithOptions:
     (string, MessageOptions.t, array(string)) => Promise.t(option(string)) =
     "showInformationMessage";
-
-  // module InputBoxOptions = {
-  //   type t = {
-  //     ignoreFocusOut: bool,
-  //     password: bool,
-  //     placeHolder: string,
-  //     value: string,
-  //     valueSelection: (int, int),
-  //   };
-  // };
-  // module CancellationToken = {
-  //   type t = {isCancellationRequested: bool};
-  // };
   [@bs.module "vscode"] [@bs.scope "window"]
   external showInputBox:
     (~option: InputBoxOptions.t=?, ~token: CancellationToken.t=?, unit) =>
@@ -1858,12 +1932,9 @@ module GlobPattern = {
 module FileSystemWatcher = {
   type t;
   // events
-  [@bs.send]
-  external onDidChange: (t, Uri.t => unit) => Disposable.t = "onDidChange";
-  [@bs.send]
-  external onDidCreate: (t, Uri.t => unit) => Disposable.t = "onDidCreate";
-  [@bs.send]
-  external onDidDelete: (t, Uri.t => unit) => Disposable.t = "onDidDelete";
+  [@bs.send] external onDidChange: t => Event.t(Uri.t) = "onDidChange";
+  [@bs.send] external onDidCreate: t => Event.t(Uri.t) = "onDidCreate";
+  [@bs.send] external onDidDelete: t => Event.t(Uri.t) = "onDidDelete";
   // static
   [@bs.val]
   external from: array({. "dispose": unit => 'a}) => Disposable.t = "from";
@@ -1929,11 +2000,6 @@ module TaskProvider = {
 // https://code.visualstudio.com/api/references/vscode-api#FileSystemProvider
 module FileSystemProvider = {
   type t;
-};
-
-// https://code.visualstudio.com/api/references/vscode-api#Event
-module Event = {
-  type t('a) = (. ('a => unit)) => Disposable.t;
 };
 
 // https://code.visualstudio.com/api/references/vscode-api#workspace
@@ -2140,7 +2206,7 @@ module Extensions = {
   external all: array(Extension.t('a)) = "all";
   // events
   [@bs.module "vscode"] [@bs.scope "extensions"]
-  external onDidChange: (unit => unit) => Disposable.t = "onDidChange";
+  external onDidChange: Event.t(unit) = "onDidChange";
   // functions
   [@bs.module "vscode"] [@bs.scope "extensions"]
   external getExtension: string => option(Extension.t('a)) = "getExtension";
@@ -2364,7 +2430,7 @@ module CodeLens = {
 // https://code.visualstudio.com/api/references/vscode-api#CodeLensProvider
 module CodeLensProvider = {
   type t('a) = {
-    onDidChangeCodeLenses: option((unit => unit) => Disposable.t),
+    onDidChangeCodeLenses: option(Event.t(unit)),
     resolveCodeLens: ('a, CancellationToken.t) => ProviderResult.t('a),
     provideCodeLenses:
       (TextDocument.t, CancellationToken.t) => ProviderResult.t(array('a)),
@@ -2505,8 +2571,7 @@ module DocumentSemanticTokensProvider = {
 module Languages = {
   // events
   [@bs.module "vscode"] [@bs.scope "languages"]
-  external onDidChangeDiagnostics:
-    (DiagnosticChangeEvent.t => unit) => Disposable.t =
+  external onDidChangeDiagnostics: Event.t(DiagnosticChangeEvent.t) =
     "onDidChangeDiagnostics";
 
   // functions

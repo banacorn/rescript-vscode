@@ -62,6 +62,8 @@ var Api = {
 
 var Disposable = {};
 
+var $$Event = {};
+
 var Memento = {};
 
 var ExtensionContext = {};
@@ -613,6 +615,12 @@ var CustomReadonlyEditorProvider = {};
 
 var CustomTextEditorProvider = {};
 
+var CustomEditorProvider = {};
+
+var TerminalLinkProvider = {};
+
+var WebviewViewProvider = {};
+
 var $$Window = {};
 
 function toEnum$9(param) {
@@ -763,8 +771,6 @@ var TextDocumentContentProvider = {};
 var TaskProvider = {};
 
 var FileSystemProvider = {};
-
-var $$Event = {};
 
 var Workspace = {};
 
@@ -937,6 +943,7 @@ exports.ThemeColor = ThemeColor;
 exports.StringOr = StringOr;
 exports.Api = Api;
 exports.Disposable = Disposable;
+exports.$$Event = $$Event;
 exports.Memento = Memento;
 exports.ExtensionContext = ExtensionContext;
 exports.Commands = Commands;
@@ -1009,6 +1016,9 @@ exports.ColorTheme = ColorTheme;
 exports.CustomDocumentOpenContext = CustomDocumentOpenContext;
 exports.CustomReadonlyEditorProvider = CustomReadonlyEditorProvider;
 exports.CustomTextEditorProvider = CustomTextEditorProvider;
+exports.CustomEditorProvider = CustomEditorProvider;
+exports.TerminalLinkProvider = TerminalLinkProvider;
+exports.WebviewViewProvider = WebviewViewProvider;
 exports.$$Window = $$Window;
 exports.FileType = FileType;
 exports.FileStat = FileStat;
@@ -1035,7 +1045,6 @@ exports.WorkspaceConfiguration = WorkspaceConfiguration;
 exports.TextDocumentContentProvider = TextDocumentContentProvider;
 exports.TaskProvider = TaskProvider;
 exports.FileSystemProvider = FileSystemProvider;
-exports.$$Event = $$Event;
 exports.Workspace = Workspace;
 exports.ExtensionKind = ExtensionKind;
 exports.Extension = Extension;
