@@ -67,7 +67,6 @@ module Disposable = {
 // https://code.visualstudio.com/api/references/vscode-api#Event
 module Event = {
   type t('a) = (. ('a => unit)) => Disposable.t;
-  type t2('a) = ('a => unit) => Disposable.t;
 };
 
 // https://code.visualstudio.com/api/references/vscode-api#Memento
@@ -275,7 +274,8 @@ module Webview = {
   type t;
   // events
   [@bs.send]
-  external onDidReceiveMessage: t => Event.t2('a) = "onDidReceiveMessage";
+  external onDidReceiveMessage: (t, 'a => unit) => Disposable.t =
+    "onDidReceiveMessage";
   // properties
   [@bs.get] external cspSource: t => string = "cspSource";
   [@bs.get] external html: t => string = "html";
@@ -310,9 +310,11 @@ module WebviewPanel = {
 
   // events
   [@bs.send]
-  external onDidChangeViewState: t => Event.t(OnDidChangeViewStateEvent.t) =
+  external onDidChangeViewState:
+    (t, OnDidChangeViewStateEvent.t => unit) => Disposable.t =
     "onDidChangeViewState";
-  [@bs.send] external onDidDispose: t => Event.t(unit) = "onDidDispose";
+  [@bs.send]
+  external onDidDispose: (t, unit => unit) => Disposable.t = "onDidDispose";
 
   // properties
   [@bs.get] external active: t => bool = "active";
@@ -1090,7 +1092,7 @@ module CancellationToken = {
   [@bs.get]
   external isCancellationRequested: t => bool = "isCancellationRequested";
   [@bs.send]
-  external onCancellationRequested: t => Event.t('a) =
+  external onCancellationRequested: (t, 'a => unit) => Disposable.t =
     "onCancellationRequested";
 };
 
@@ -1933,9 +1935,12 @@ module GlobPattern = {
 module FileSystemWatcher = {
   type t;
   // events
-  [@bs.send] external onDidChange: t => Event.t(Uri.t) = "onDidChange";
-  [@bs.send] external onDidCreate: t => Event.t(Uri.t) = "onDidCreate";
-  [@bs.send] external onDidDelete: t => Event.t(Uri.t) = "onDidDelete";
+  [@bs.send]
+  external onDidChange: (t, t, Uri.t => unit) => Disposable.t = "onDidChange";
+  [@bs.send]
+  external onDidCreate: (t, t, Uri.t => unit) => Disposable.t = "onDidCreate";
+  [@bs.send]
+  external onDidDelete: (t, t, Uri.t => unit) => Disposable.t = "onDidDelete";
   // static
   [@bs.val]
   external from: array({. "dispose": unit => 'a}) => Disposable.t = "from";
