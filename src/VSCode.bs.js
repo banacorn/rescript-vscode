@@ -394,6 +394,42 @@ var TextEditor = {
   show: show
 };
 
+var TerminalOptions = {};
+
+var Pseudoterminal = {};
+
+var ExtensionTerminalOptions = {};
+
+function terminalOptions(v) {
+  return v;
+}
+
+function extensionTerminalOptions(v) {
+  return v;
+}
+
+function classify$1(v) {
+  if ((v.hasOwnProperty('pty'))) {
+    return {
+            TAG: 1,
+            _0: v,
+            [Symbol.for("name")]: "ExtensionTerminalOptions"
+          };
+  } else {
+    return {
+            TAG: 0,
+            _0: v,
+            [Symbol.for("name")]: "TerminalOptions"
+          };
+  }
+}
+
+var TerminalOptionsOrExtensionTerminalOptions = {
+  terminalOptions: terminalOptions,
+  extensionTerminalOptions: extensionTerminalOptions,
+  classify: classify$1
+};
+
 var Terminal = {};
 
 var WindowState = {};
@@ -446,10 +482,6 @@ var QuickPickItem = {};
 var QuickPick = {};
 
 var StatusBarItem = {};
-
-var TerminalOptions = {};
-
-var ExtensionTerminalOptions = {};
 
 function toEnum$6(param) {
   switch (param) {
@@ -895,7 +927,7 @@ function locationLinks(v) {
   return v;
 }
 
-function classify$1(v) {
+function classify$2(v) {
   if ((function (a) { return a.targetRange === undefined})(v)) {
     return {
             TAG: 0,
@@ -914,7 +946,7 @@ function classify$1(v) {
 var LocationLinkOrLocation = {
   locations: locations,
   locationLinks: locationLinks,
-  classify: classify$1
+  classify: classify$2
 };
 
 var DefinitionProvider = {};
@@ -964,6 +996,10 @@ exports.ThemableDecorationInstanceRenderOptions = ThemableDecorationInstanceRend
 exports.DecorationInstanceRenderOptions = DecorationInstanceRenderOptions;
 exports.DecorationOptions = DecorationOptions;
 exports.TextEditor = TextEditor;
+exports.TerminalOptions = TerminalOptions;
+exports.Pseudoterminal = Pseudoterminal;
+exports.ExtensionTerminalOptions = ExtensionTerminalOptions;
+exports.TerminalOptionsOrExtensionTerminalOptions = TerminalOptionsOrExtensionTerminalOptions;
 exports.Terminal = Terminal;
 exports.WindowState = WindowState;
 exports.TextEditorOptionsChangeEvent = TextEditorOptionsChangeEvent;
@@ -976,8 +1012,6 @@ exports.OutputChannel = OutputChannel;
 exports.QuickPickItem = QuickPickItem;
 exports.QuickPick = QuickPick;
 exports.StatusBarItem = StatusBarItem;
-exports.TerminalOptions = TerminalOptions;
-exports.ExtensionTerminalOptions = ExtensionTerminalOptions;
 exports.OverviewRulerLane = OverviewRulerLane;
 exports.DecorationRangeBehavior = DecorationRangeBehavior;
 exports.DecorationRenderOptions = DecorationRenderOptions;

@@ -813,12 +813,88 @@ module TextEditor = {
     show_raw(self, viewColumn->Belt.Option.map(ViewColumn.toEnum));
 };
 
-module Terminal = {
+// https://code.visualstudio.com/api/references/vscode-api#TerminalOptions
+// 1.51.0
+module TerminalOptions = {
+  type t;
+  // properties
+  [@bs.get] external cwd: t => option(string) = "cwd";
+  [@bs.get] external env: t => option('a) = "env";
+  [@bs.get] external hideFromUser: t => option(bool) = "hideFromUser";
+  [@bs.get] external name: t => option(string) = "name";
+  [@bs.get] external shellArgs: t => StringOr.t(array(string)) = "shellArgs";
+  [@bs.get] external shellPath: t => option(string) = "shellPath";
+  [@bs.get] external strictEnv: t => option(bool) = "strictEnv";
+};
+
+// https://code.visualstudio.com/api/references/vscode-api#Pseudoterminal
+module Pseudoterminal = {
   type t;
 };
 
+// https://code.visualstudio.com/api/references/vscode-api#ExtensionTerminalOptions
+// 1.51.0
+module ExtensionTerminalOptions = {
+  type t;
+  // properties
+  [@bs.get] external name: t => string = "name";
+  [@bs.get] external pty: t => Pseudoterminal.t = "pty";
+};
+
+// "TerminalOptions | ExtensionTerminalOptions", FUCK UNION TYPE
+// 1.51.0
+module TerminalOptionsOrExtensionTerminalOptions: {
+  type t;
+  type case =
+    | TerminalOptions(TerminalOptions.t)
+    | ExtensionTerminalOptions(ExtensionTerminalOptions.t);
+  let terminalOptions: TerminalOptions.t => t;
+  let extensionTerminalOptions: ExtensionTerminalOptions.t => t;
+  let classify: t => case;
+} = {
+  [@unboxed]
+  type t =
+    | Any('x): t;
+  type case =
+    | TerminalOptions(TerminalOptions.t)
+    | ExtensionTerminalOptions(ExtensionTerminalOptions.t);
+  let terminalOptions = (v: TerminalOptions.t) => Any(v);
+  let extensionTerminalOptions = (v: ExtensionTerminalOptions.t) => Any(v);
+  let classify = (Any(v): t): case =>
+    if ([%raw "v.hasOwnProperty('pty')"]) {
+      ExtensionTerminalOptions(Obj.magic(v): ExtensionTerminalOptions.t);
+    } else {
+      TerminalOptions(Obj.magic(v): TerminalOptions.t);
+    };
+};
+
+// https://code.visualstudio.com/api/references/vscode-api#Terminal
+// 1.51.0
+module Terminal = {
+  type t;
+  // properties
+  [@bs.get]
+  external creationOptions: t => TerminalOptionsOrExtensionTerminalOptions.t =
+    "creationOptions";
+  [@bs.get] external exitStatus: t => option(int) = "exitStatus";
+  [@bs.get] external name: t => string = "name";
+  [@bs.get] external processId: t => option(int) = "processId";
+  // methods
+  [@bs.send] external dispose: t => unit = "dispose";
+  [@bs.send] external hide: t => unit = "hide";
+  [@bs.send] external sendText: (t, string) => unit = "sendText";
+  [@bs.send]
+  external sendTextWithOptions: (t, string, bool) => unit = "sendText";
+  [@bs.send] external show: t => unit = "show";
+  [@bs.send] external showWithOptions: (t, bool) => unit = "show";
+};
+
+// https://code.visualstudio.com/api/references/vscode-api#WindowState
+// 1.51.0
 module WindowState = {
   type t;
+  // properties
+  [@bs.get] external focused: t => bool = "focused";
 };
 
 // https://code.visualstudio.com/api/references/vscode-api#TextEditorOptionsChangeEvent
@@ -891,16 +967,6 @@ module QuickPick = {
 
 // https://code.visualstudio.com/api/references/vscode-api#StatusBarItem
 module StatusBarItem = {
-  type t;
-};
-
-// https://code.visualstudio.com/api/references/vscode-api#TerminalOptions
-module TerminalOptions = {
-  type t;
-};
-
-// https://code.visualstudio.com/api/references/vscode-api#ExtensionTerminalOptions
-module ExtensionTerminalOptions = {
   type t;
 };
 
@@ -1084,6 +1150,7 @@ module CancellationToken = {
   // properties
   [@bs.get]
   external isCancellationRequested: t => bool = "isCancellationRequested";
+  // methods
   [@bs.send]
   external onCancellationRequested: (t, 'a => unit) => Disposable.t =
     "onCancellationRequested";
