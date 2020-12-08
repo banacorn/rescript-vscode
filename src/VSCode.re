@@ -1053,13 +1053,6 @@ module WebviewAndWebviewPanelOptions = {
   };
 };
 
-module ViewColumnAndPreserveFocus = {
-  type t = {
-    preserveFocus: bool,
-    viewColumn: int,
-  };
-};
-
 // https://code.visualstudio.com/api/references/vscode-api#TreeDataProvider
 module TreeDataProvider = {
   type t;
@@ -1265,11 +1258,67 @@ module TerminalLinkProvider = {
 };
 
 // https://code.visualstudio.com/api/references/vscode-api#WebviewViewProvider
+// 1.51.0
+module WebviewView = {
+  type t;
+  // events
+  [@bs.send]
+  external onDidChangeVisibility: (t, unit => unit) => Disposable.t =
+    "onDidChangeVisibility";
+  [@bs.send]
+  external onDidDispose: (t, unit => unit) => Disposable.t = "onDidDispose";
+  // properties
+  [@bs.get] external description: t => option(string) = "description";
+  [@bs.get] external title: t => option(string) = "title";
+  [@bs.get] external viewType: t => string = "viewType";
+  [@bs.get] external visible: t => bool = "visible";
+  [@bs.get] external webview: t => Webview.t = "webview";
+  // methods
+  [@bs.send] external show: t => unit = "show";
+  [@bs.send] external showWithOptions: (t, bool) => unit = "show";
+};
+
+// https://code.visualstudio.com/api/references/vscode-api#WebviewViewResolveContext
+// 1.51.0
+module WebviewViewResolveContext = {
+  type t('a);
+  // properties
+  [@bs.get] external state: t('a) => option('a) = "state";
+};
+
+// https://code.visualstudio.com/api/references/vscode-api#WebviewViewProvider
+// 1.51.0
 module WebviewViewProvider = {
   type t;
+  // methods
+  [@bs.send]
+  external resolveWebviewView:
+    (
+      t,
+      WebviewView.t,
+      WebviewViewResolveContext.t('a),
+      CancellationToken.t
+    ) =>
+    option(Promise.t(unit)) =
+    "resolveWebviewView";
+};
+
+module ProviderResult = {
+  type t('a) = option(Promise.t('a));
+  let map = (x, f) => x->Belt.Option.map(result => result->Promise.map(f));
+};
+
+// https://code.visualstudio.com/api/references/vscode-api#UriHandler
+// 1.51.0
+module UriHandler = {
+  type t;
+  // methods
+  [@bs.send]
+  external handleUri: (t, Uri.t) => ProviderResult.t(unit) = "handleUri";
 };
 
 // https://code.visualstudio.com/api/references/vscode-api#window
+// 1.51.0
 module Window = {
   // variables
   [@bs.module "vscode"] [@bs.scope "window"]
@@ -1367,7 +1416,11 @@ module Window = {
     (
       string,
       string,
-      ViewColumnAndPreserveFocus.t,
+      {
+        .
+        preserveFocus: bool,
+        viewColumn: int,
+      },
       option(WebviewAndWebviewPanelOptions.t)
     ) =>
     WebviewPanel.t =
@@ -1936,11 +1989,11 @@ module FileSystemWatcher = {
   type t;
   // events
   [@bs.send]
-  external onDidChange: (t, t, Uri.t => unit) => Disposable.t = "onDidChange";
+  external onDidChange: (t, Uri.t => unit) => Disposable.t = "onDidChange";
   [@bs.send]
-  external onDidCreate: (t, t, Uri.t => unit) => Disposable.t = "onDidCreate";
+  external onDidCreate: (t, Uri.t => unit) => Disposable.t = "onDidCreate";
   [@bs.send]
-  external onDidDelete: (t, t, Uri.t => unit) => Disposable.t = "onDidDelete";
+  external onDidDelete: (t, Uri.t => unit) => Disposable.t = "onDidDelete";
   // static
   [@bs.module "vscode"] [@bs.scope "FileSystemWatcher"]
   external from: array({. "dispose": unit => 'a}) => Disposable.t = "from";
@@ -2357,20 +2410,6 @@ module DiagnosticCollection = {
   external setDiagnosticEntries:
     (t, array((Uri.t, option(array(Diagnostic.t))))) => unit =
     "set";
-};
-
-module ProviderResult = {
-  type t('a) = option(Promise.t('a));
-  let map = (x, f) => x->Belt.Option.map(result => result->Promise.map(f));
-};
-
-// https://code.visualstudio.com/api/references/vscode-api#UriHandler
-// 1.51.0
-module UriHandler = {
-  type t;
-  // methods
-  [@bs.send]
-  external handleUri: (t, Uri.t) => ProviderResult.t(unit) = "handleUri";
 };
 
 // https://code.visualstudio.com/api/references/vscode-api#CallHierarchyItem

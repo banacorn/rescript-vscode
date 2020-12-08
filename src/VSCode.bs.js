@@ -523,11 +523,7 @@ var WebviewAndWebviewPanelOptions = {
   make: make
 };
 
-var ViewColumnAndPreserveFocus = {};
-
 var TreeDataProvider = {};
-
-var UriHandler = {};
 
 var WebviewPanelSerializer = {};
 
@@ -607,7 +603,23 @@ var CustomEditorProvider = {};
 
 var TerminalLinkProvider = {};
 
+var WebviewView = {};
+
+var WebviewViewResolveContext = {};
+
 var WebviewViewProvider = {};
+
+function map$1(x, f) {
+  return Belt_Option.map(x, (function (result) {
+                return $$Promise.map(result, f);
+              }));
+}
+
+var ProviderResult = {
+  map: map$1
+};
+
+var UriHandler = {};
 
 var $$Window = {};
 
@@ -847,16 +859,6 @@ var DocumentSelector = {};
 
 var DiagnosticCollection = {};
 
-function map$1(x, f) {
-  return Belt_Option.map(x, (function (result) {
-                return $$Promise.map(result, f);
-              }));
-}
-
-var ProviderResult = {
-  map: map$1
-};
-
 var CallHierarchyItem = {};
 
 var CallHierarchyOutgoingCall = {};
@@ -982,9 +984,7 @@ exports.DecorationRenderOptions = DecorationRenderOptions;
 exports.TreeViewOptions = TreeViewOptions;
 exports.TreeView = TreeView;
 exports.WebviewAndWebviewPanelOptions = WebviewAndWebviewPanelOptions;
-exports.ViewColumnAndPreserveFocus = ViewColumnAndPreserveFocus;
 exports.TreeDataProvider = TreeDataProvider;
-exports.UriHandler = UriHandler;
 exports.WebviewPanelSerializer = WebviewPanelSerializer;
 exports.MessageOptions = MessageOptions;
 exports.MessageItem = MessageItem;
@@ -1006,7 +1006,11 @@ exports.CustomReadonlyEditorProvider = CustomReadonlyEditorProvider;
 exports.CustomTextEditorProvider = CustomTextEditorProvider;
 exports.CustomEditorProvider = CustomEditorProvider;
 exports.TerminalLinkProvider = TerminalLinkProvider;
+exports.WebviewView = WebviewView;
+exports.WebviewViewResolveContext = WebviewViewResolveContext;
 exports.WebviewViewProvider = WebviewViewProvider;
+exports.ProviderResult = ProviderResult;
+exports.UriHandler = UriHandler;
 exports.$$Window = $$Window;
 exports.FileType = FileType;
 exports.FileStat = FileStat;
@@ -1047,7 +1051,6 @@ exports.Diagnostic = Diagnostic;
 exports.DocumentFilter = DocumentFilter;
 exports.DocumentSelector = DocumentSelector;
 exports.DiagnosticCollection = DiagnosticCollection;
-exports.ProviderResult = ProviderResult;
 exports.CallHierarchyItem = CallHierarchyItem;
 exports.CallHierarchyOutgoingCall = CallHierarchyOutgoingCall;
 exports.CallHierarchyIncomingCall = CallHierarchyIncomingCall;
