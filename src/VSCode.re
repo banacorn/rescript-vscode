@@ -1065,11 +1065,6 @@ module TreeDataProvider = {
   type t;
 };
 
-// https://code.visualstudio.com/api/references/vscode-api#UriHandler
-module UriHandler = {
-  type t;
-};
-
 // https://code.visualstudio.com/api/references/vscode-api#WebviewPanelSerializer
 module WebviewPanelSerializer = {
   type t;
@@ -2367,6 +2362,15 @@ module DiagnosticCollection = {
 module ProviderResult = {
   type t('a) = option(Promise.t('a));
   let map = (x, f) => x->Belt.Option.map(result => result->Promise.map(f));
+};
+
+// https://code.visualstudio.com/api/references/vscode-api#UriHandler
+// 1.51.0
+module UriHandler = {
+  type t;
+  // methods
+  [@bs.send]
+  external handleUri: (t, Uri.t) => ProviderResult.t(unit) = "handleUri";
 };
 
 // https://code.visualstudio.com/api/references/vscode-api#CallHierarchyItem
