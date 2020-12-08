@@ -56,7 +56,8 @@ module Api = {
 module Disposable = {
   type t;
   // static
-  [@bs.val] external from: array({. "dispose": unit => 'a}) => t = "from";
+  [@bs.module "vscode"] [@bs.scope "Disposable"]
+  external from: array({. "dispose": unit => 'a}) => t = "from";
   // constructor
   [@bs.module "vscode"] [@bs.new]
   external make: (unit => unit) => t = "Disposable";
@@ -143,10 +144,15 @@ module Commands = {
     "registerCommand";
 };
 
+// https://code.visualstudio.com/api/references/vscode-api#Uri
+// 1.51.0
 module Uri = {
   type t;
 
+  // static
   [@bs.module "vscode"] [@bs.scope "Uri"] external file: string => t = "file";
+  [@bs.module "vscode"] [@bs.scope "Uri"] [@bs.variadic]
+  external joinPath: (t, array(string)) => t = "joinPath";
   [@bs.module "vscode"] [@bs.scope "Uri"]
   external parse: (string, option(bool)) => t = "file";
 
@@ -162,24 +168,23 @@ module Uri = {
 
   [@bs.send] external toJSON: t => Js.Json.t = "toJSON";
   [@bs.send] external toString: t => string = "toString";
+  [@bs.send] external toStringWithOptions: (t, bool) => string = "toString";
 
-  type change = {
-    authority: option(string),
-    fragment: option(string),
-    path: option(string),
-    prompt: option(string),
-    scheme: option(string),
-  };
-
-  let makeChange =
-      (~authority=?, ~fragment=?, ~path=?, ~prompt=?, ~scheme=?, ()): change => {
-    authority,
-    fragment,
-    path,
-    prompt,
-    scheme,
-  };
-  [@bs.send] external with_: (t, change) => t = "with";
+  [@bs.send]
+  external with_:
+    (
+      t,
+      {
+        .
+        authority: option(string),
+        fragment: option(string),
+        path: option(string),
+        prompt: option(string),
+        scheme: option(string),
+      }
+    ) =>
+    t =
+    "with";
 };
 
 // https://code.visualstudio.com/api/references/vscode-api#Clipboard
@@ -1731,7 +1736,7 @@ module WorkspaceEditEntryMetadata = {
 module TextEdit = {
   type t;
 
-  // statics
+  // static
   [@bs.module "vscode"] [@bs.scope "TextEdit"]
   external delete: Range.t => t = "delete";
   [@bs.module "vscode"] [@bs.scope "TextEdit"]
@@ -1942,7 +1947,7 @@ module FileSystemWatcher = {
   [@bs.send]
   external onDidDelete: (t, t, Uri.t => unit) => Disposable.t = "onDidDelete";
   // static
-  [@bs.val]
+  [@bs.module "vscode"] [@bs.scope "FileSystemWatcher"]
   external from: array({. "dispose": unit => 'a}) => Disposable.t = "from";
   // constructors
   [@bs.module "vscode"] [@bs.new]

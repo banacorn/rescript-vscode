@@ -83,19 +83,7 @@ var Commands = {
   Layout: Layout
 };
 
-function makeChange(authority, fragment, path, prompt, scheme, param) {
-  return {
-          authority: authority,
-          fragment: fragment,
-          path: path,
-          prompt: prompt,
-          scheme: scheme
-        };
-}
-
-var Uri = {
-  makeChange: makeChange
-};
+var Uri = {};
 
 var Clipboard = {};
 
