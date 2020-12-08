@@ -91,8 +91,8 @@ var UIKind = {};
 
 var Env = {};
 
-function toEnum(param) {
-  switch (param) {
+function toEnum(x) {
+  switch (x) {
     case /* Active */0 :
         return -1;
     case /* Beside */1 :
@@ -119,8 +119,8 @@ function toEnum(param) {
   }
 }
 
-function fromEnum(param) {
-  switch (param) {
+function fromEnum(x) {
+  switch (x) {
     case -2 :
         return /* Beside */1;
     case -1 :
@@ -214,16 +214,16 @@ var $$Range = {};
 
 var TextLine = {};
 
-function toEnum$1(param) {
-  if (param) {
+function toEnum$1(x) {
+  if (x) {
     return 1;
   } else {
     return 2;
   }
 }
 
-function fromEnum$1(param) {
-  if (param !== 2) {
+function fromEnum$1(x) {
+  if (x !== 2) {
     return /* LF */1;
   } else {
     return /* CRLF */0;
@@ -243,8 +243,8 @@ var TextDocument = {
   eol: eol
 };
 
-function toEnum$2(param) {
-  switch (param) {
+function toEnum$2(x) {
+  switch (x) {
     case /* Block */0 :
         return 2;
     case /* BlockOutline */1 :
@@ -261,8 +261,8 @@ function toEnum$2(param) {
   }
 }
 
-function fromEnum$2(param) {
-  switch (param) {
+function fromEnum$2(x) {
+  switch (x) {
     case 1 :
         return /* Line */2;
     case 2 :
@@ -283,13 +283,13 @@ var TextEditorCursorStyle = {
   fromEnum: fromEnum$2
 };
 
-function toEnum$3(param) {
-  return param;
+function toEnum$3(x) {
+  return x;
 }
 
-function fromEnum$3(param) {
-  if (param !== 0) {
-    if (param !== 1) {
+function fromEnum$3(x) {
+  if (x !== 0) {
+    if (x !== 1) {
       return /* Relative */2;
     } else {
       return /* On */1;
@@ -330,8 +330,8 @@ var TextEditorEdit = {
 
 var SnippetString = {};
 
-function toEnum$4(param) {
-  switch (param) {
+function toEnum$4(x) {
+  switch (x) {
     case /* AtTop */0 :
         return 3;
     case /* Default */1 :
@@ -344,8 +344,8 @@ function toEnum$4(param) {
   }
 }
 
-function fromEnum$4(param) {
-  switch (param) {
+function fromEnum$4(x) {
+  switch (x) {
     case 1 :
         return /* InCenter */2;
     case 2 :
@@ -436,13 +436,13 @@ var WindowState = {};
 
 var TextEditorOptionsChangeEvent = {};
 
-function toEnum$5(param) {
-  return param + 1 | 0;
+function toEnum$5(x) {
+  return x + 1 | 0;
 }
 
-function fromEnum$5(param) {
-  if (param !== 1) {
-    if (param !== 2) {
+function fromEnum$5(x) {
+  if (x !== 1) {
+    if (x !== 2) {
       return /* Command */2;
     } else {
       return /* Mouse */1;
@@ -483,8 +483,8 @@ var QuickPick = {};
 
 var StatusBarItem = {};
 
-function toEnum$6(param) {
-  switch (param) {
+function toEnum$6(x) {
+  switch (x) {
     case /* Left */0 :
         return 1;
     case /* Center */1 :
@@ -497,8 +497,8 @@ function toEnum$6(param) {
   }
 }
 
-function fromEnum$6(param) {
-  switch (param) {
+function fromEnum$6(x) {
+  switch (x) {
     case 1 :
         return /* Left */0;
     case 2 :
@@ -517,15 +517,15 @@ var OverviewRulerLane = {
   fromEnum: fromEnum$6
 };
 
-function toEnum$7(param) {
-  return param;
+function toEnum$7(x) {
+  return x;
 }
 
-function fromEnum$7(param) {
-  if (param > 3 || param < 0) {
+function fromEnum$7(x) {
+  if (x > 3 || x < 0) {
     return /* OpenOpen */0;
   } else {
-    return param;
+    return x;
   }
 }
 
@@ -596,13 +596,13 @@ var TextDocumentShowOptions = {
   make: make$1
 };
 
-function toEnum$8(param) {
-  return param + 1 | 0;
+function toEnum$8(x) {
+  return x + 1 | 0;
 }
 
-function fromEnum$8(param) {
-  if (param !== 1) {
-    if (param !== 2) {
+function fromEnum$8(x) {
+  if (x !== 1) {
+    if (x !== 2) {
       return /* HighContrast */2;
     } else {
       return /* Dark */1;
@@ -655,8 +655,8 @@ var UriHandler = {};
 
 var $$Window = {};
 
-function toEnum$9(param) {
-  switch (param) {
+function toEnum$9(x) {
+  switch (x) {
     case /* Unknown */0 :
         return 0;
     case /* File */1 :
@@ -669,15 +669,15 @@ function toEnum$9(param) {
   }
 }
 
-function fromEnum$9(param) {
-  if (param >= 3) {
-    if (param !== 64) {
+function fromEnum$9(x) {
+  if (x >= 3) {
+    if (x !== 64) {
       return /* Unknown */0;
     } else {
       return /* SymbolicLink */3;
     }
-  } else if (param >= 0) {
-    return param;
+  } else if (x >= 0) {
+    return x;
   } else {
     return /* Unknown */0;
   }
@@ -753,8 +753,8 @@ var FileWillDeleteEvent = {};
 
 var FileWillRenameEvent = {};
 
-function toEnum$10(param) {
-  switch (param) {
+function toEnum$10(x) {
+  switch (x) {
     case /* AfterDelay */0 :
         return 2;
     case /* FocusOut */1 :
@@ -765,9 +765,9 @@ function toEnum$10(param) {
   }
 }
 
-function fromEnum$10(param) {
-  if (param !== 2) {
-    if (param !== 3) {
+function fromEnum$10(x) {
+  if (x !== 2) {
+    if (x !== 3) {
       return /* Manual */2;
     } else {
       return /* FocusOut */1;
@@ -806,16 +806,16 @@ var FileSystemProvider = {};
 
 var Workspace = {};
 
-function toEnum$11(param) {
-  if (param) {
+function toEnum$11(x) {
+  if (x) {
     return 2;
   } else {
     return 1;
   }
 }
 
-function fromEnum$11(param) {
-  if (param !== 1) {
+function fromEnum$11(x) {
+  if (x !== 1) {
     return /* Workspace */1;
   } else {
     return /* UI */0;
@@ -845,15 +845,15 @@ var LocationLink = {};
 
 var DiagnosticRelatedInformation = {};
 
-function toEnum$12(param) {
-  return param;
+function toEnum$12(x) {
+  return x;
 }
 
-function fromEnum$12(param) {
-  if (param > 2 || param < 0) {
+function fromEnum$12(x) {
+  if (x > 2 || x < 0) {
     return /* Hint */3;
   } else {
-    return param;
+    return x;
   }
 }
 
@@ -862,16 +862,16 @@ var DiagnosticSeverity = {
   fromEnum: fromEnum$12
 };
 
-function toEnum$13(param) {
-  if (param) {
+function toEnum$13(x) {
+  if (x) {
     return 2;
   } else {
     return 1;
   }
 }
 
-function fromEnum$13(param) {
-  if (param !== 1) {
+function fromEnum$13(x) {
+  if (x !== 1) {
     return /* Deprecated */1;
   } else {
     return /* Unnecessary */0;
