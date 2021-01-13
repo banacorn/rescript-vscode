@@ -66,7 +66,67 @@ var $$Event = {};
 
 var Memento = {};
 
-var ExtensionContext = {};
+var Uri = {};
+
+function toEnum(x) {
+  return x + 1 | 0;
+}
+
+function fromEnum(x) {
+  if (x !== 1) {
+    if (x !== 2) {
+      return /* Prepend */2;
+    } else {
+      return /* Append */1;
+    }
+  } else {
+    return /* Replace */0;
+  }
+}
+
+var EnvironmentVariableMutatorType = {
+  toEnum: toEnum,
+  fromEnum: fromEnum
+};
+
+function type_(self) {
+  return fromEnum(self.type);
+}
+
+var EnvironmentVariableMutator = {
+  type_: type_
+};
+
+var EnvironmentVariableCollection = {};
+
+function toEnum$1(x) {
+  return x + 1 | 0;
+}
+
+function fromEnum$1(x) {
+  if (x !== 1) {
+    if (x !== 2) {
+      return /* Test */2;
+    } else {
+      return /* Development */1;
+    }
+  } else {
+    return /* Production */0;
+  }
+}
+
+var ExtensionMode = {
+  toEnum: toEnum$1,
+  fromEnum: fromEnum$1
+};
+
+function extensionMode(self) {
+  return fromEnum$1(self.extensionMode);
+}
+
+var ExtensionContext = {
+  extensionMode: extensionMode
+};
 
 var simple = {};
 
@@ -83,15 +143,13 @@ var Commands = {
   Layout: Layout
 };
 
-var Uri = {};
-
 var Clipboard = {};
 
 var UIKind = {};
 
 var Env = {};
 
-function toEnum(x) {
+function toEnum$2(x) {
   switch (x) {
     case /* Active */0 :
         return -1;
@@ -119,7 +177,7 @@ function toEnum(x) {
   }
 }
 
-function fromEnum(x) {
+function fromEnum$2(x) {
   switch (x) {
     case -2 :
         return /* Beside */1;
@@ -150,8 +208,8 @@ function fromEnum(x) {
 }
 
 var ViewColumn = {
-  toEnum: toEnum,
-  fromEnum: fromEnum
+  toEnum: toEnum$2,
+  fromEnum: fromEnum$2
 };
 
 var WebviewOptions = {};
@@ -181,11 +239,11 @@ function iconPath(self) {
 }
 
 function viewColumn(self) {
-  return Belt_Option.map(self.viewColumn, fromEnum);
+  return Belt_Option.map(self.viewColumn, fromEnum$2);
 }
 
 function reveal(self, viewColumn, preserveFocus, param) {
-  var viewColumn$1 = Belt_Option.map(viewColumn, toEnum);
+  var viewColumn$1 = Belt_Option.map(viewColumn, toEnum$2);
   if (viewColumn$1 !== undefined) {
     if (preserveFocus !== undefined) {
       self.reveal(viewColumn$1, preserveFocus);
@@ -214,7 +272,7 @@ var $$Range = {};
 
 var TextLine = {};
 
-function toEnum$1(x) {
+function toEnum$3(x) {
   if (x) {
     return 1;
   } else {
@@ -222,7 +280,7 @@ function toEnum$1(x) {
   }
 }
 
-function fromEnum$1(x) {
+function fromEnum$3(x) {
   if (x !== 2) {
     return /* LF */1;
   } else {
@@ -231,19 +289,19 @@ function fromEnum$1(x) {
 }
 
 var EndOfLine = {
-  toEnum: toEnum$1,
-  fromEnum: fromEnum$1
+  toEnum: toEnum$3,
+  fromEnum: fromEnum$3
 };
 
 function eol(self) {
-  return fromEnum$1(self.eol);
+  return fromEnum$3(self.eol);
 }
 
 var TextDocument = {
   eol: eol
 };
 
-function toEnum$2(x) {
+function toEnum$4(x) {
   switch (x) {
     case /* Block */0 :
         return 2;
@@ -261,7 +319,7 @@ function toEnum$2(x) {
   }
 }
 
-function fromEnum$2(x) {
+function fromEnum$4(x) {
   switch (x) {
     case 1 :
         return /* Line */2;
@@ -279,15 +337,15 @@ function fromEnum$2(x) {
 }
 
 var TextEditorCursorStyle = {
-  toEnum: toEnum$2,
-  fromEnum: fromEnum$2
+  toEnum: toEnum$4,
+  fromEnum: fromEnum$4
 };
 
-function toEnum$3(x) {
+function toEnum$5(x) {
   return x;
 }
 
-function fromEnum$3(x) {
+function fromEnum$5(x) {
   if (x !== 0) {
     if (x !== 1) {
       return /* Relative */2;
@@ -300,16 +358,16 @@ function fromEnum$3(x) {
 }
 
 var TextEditorLineNumbersStyle = {
-  toEnum: toEnum$3,
-  fromEnum: fromEnum$3
+  toEnum: toEnum$5,
+  fromEnum: fromEnum$5
 };
 
 function cursorStyle(self) {
-  return Belt_Option.map(self.cursorStyle, fromEnum$2);
+  return Belt_Option.map(self.cursorStyle, fromEnum$4);
 }
 
 function lineNumbers(self) {
-  return Belt_Option.map(self.lineNumbers, fromEnum$3);
+  return Belt_Option.map(self.lineNumbers, fromEnum$5);
 }
 
 var TextEditorOptions = {
@@ -330,7 +388,7 @@ var TextEditorEdit = {
 
 var SnippetString = {};
 
-function toEnum$4(x) {
+function toEnum$6(x) {
   switch (x) {
     case /* AtTop */0 :
         return 3;
@@ -344,7 +402,7 @@ function toEnum$4(x) {
   }
 }
 
-function fromEnum$4(x) {
+function fromEnum$6(x) {
   switch (x) {
     case 1 :
         return /* InCenter */2;
@@ -358,8 +416,8 @@ function fromEnum$4(x) {
 }
 
 var TextEditorRevealType = {
-  toEnum: toEnum$4,
-  fromEnum: fromEnum$4
+  toEnum: toEnum$6,
+  fromEnum: fromEnum$6
 };
 
 var TextEditorDecorationType = {};
@@ -375,16 +433,16 @@ var DecorationInstanceRenderOptions = {};
 var DecorationOptions = {};
 
 function viewColumn$1(self) {
-  return Belt_Option.map(self.viewColumn, fromEnum);
+  return Belt_Option.map(self.viewColumn, fromEnum$2);
 }
 
 function revealRange(self, range, option) {
-  self.revealRange(range, Belt_Option.map(option, toEnum$4));
+  self.revealRange(range, Belt_Option.map(option, toEnum$6));
   
 }
 
 function show(self, viewColumn) {
-  self.show(Belt_Option.map(viewColumn, toEnum));
+  self.show(Belt_Option.map(viewColumn, toEnum$2));
   
 }
 
@@ -436,11 +494,11 @@ var WindowState = {};
 
 var TextEditorOptionsChangeEvent = {};
 
-function toEnum$5(x) {
+function toEnum$7(x) {
   return x + 1 | 0;
 }
 
-function fromEnum$5(x) {
+function fromEnum$7(x) {
   if (x !== 1) {
     if (x !== 2) {
       return /* Command */2;
@@ -453,14 +511,14 @@ function fromEnum$5(x) {
 }
 
 var TextEditorSelectionChangeKind = {
-  toEnum: toEnum$5,
-  fromEnum: fromEnum$5
+  toEnum: toEnum$7,
+  fromEnum: fromEnum$7
 };
 
 function kind(self) {
   var n = self.kind;
   if (n !== undefined) {
-    return fromEnum$5(n);
+    return fromEnum$7(n);
   }
   
 }
@@ -483,7 +541,7 @@ var QuickPick = {};
 
 var StatusBarItem = {};
 
-function toEnum$6(x) {
+function toEnum$8(x) {
   switch (x) {
     case /* Left */0 :
         return 1;
@@ -497,7 +555,7 @@ function toEnum$6(x) {
   }
 }
 
-function fromEnum$6(x) {
+function fromEnum$8(x) {
   switch (x) {
     case 1 :
         return /* Left */0;
@@ -513,15 +571,15 @@ function fromEnum$6(x) {
 }
 
 var OverviewRulerLane = {
-  toEnum: toEnum$6,
-  fromEnum: fromEnum$6
+  toEnum: toEnum$8,
+  fromEnum: fromEnum$8
 };
 
-function toEnum$7(x) {
+function toEnum$9(x) {
   return x;
 }
 
-function fromEnum$7(x) {
+function fromEnum$9(x) {
   if (x > 3 || x < 0) {
     return /* OpenOpen */0;
   } else {
@@ -530,8 +588,8 @@ function fromEnum$7(x) {
 }
 
 var DecorationRangeBehavior = {
-  toEnum: toEnum$7,
-  fromEnum: fromEnum$7
+  toEnum: toEnum$9,
+  fromEnum: fromEnum$9
 };
 
 var DecorationRenderOptions = {};
@@ -596,11 +654,11 @@ var TextDocumentShowOptions = {
   make: make$1
 };
 
-function toEnum$8(x) {
+function toEnum$10(x) {
   return x + 1 | 0;
 }
 
-function fromEnum$8(x) {
+function fromEnum$10(x) {
   if (x !== 1) {
     if (x !== 2) {
       return /* HighContrast */2;
@@ -613,12 +671,12 @@ function fromEnum$8(x) {
 }
 
 var ColorThemeKind = {
-  toEnum: toEnum$8,
-  fromEnum: fromEnum$8
+  toEnum: toEnum$10,
+  fromEnum: fromEnum$10
 };
 
 function kind$1(self) {
-  return fromEnum$8(self.kind);
+  return fromEnum$10(self.kind);
 }
 
 var ColorTheme = {
@@ -655,7 +713,7 @@ var UriHandler = {};
 
 var $$Window = {};
 
-function toEnum$9(x) {
+function toEnum$11(x) {
   switch (x) {
     case /* Unknown */0 :
         return 0;
@@ -669,7 +727,7 @@ function toEnum$9(x) {
   }
 }
 
-function fromEnum$9(x) {
+function fromEnum$11(x) {
   if (x >= 3) {
     if (x !== 64) {
       return /* Unknown */0;
@@ -684,22 +742,22 @@ function fromEnum$9(x) {
 }
 
 var FileType = {
-  toEnum: toEnum$9,
-  fromEnum: fromEnum$9
+  toEnum: toEnum$11,
+  fromEnum: fromEnum$11
 };
 
-function type_(self) {
-  return fromEnum$9(self.type);
+function type_$1(self) {
+  return fromEnum$11(self.type);
 }
 
 var FileStat = {
-  type_: type_
+  type_: type_$1
 };
 
 function readDirectory(self, uri) {
   return $$Promise.map(self.readDirectory(uri), (function (xs) {
                 return Belt_Array.map(xs, (function (param) {
-                              return map(fromEnum$9, param);
+                              return map(fromEnum$11, param);
                             }));
               }));
 }
@@ -753,7 +811,7 @@ var FileWillDeleteEvent = {};
 
 var FileWillRenameEvent = {};
 
-function toEnum$10(x) {
+function toEnum$12(x) {
   switch (x) {
     case /* AfterDelay */0 :
         return 2;
@@ -765,7 +823,7 @@ function toEnum$10(x) {
   }
 }
 
-function fromEnum$10(x) {
+function fromEnum$12(x) {
   if (x !== 2) {
     if (x !== 3) {
       return /* Manual */2;
@@ -778,12 +836,12 @@ function fromEnum$10(x) {
 }
 
 var TextDocumentSaveReason = {
-  toEnum: toEnum$10,
-  fromEnum: fromEnum$10
+  toEnum: toEnum$12,
+  fromEnum: fromEnum$12
 };
 
 function reason(self) {
-  return fromEnum$10(self.reason);
+  return fromEnum$12(self.reason);
 }
 
 var TextDocumentWillSaveEvent = {
@@ -806,7 +864,7 @@ var FileSystemProvider = {};
 
 var Workspace = {};
 
-function toEnum$11(x) {
+function toEnum$13(x) {
   if (x) {
     return 2;
   } else {
@@ -814,7 +872,7 @@ function toEnum$11(x) {
   }
 }
 
-function fromEnum$11(x) {
+function fromEnum$13(x) {
   if (x !== 1) {
     return /* Workspace */1;
   } else {
@@ -823,12 +881,12 @@ function fromEnum$11(x) {
 }
 
 var ExtensionKind = {
-  toEnum: toEnum$11,
-  fromEnum: fromEnum$11
+  toEnum: toEnum$13,
+  fromEnum: fromEnum$13
 };
 
 function extensionKind(self) {
-  return fromEnum$11(self.extensionKind);
+  return fromEnum$13(self.extensionKind);
 }
 
 var Extension = {
@@ -845,11 +903,11 @@ var LocationLink = {};
 
 var DiagnosticRelatedInformation = {};
 
-function toEnum$12(x) {
+function toEnum$14(x) {
   return x;
 }
 
-function fromEnum$12(x) {
+function fromEnum$14(x) {
   if (x > 2 || x < 0) {
     return /* Hint */3;
   } else {
@@ -858,11 +916,11 @@ function fromEnum$12(x) {
 }
 
 var DiagnosticSeverity = {
-  toEnum: toEnum$12,
-  fromEnum: fromEnum$12
+  toEnum: toEnum$14,
+  fromEnum: fromEnum$14
 };
 
-function toEnum$13(x) {
+function toEnum$15(x) {
   if (x) {
     return 2;
   } else {
@@ -870,7 +928,7 @@ function toEnum$13(x) {
   }
 }
 
-function fromEnum$13(x) {
+function fromEnum$15(x) {
   if (x !== 1) {
     return /* Deprecated */1;
   } else {
@@ -879,8 +937,8 @@ function fromEnum$13(x) {
 }
 
 var DiagnosticTag = {
-  toEnum: toEnum$13,
-  fromEnum: fromEnum$13
+  toEnum: toEnum$15,
+  fromEnum: fromEnum$15
 };
 
 var Diagnostic = {};
@@ -967,9 +1025,13 @@ exports.Api = Api;
 exports.Disposable = Disposable;
 exports.$$Event = $$Event;
 exports.Memento = Memento;
+exports.Uri = Uri;
+exports.EnvironmentVariableMutatorType = EnvironmentVariableMutatorType;
+exports.EnvironmentVariableMutator = EnvironmentVariableMutator;
+exports.EnvironmentVariableCollection = EnvironmentVariableCollection;
+exports.ExtensionMode = ExtensionMode;
 exports.ExtensionContext = ExtensionContext;
 exports.Commands = Commands;
-exports.Uri = Uri;
 exports.Clipboard = Clipboard;
 exports.UIKind = UIKind;
 exports.Env = Env;

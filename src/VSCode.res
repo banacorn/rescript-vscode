@@ -78,14 +78,136 @@ module Memento = {
   @bs.send external update: (t, string, 'a) => Promise.t<unit> = "update"
 }
 
+// https://code.visualstudio.com/api/references/vscode-api#Uri
+// 1.51.0
+module Uri = {
+  type t
+
+  // static
+  @bs.module("vscode") @bs.scope("Uri") external file: string => t = "file"
+  @bs.module("vscode") @bs.scope("Uri") @bs.variadic
+  external joinPath: (t, array<string>) => t = "joinPath"
+  @bs.module("vscode") @bs.scope("Uri")
+  external parse: (string, option<bool>) => t = "file"
+
+  @bs.new
+  external make: (string, string, string, string, string) => t = "Uri"
+
+  @bs.get external authority: t => string = "authority"
+  @bs.get external fragment: t => string = "fragment"
+  @bs.get external fsPath: t => string = "fsPath"
+  @bs.get external path: t => string = "path"
+  @bs.get external prompt: t => string = "prompt"
+  @bs.get external scheme: t => string = "scheme"
+
+  @bs.send external toJSON: t => Js.Json.t = "toJSON"
+  @bs.send external toString: t => string = "toString"
+  @bs.send external toStringWithOptions: (t, bool) => string = "toString"
+
+  @bs.send
+  external with_: (
+    t,
+    {
+      "authority": option<string>,
+      "fragment": option<string>,
+      "path": option<string>,
+      "prompt": option<string>,
+      "scheme": option<string>,
+    },
+  ) => t = "with"
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#EnvironmentVariableMutatorType
+// 1.52.0
+module EnvironmentVariableMutatorType = {
+  type t =
+    | Replace
+    | Append
+    | Prepend
+  let toEnum = x =>
+    switch x {
+    | Replace => 1
+    | Append => 2
+    | Prepend => 3
+    }
+  let fromEnum = x =>
+    switch x {
+    | 1 => Replace
+    | 2 => Append
+    | _ => Prepend
+    }
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#EnvironmentVariableMutator
+// 1.52.0
+module EnvironmentVariableMutator = {
+  type t
+  // properties
+  @bs.get external type_raw: t => int = "type"
+  let type_ = self => EnvironmentVariableMutatorType.fromEnum(type_raw(self))
+  @bs.get external value: t => bool = "value"
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#EnvironmentVariableCollection
+// 1.52.0
+module EnvironmentVariableCollection = {
+  type t
+  // properties
+  @bs.get external persistent: t => bool = "persistent"
+  // methods
+  @bs.send external append: (t, string, string) => unit = "append"
+  @bs.send external clear: t => unit = "clear"
+  @bs.send external delete: (t, string) => unit = "delete"
+  @bs.send
+  external forEach: (t, (string, EnvironmentVariableMutator.t, t) => 'a) => unit = "forEach"
+  @bs.send
+  external forEachWithThisArg: (t, (string, EnvironmentVariableMutator.t, t) => 'a, 'b) => unit =
+    "forEach"
+  @bs.send external get: (t, string) => option<EnvironmentVariableMutator.t> = "get"
+  @bs.send external prepend: (t, string, string) => unit = "prepend"
+  @bs.send external replace: (t, string, string) => unit = "replace"
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#ExtensionMode
+// 1.52.0
+module ExtensionMode = {
+  type t =
+    | Production
+    | Development
+    | Test
+  let toEnum = x =>
+    switch x {
+    | Production => 1
+    | Development => 2
+    | Test => 3
+    }
+  let fromEnum = x =>
+    switch x {
+    | 1 => Production
+    | 2 => Development
+    | _ => Test
+    }
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#ExtensionContext
+// 1.52.0
 module ExtensionContext = {
   type t
   // properties
+  @bs.get
+  external environmentVariableCollection: t => EnvironmentVariableCollection.t =
+    "environmentVariableCollection"
+  @bs.get external extensionMode_raw: t => int = "extensionMode"
+  let extensionMode = self => ExtensionMode.fromEnum(extensionMode_raw(self))
+  @bs.get external extensionMode_raw: t => ExtensionMode.t = "extensionMode"
   @bs.get external extensionPath: t => string = "extensionPath"
+  @bs.get external extensionUri: t => Uri.t = "extensionUri"
   @bs.get external globalState: t => Memento.t = "globalState"
   @bs.get external globalStoragePath: t => string = "globalStoragePath"
   @bs.get external logPath: t => string = "logPath"
+  @bs.get external logUri: t => Uri.t = "logUri"
   @bs.get external storagePath: t => option<string> = "storagePath"
+  @bs.get external storageUri: t => option<Uri.t> = "storageUri"
   @bs.get
   external subscriptions: t => array<Disposable.t> = "subscriptions"
   @bs.get external workspaceState: t => Memento.t = "workspaceState"
@@ -130,45 +252,6 @@ module Commands = {
   external getCommands: option<bool> => Promise.t<array<string>> = "getCommands"
   @bs.module("vscode") @bs.scope("commands")
   external registerCommand: (string, unit => 'a) => Disposable.t = "registerCommand"
-}
-
-// https://code.visualstudio.com/api/references/vscode-api#Uri
-// 1.51.0
-module Uri = {
-  type t
-
-  // static
-  @bs.module("vscode") @bs.scope("Uri") external file: string => t = "file"
-  @bs.module("vscode") @bs.scope("Uri") @bs.variadic
-  external joinPath: (t, array<string>) => t = "joinPath"
-  @bs.module("vscode") @bs.scope("Uri")
-  external parse: (string, option<bool>) => t = "file"
-
-  @bs.new
-  external make: (string, string, string, string, string) => t = "Uri"
-
-  @bs.get external authority: t => string = "authority"
-  @bs.get external fragment: t => string = "fragment"
-  @bs.get external fsPath: t => string = "fsPath"
-  @bs.get external path: t => string = "path"
-  @bs.get external prompt: t => string = "prompt"
-  @bs.get external scheme: t => string = "scheme"
-
-  @bs.send external toJSON: t => Js.Json.t = "toJSON"
-  @bs.send external toString: t => string = "toString"
-  @bs.send external toStringWithOptions: (t, bool) => string = "toString"
-
-  @bs.send
-  external with_: (
-    t,
-    {
-      "authority": option<string>,
-      "fragment": option<string>,
-      "path": option<string>,
-      "prompt": option<string>,
-      "scheme": option<string>,
-    },
-  ) => t = "with"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#Clipboard
@@ -2030,6 +2113,7 @@ module Workspace = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#ExtensionKind
+// 1.52.0
 module ExtensionKind = {
   type t =
     | UI
@@ -2046,11 +2130,6 @@ module ExtensionKind = {
     }
 }
 
-// module TextDocument = {
-//   type t;
-//   // properties
-//   [@bs.get] external eol_raw: t => int = "eol";
-//   let eol = (self: t): EndOfLine.t => EndOfLine.fromEnum(eol_raw(self));
 // https://code.visualstudio.com/api/references/vscode-api#Extension
 module Extension = {
   type t<'a>
