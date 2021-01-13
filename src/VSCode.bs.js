@@ -9,6 +9,16 @@ var $$Promise = require("reason-promise/src/js/promise.bs.js");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var Belt_Option = require("bs-platform/lib/js/belt_Option.js");
 
+function map(x, f) {
+  return Belt_Option.map(x, (function (result) {
+                return $$Promise.map(result, f);
+              }));
+}
+
+var ProviderResult = {
+  map: map
+};
+
 var ThemeColor = {};
 
 function string(v) {
@@ -35,7 +45,7 @@ function classify(v) {
   }
 }
 
-function map(f, xs) {
+function map$1(f, xs) {
   var s = classify(xs);
   if (s.TAG) {
     return Curry._1(f, s._0);
@@ -48,7 +58,7 @@ var StringOr = {
   string: string,
   others: others,
   classify: classify,
-  map: map
+  map: map$1
 };
 
 function onMessage(callback) {
@@ -142,6 +152,32 @@ var Layout = {
 var Commands = {
   Layout: Layout
 };
+
+var DebugConsole = {};
+
+var DebugConfiguration = {};
+
+var WorkspaceFolder = {};
+
+var Breakpoint = {};
+
+var DebugProtocolBreakpoint = {};
+
+var DebugSession = {};
+
+var BreakpointsChangeEvent = {};
+
+var DebugSessionCustomEvent = {};
+
+var DebugProtocolSource = {};
+
+var DebugAdapterExecutableOptions = {};
+
+var DebugAdapterExecutable = {};
+
+var DebugAdapterDescriptorFactory = {};
+
+var Debug = {};
 
 var Clipboard = {};
 
@@ -658,8 +694,6 @@ var SaveDialogOptions = {};
 
 var WorkspaceFolderPickOptions = {};
 
-var WorkspaceFolder = {};
-
 var ProgressOptions = {};
 
 var Progress = {};
@@ -722,16 +756,6 @@ var WebviewViewResolveContext = {};
 
 var WebviewViewProvider = {};
 
-function map$1(x, f) {
-  return Belt_Option.map(x, (function (result) {
-                return $$Promise.map(result, f);
-              }));
-}
-
-var ProviderResult = {
-  map: map$1
-};
-
 var UriHandler = {};
 
 var $$Window = {};
@@ -780,7 +804,7 @@ var FileStat = {
 function readDirectory(self, uri) {
   return $$Promise.map(self.readDirectory(uri), (function (xs) {
                 return Belt_Array.map(xs, (function (param) {
-                              return map(fromEnum$12, param);
+                              return map$1(fromEnum$12, param);
                             }));
               }));
 }
@@ -1042,6 +1066,7 @@ var DocumentSemanticTokensProvider = {};
 
 var Languages = {};
 
+exports.ProviderResult = ProviderResult;
 exports.ThemeColor = ThemeColor;
 exports.StringOr = StringOr;
 exports.Api = Api;
@@ -1055,6 +1080,19 @@ exports.EnvironmentVariableCollection = EnvironmentVariableCollection;
 exports.ExtensionMode = ExtensionMode;
 exports.ExtensionContext = ExtensionContext;
 exports.Commands = Commands;
+exports.DebugConsole = DebugConsole;
+exports.DebugConfiguration = DebugConfiguration;
+exports.WorkspaceFolder = WorkspaceFolder;
+exports.Breakpoint = Breakpoint;
+exports.DebugProtocolBreakpoint = DebugProtocolBreakpoint;
+exports.DebugSession = DebugSession;
+exports.BreakpointsChangeEvent = BreakpointsChangeEvent;
+exports.DebugSessionCustomEvent = DebugSessionCustomEvent;
+exports.DebugProtocolSource = DebugProtocolSource;
+exports.DebugAdapterExecutableOptions = DebugAdapterExecutableOptions;
+exports.DebugAdapterExecutable = DebugAdapterExecutable;
+exports.DebugAdapterDescriptorFactory = DebugAdapterDescriptorFactory;
+exports.Debug = Debug;
 exports.Clipboard = Clipboard;
 exports.UIKind = UIKind;
 exports.Env = Env;
@@ -1114,7 +1152,6 @@ exports.OpenDialogOptions = OpenDialogOptions;
 exports.QuickPickOptions = QuickPickOptions;
 exports.SaveDialogOptions = SaveDialogOptions;
 exports.WorkspaceFolderPickOptions = WorkspaceFolderPickOptions;
-exports.WorkspaceFolder = WorkspaceFolder;
 exports.ProgressOptions = ProgressOptions;
 exports.Progress = Progress;
 exports.TextDocumentShowOptions = TextDocumentShowOptions;
@@ -1128,7 +1165,6 @@ exports.TerminalLinkProvider = TerminalLinkProvider;
 exports.WebviewView = WebviewView;
 exports.WebviewViewResolveContext = WebviewViewResolveContext;
 exports.WebviewViewProvider = WebviewViewProvider;
-exports.ProviderResult = ProviderResult;
 exports.UriHandler = UriHandler;
 exports.$$Window = $$Window;
 exports.FileType = FileType;

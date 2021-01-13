@@ -1,3 +1,10 @@
+// https://code.visualstudio.com/api/references/vscode-api#ProviderResult
+// 1.52.0
+module ProviderResult = {
+  type t<'a> = option<Promise.t<'a>>
+  let map = (x, f) => x->Belt.Option.map(result => result->Promise.map(f))
+}
+
 // https://code.visualstudio.com/api/references/vscode-api#ThemeColor
 module ThemeColor = {
   type t
@@ -252,6 +259,179 @@ module Commands = {
   external getCommands: option<bool> => Promise.t<array<string>> = "getCommands"
   @bs.module("vscode") @bs.scope("commands")
   external registerCommand: (string, unit => 'a) => Disposable.t = "registerCommand"
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#DebugConsole
+// 1.52.0
+module DebugConsole = {
+  type t
+  // methods
+  @bs.send external append: (t, string) => unit = "append"
+  @bs.send external appendLine: (t, string) => unit = "appendLine"
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#DebugConfiguration
+// 1.52.0
+module DebugConfiguration = {
+  type t
+  // properties
+  @bs.get external name: t => string = "name"
+  @bs.get external request: t => string = "request"
+  @bs.get external type_: t => string = "type"
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#WorkspaceFolder
+// 1.52.0
+module WorkspaceFolder = {
+  type t
+  // properties
+  @bs.get external index: t => int = "index"
+  @bs.get external name: t => string = "name"
+  @bs.get external uri: t => Uri.t = "uri"
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#Breakpoint
+// 1.52.0
+module Breakpoint = {
+  type t
+  // constructors
+  @bs.module("vscode") @bs.new
+  external make: (option<bool>, option<string>, option<string>, option<string>) => t = "Breakpoint"
+  // properties
+  @bs.get external condition: t => option<string> = "condition"
+  @bs.get external enabled: t => bool = "enabled"
+  @bs.get external hitCondition: t => option<string> = "hitCondition"
+  @bs.get external id: t => string = "id"
+  @bs.get external logMessage: t => option<string> = "logMessage"
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#DebugProtocolBreakpoint
+// 1.52.0
+module DebugProtocolBreakpoint = {
+  // A DebugProtocolBreakpoint is an opaque stand-in type for the Breakpoint type defined in the Debug Adapter Protocol.
+  type t
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#DebugSession
+// 1.52.0
+module DebugSession = {
+  type t
+  // properties
+  @bs.get external configuration: t => DebugConfiguration.t = "configuration"
+  @bs.get external id: t => string = "id"
+  @bs.get external name: t => string = "name"
+  @bs.get external type_: t => string = "type"
+  @bs.get external workspaceFolder: t => option<WorkspaceFolder.t> = "workspaceFolder"
+  // methods
+  @bs.send external customRequest: (t, string) => Promise.t<'a> = "customRequest"
+  @bs.send external customRequestWithArgs: (t, string, 'a) => Promise.t<'b> = "customRequest"
+  @bs.send
+  external getDebugProtocolBreakpoint: (
+    t,
+    Breakpoint.t,
+  ) => Promise.t<option<DebugProtocolBreakpoint.t>> = "getDebugProtocolBreakpoint"
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#BreakpointsChangeEvent
+// 1.52.0
+module BreakpointsChangeEvent = {
+  type t
+  // properties
+  @bs.get external added: t => array<Breakpoint.t> = "added"
+  @bs.get external changed: t => array<Breakpoint.t> = "changed"
+  @bs.get external removed: t => array<Breakpoint.t> = "removed"
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#DebugSessionCustomEvent
+// 1.52.0
+module DebugSessionCustomEvent = {
+  type t
+  // properties
+  @bs.get external body: t => option<'a> = "body"
+  @bs.get external event: t => string = "event"
+  @bs.get external session: t => DebugSession.t = "session"
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#DebugProtocolSource
+// 1.52.0
+module DebugProtocolSource = {
+  // A DebugProtocolSource is an opaque stand-in type for the Source type defined in the Debug Adapter Protocol.
+  type t
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#DebugAdapterExecutableOptions
+// 1.52.0
+module DebugAdapterExecutableOptions = {
+  type t
+  // properties
+  @bs.get external cwd: t => option<string> = "cwd"
+  @bs.get external env: t => option<'a> = "env"
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#DebugAdapterExecutable
+// 1.52.0
+module DebugAdapterExecutable = {
+  type t
+  // constructor
+  @bs.module("vscode") @bs.new
+  external make: (string, array<string>) => t = "DebugAdapterExecutable"
+  @bs.module("vscode") @bs.new
+  external makeWithOptions: (string, array<string>, DebugAdapterExecutableOptions.t) => t =
+    "DebugAdapterExecutable"
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#DebugAdapterDescriptorFactory
+// 1.52.0 (WIP)
+module DebugAdapterDescriptorFactory = {
+  type t
+  // methods
+  @bs.send
+  external createDebugAdapterDescriptor: (
+    t,
+    DebugSession.t,
+    option<DebugAdapterExecutable.t>,
+  ) => ProviderResult.t<'a> = "createDebugAdapterDescriptor"
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#debug
+// 1.52.0 (WIP)
+module Debug = {
+  // variables
+  @bs.module("vscode") @bs.scope("debug")
+  external activeDebugConsole: option<DebugConsole.t> = "activeDebugConsole"
+  @bs.module("vscode") @bs.scope("debug")
+  external activeDebugSession: option<DebugSession.t> = "activeDebugSession"
+  @bs.module("vscode") @bs.scope("debug")
+  external breakpoints: array<Breakpoint.t> = "breakpoints"
+
+  // events
+  @bs.module("vscode") @bs.scope("debug")
+  external onDidChangeActiveDebugSession: Event.t<option<DebugSession.t>> =
+    "onDidChangeActiveDebugSession"
+  @bs.module("vscode") @bs.scope("debug")
+  external onDidChangeBreakpoints: Event.t<BreakpointsChangeEvent.t> = "onDidChangeBreakpoints"
+  @bs.module("vscode") @bs.scope("debug")
+  external onDidReceiveDebugSessionCustomEvent: Event.t<DebugSessionCustomEvent.t> =
+    "onDidReceiveDebugSessionCustomEvent"
+  @bs.module("vscode") @bs.scope("debug")
+  external onDidStartDebugSession: Event.t<DebugSession.t> = "onDidStartDebugSession"
+  @bs.module("vscode") @bs.scope("debug")
+  external onDidTerminateDebugSession: Event.t<DebugSession.t> = "onDidTerminateDebugSession"
+
+  // functions
+  @bs.module("vscode") @bs.scope("debug")
+  external addBreakpoints: array<Breakpoint.t> => unit = "addBreakpoints"
+  @bs.module("vscode") @bs.scope("debug")
+  external asDebugSourceUri: DebugProtocolSource.t => unit = "asDebugSourceUri"
+  @bs.module("vscode") @bs.scope("debug")
+  external asDebugSourceUriWithSession: (DebugProtocolSource.t, DebugSession.t) => unit =
+    "asDebugSourceUri"
+  @bs.module("vscode") @bs.scope("debug")
+  external registerDebugAdapterDescriptorFactory: (
+    string,
+    DebugAdapterDescriptorFactory.t,
+    Disposable.t,
+  ) => unit = "registerDebugAdapterDescriptorFactory"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#Clipboard
@@ -1218,15 +1398,6 @@ module WorkspaceFolderPickOptions = {
   @bs.get external placeHolder: t => option<string> = "placeHolder"
 }
 
-// https://code.visualstudio.com/api/references/vscode-api#WorkspaceFolder
-module WorkspaceFolder = {
-  type t
-  // properties
-  @bs.get external index: t => int = "index"
-  @bs.get external name: t => string = "name"
-  @bs.get external uri: t => Uri.t = "uri"
-}
-
 // https://code.visualstudio.com/api/references/vscode-api#ProgressOptions
 module ProgressOptions = {
   type t
@@ -1402,10 +1573,6 @@ module WebviewViewProvider = {
   ) => option<Promise.t<unit>> = "resolveWebviewView"
 }
 
-module ProviderResult = {
-  type t<'a> = option<Promise.t<'a>>
-  let map = (x, f) => x->Belt.Option.map(result => result->Promise.map(f))
-}
 
 // https://code.visualstudio.com/api/references/vscode-api#UriHandler
 // 1.51.0
@@ -2170,6 +2337,7 @@ module Extension = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#extensions
+// 1.52.0
 module Extensions = {
   // variables
   @bs.module("vscode") @bs.scope("extensions")
