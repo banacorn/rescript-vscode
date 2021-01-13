@@ -202,7 +202,9 @@ var UIKind = {
   fromEnum: fromEnum$2
 };
 
-var uiKind = fromEnum$2(Vscode.env.uiKind);
+function uiKind(param) {
+  return fromEnum$2(Vscode.env.uiKind);
+}
 
 var Env = {
   uiKind: uiKind
@@ -1227,4 +1229,4 @@ exports.SemanticTokensLegend = SemanticTokensLegend;
 exports.SemanticTokensBuilder = SemanticTokensBuilder;
 exports.DocumentSemanticTokensProvider = DocumentSemanticTokensProvider;
 exports.Languages = Languages;
-/* uiKind Not a pure module */
+/* vscode Not a pure module */

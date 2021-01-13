@@ -479,7 +479,7 @@ module Env = {
   external sessionId: string = "sessionId"
   @bs.module("vscode") @bs.scope("env") external shell: string = "shell"
   @bs.module("vscode") @bs.scope("env") external uiKind_raw: int = "uiKind"
-  let uiKind: UIKind.t = UIKind.fromEnum(uiKind_raw)
+  let uiKind: unit => UIKind.t = () => UIKind.fromEnum(uiKind_raw)
   @bs.module("vscode") @bs.scope("env")
   external uriScheme: string = "uriScheme"
 
