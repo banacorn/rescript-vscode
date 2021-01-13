@@ -264,10 +264,23 @@ module Clipboard = {
 
 // https://code.visualstudio.com/api/references/vscode-api#UIKind;
 module UIKind = {
-  type t
+  type t =
+    | Desktop
+    | Web
+  let toEnum = x =>
+    switch x {
+    | Desktop => 1
+    | Web => 2
+    }
+  let fromEnum = x =>
+    switch x {
+    | 1 => Desktop
+    | _ => Web
+    }
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#env
+// 1.52.0
 module Env = {
   type t
 
@@ -285,9 +298,16 @@ module Env = {
   @bs.module("vscode") @bs.scope("env")
   external sessionId: string = "sessionId"
   @bs.module("vscode") @bs.scope("env") external shell: string = "shell"
-  @bs.module("vscode") @bs.scope("env") external uiKind: UIKind.t = "uiKind"
+  @bs.module("vscode") @bs.scope("env") external uiKind_raw: int = "uiKind"
+  let uiKind: UIKind.t = UIKind.fromEnum(uiKind_raw)
   @bs.module("vscode") @bs.scope("env")
   external uriScheme: string = "uriScheme"
+
+  // functions
+  @bs.module("vscode") @bs.scope("env")
+  external asExternalUri: Uri.t => Promise.t<Uri.t> = "asExternalUri"
+  @bs.module("vscode") @bs.scope("env")
+  external openExternal: Uri.t => Promise.t<bool> = "openExternal"
 }
 
 module ViewColumn = {
