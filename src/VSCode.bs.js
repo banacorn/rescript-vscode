@@ -629,8 +629,14 @@ function alignment(self) {
   return fromEnum$9(self.alignment);
 }
 
+function setAlignment(self, alignment) {
+  self.alignment = alignment ? 2 : 1;
+  
+}
+
 var StatusBarItem = {
-  alignment: alignment
+  alignment: alignment,
+  setAlignment: setAlignment
 };
 
 function toEnum$10(x) {

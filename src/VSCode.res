@@ -1230,15 +1230,38 @@ module StatusBarItem = {
   @bs.get
   external accessibilityInformation: t => option<AccessibilityInformation.t> =
     "accessibilityInformation"
+  @bs.set
+  external setAccessibilityInformation: (t, AccessibilityInformation.t) => unit =
+    "accessibilityInformation"
   @bs.get external alignment_raw: t => int = "alignment"
   let alignment: t => StatusBarAlignment.t = self =>
     StatusBarAlignment.fromEnum(self->alignment_raw)
+  @bs.set
+  external setAlignment_raw: (t, int) => unit = "alignment"
+  let setAlignment: (t, StatusBarAlignment.t) => unit = (self, alignment) =>
+    setAlignment_raw(self, StatusBarAlignment.toEnum(alignment))
   @bs.get external backgroundColor: t => option<ThemeColor.t> = "backgroundColor"
+  @bs.set
+  external setBackgroundColor: (t, ThemeColor.t) => unit = "backgroundColor"
   @bs.get external color: t => option<StringOr.t<ThemeColor.t>> = "color"
+  @bs.set
+  external setColor: (t, ThemeColor.t) => unit = "color"
+  @bs.set
+  external setColorWithString: (t, string) => unit = "color"
   @bs.get external command: t => option<StringOr.t<Command.t>> = "command"
+  @bs.set
+  external setCommand: (t, Command.t) => unit = "command"
+  @bs.set
+  external setCommandWithString: (t, string) => unit = "command"
   @bs.get external priority: t => option<int> = "priority"
+  @bs.set
+  external setPriority: (t, int) => unit = "priority"
   @bs.get external text: t => string = "text"
+  @bs.set
+  external setText: (t, string) => unit = "text"
   @bs.get external tooltip: t => option<string> = "tooltip"
+  @bs.set
+  external setTooltip: (t, string) => unit = "tooltip"
   // methods
   @bs.send external dispose: t => unit = "dispose"
   @bs.send external hide: t => unit = "hide"
