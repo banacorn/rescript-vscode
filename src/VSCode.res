@@ -145,6 +145,25 @@ module EnvironmentVariableMutatorType = {
     }
 }
 
+// https://code.visualstudio.com/api/references/vscode-api#Command
+// 1.55.0
+module Command = {
+  type t
+  // properties
+  @bs.get external arguments: t => option<array<'a>> = "arguments"
+  @bs.get external command: t => string = "command"
+  @bs.get external title: t => string = "title"
+  @bs.get external tooltip: t => option<string> = "tooltip"
+}
+// module Command = {
+//   type t<'a> = {
+//     arguments: option<array<'a>>,
+//     command: string,
+//     title: string,
+//     tooltip: option<string>,
+//   }
+// }
+
 // https://code.visualstudio.com/api/references/vscode-api#EnvironmentVariableMutator
 // 1.52.0
 module EnvironmentVariableMutator = {
@@ -1174,9 +1193,56 @@ module QuickPick = {
   type t
 }
 
+// https://code.visualstudio.com/api/references/vscode-api#AccessibilityInformation
+// 1.55.0
+module AccessibilityInformation = {
+  type t
+  // properties
+  @bs.get external label: t => string = "label"
+  @bs.get external role: t => option<string> = "role"
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#StatusBarAlignment
+// 1.55.0
+module StatusBarAlignment = {
+  type raw = int
+  type t =
+    | Left
+    | Right
+
+  let toEnum = x =>
+    switch x {
+    | Left => 1
+    | Right => 2
+    }
+  let fromEnum = x =>
+    switch x {
+    | 1 => Left
+    | 2 => Right
+    | _ => Right
+    }
+}
+
 // https://code.visualstudio.com/api/references/vscode-api#StatusBarItem
 module StatusBarItem = {
   type t
+  // properties
+  @bs.get
+  external accessibilityInformation: t => option<AccessibilityInformation.t> =
+    "accessibilityInformation"
+  @bs.get external alignment_raw: t => int = "alignment"
+  let alignment: t => StatusBarAlignment.t = self =>
+    StatusBarAlignment.fromEnum(self->alignment_raw)
+  @bs.get external backgroundColor: t => option<ThemeColor.t> = "backgroundColor"
+  @bs.get external color: t => option<StringOr.t<ThemeColor.t>> = "color"
+  @bs.get external command: t => option<StringOr.t<Command.t>> = "command"
+  @bs.get external priority: t => option<int> = "priority"
+  @bs.get external text: t => string = "text"
+  @bs.get external tooltip: t => option<string> = "tooltip"
+  // methods
+  @bs.send external dispose: t => unit = "dispose"
+  @bs.send external hide: t => unit = "hide"
+  @bs.send external show: t => unit = "show"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#OverviewRulerLane;
@@ -1454,6 +1520,7 @@ module ColorThemeKind = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#ColorTheme
+// 1.55.0
 module ColorTheme = {
   type t
   // properties
@@ -1573,7 +1640,6 @@ module WebviewViewProvider = {
   ) => option<Promise.t<unit>> = "resolveWebviewView"
 }
 
-
 // https://code.visualstudio.com/api/references/vscode-api#UriHandler
 // 1.51.0
 module UriHandler = {
@@ -1637,11 +1703,8 @@ module Window = {
   @bs.module("vscode") @bs.scope("window")
   external createQuickPick: QuickPickItem.t => QuickPick.t = "createQuickPick"
   @bs.module("vscode") @bs.scope("window")
-  external createStatusBarItem: (
-    ~alignment: @bs.int [@bs.as(1) #Left | #Right]=?,
-    ~priority: int=?,
-    unit,
-  ) => StatusBarItem.t = "createStatusBarItem"
+  external createStatusBarItem: (option<StatusBarAlignment.t>, option<int>) => StatusBarItem.t =
+    "createStatusBarItem"
   @bs.module("vscode") @bs.scope("window")
   external createTerminal: (
     ~name: string=?,
@@ -2540,25 +2603,15 @@ module CodeActionProviderMetadata = {
   type t
 }
 
-// https://code.visualstudio.com/api/references/vscode-api#Command
-module Command = {
-  type t<'a> = {
-    arguments: option<array<'a>>,
-    command: string,
-    title: string,
-    tooltip: option<string>,
-  }
-}
-
 // https://code.visualstudio.com/api/references/vscode-api#CodeLens
 module CodeLens = {
   type t
   // constructors
   @bs.module("vscode") @bs.new external make: Range.t => t = "CodeLens"
   @bs.module("vscode") @bs.new
-  external makeWithCommand: (Range.t, Command.t<'a>) => t = "CodeLens"
+  external makeWithCommand: (Range.t, Command.t) => t = "CodeLens"
   // properties
-  @bs.get external command: t => option<Command.t<'a>> = "command"
+  @bs.get external command: t => option<Command.t> = "command"
   @bs.get external isResolved: t => bool = "isResolved"
   @bs.get external range: t => Range.t = "range"
 }

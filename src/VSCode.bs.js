@@ -99,6 +99,8 @@ var EnvironmentVariableMutatorType = {
   fromEnum: fromEnum
 };
 
+var Command = {};
+
 function type_(self) {
   return fromEnum(self.type);
 }
@@ -600,9 +602,38 @@ var QuickPickItem = {};
 
 var QuickPick = {};
 
-var StatusBarItem = {};
+var AccessibilityInformation = {};
 
 function toEnum$9(x) {
+  if (x) {
+    return 2;
+  } else {
+    return 1;
+  }
+}
+
+function fromEnum$9(x) {
+  if (x !== 1) {
+    return /* Right */1;
+  } else {
+    return /* Left */0;
+  }
+}
+
+var StatusBarAlignment = {
+  toEnum: toEnum$9,
+  fromEnum: fromEnum$9
+};
+
+function alignment(self) {
+  return fromEnum$9(self.alignment);
+}
+
+var StatusBarItem = {
+  alignment: alignment
+};
+
+function toEnum$10(x) {
   switch (x) {
     case /* Left */0 :
         return 1;
@@ -616,7 +647,7 @@ function toEnum$9(x) {
   }
 }
 
-function fromEnum$9(x) {
+function fromEnum$10(x) {
   switch (x) {
     case 1 :
         return /* Left */0;
@@ -632,15 +663,15 @@ function fromEnum$9(x) {
 }
 
 var OverviewRulerLane = {
-  toEnum: toEnum$9,
-  fromEnum: fromEnum$9
+  toEnum: toEnum$10,
+  fromEnum: fromEnum$10
 };
 
-function toEnum$10(x) {
+function toEnum$11(x) {
   return x;
 }
 
-function fromEnum$10(x) {
+function fromEnum$11(x) {
   if (x > 3 || x < 0) {
     return /* OpenOpen */0;
   } else {
@@ -649,8 +680,8 @@ function fromEnum$10(x) {
 }
 
 var DecorationRangeBehavior = {
-  toEnum: toEnum$10,
-  fromEnum: fromEnum$10
+  toEnum: toEnum$11,
+  fromEnum: fromEnum$11
 };
 
 var DecorationRenderOptions = {};
@@ -713,11 +744,11 @@ var TextDocumentShowOptions = {
   make: make$1
 };
 
-function toEnum$11(x) {
+function toEnum$12(x) {
   return x + 1 | 0;
 }
 
-function fromEnum$11(x) {
+function fromEnum$12(x) {
   if (x !== 1) {
     if (x !== 2) {
       return /* HighContrast */2;
@@ -730,12 +761,12 @@ function fromEnum$11(x) {
 }
 
 var ColorThemeKind = {
-  toEnum: toEnum$11,
-  fromEnum: fromEnum$11
+  toEnum: toEnum$12,
+  fromEnum: fromEnum$12
 };
 
 function kind$1(self) {
-  return fromEnum$11(self.kind);
+  return fromEnum$12(self.kind);
 }
 
 var ColorTheme = {
@@ -762,7 +793,7 @@ var UriHandler = {};
 
 var $$Window = {};
 
-function toEnum$12(x) {
+function toEnum$13(x) {
   switch (x) {
     case /* Unknown */0 :
         return 0;
@@ -776,7 +807,7 @@ function toEnum$12(x) {
   }
 }
 
-function fromEnum$12(x) {
+function fromEnum$13(x) {
   if (x >= 3) {
     if (x !== 64) {
       return /* Unknown */0;
@@ -791,12 +822,12 @@ function fromEnum$12(x) {
 }
 
 var FileType = {
-  toEnum: toEnum$12,
-  fromEnum: fromEnum$12
+  toEnum: toEnum$13,
+  fromEnum: fromEnum$13
 };
 
 function type_$1(self) {
-  return fromEnum$12(self.type);
+  return fromEnum$13(self.type);
 }
 
 var FileStat = {
@@ -806,7 +837,7 @@ var FileStat = {
 function readDirectory(self, uri) {
   return $$Promise.map(self.readDirectory(uri), (function (xs) {
                 return Belt_Array.map(xs, (function (param) {
-                              return map$1(fromEnum$12, param);
+                              return map$1(fromEnum$13, param);
                             }));
               }));
 }
@@ -860,7 +891,7 @@ var FileWillDeleteEvent = {};
 
 var FileWillRenameEvent = {};
 
-function toEnum$13(x) {
+function toEnum$14(x) {
   switch (x) {
     case /* AfterDelay */0 :
         return 2;
@@ -872,7 +903,7 @@ function toEnum$13(x) {
   }
 }
 
-function fromEnum$13(x) {
+function fromEnum$14(x) {
   if (x !== 2) {
     if (x !== 3) {
       return /* Manual */2;
@@ -885,12 +916,12 @@ function fromEnum$13(x) {
 }
 
 var TextDocumentSaveReason = {
-  toEnum: toEnum$13,
-  fromEnum: fromEnum$13
+  toEnum: toEnum$14,
+  fromEnum: fromEnum$14
 };
 
 function reason(self) {
-  return fromEnum$13(self.reason);
+  return fromEnum$14(self.reason);
 }
 
 var TextDocumentWillSaveEvent = {
@@ -913,7 +944,7 @@ var FileSystemProvider = {};
 
 var Workspace = {};
 
-function toEnum$14(x) {
+function toEnum$15(x) {
   if (x) {
     return 2;
   } else {
@@ -921,7 +952,7 @@ function toEnum$14(x) {
   }
 }
 
-function fromEnum$14(x) {
+function fromEnum$15(x) {
   if (x !== 1) {
     return /* Workspace */1;
   } else {
@@ -930,12 +961,12 @@ function fromEnum$14(x) {
 }
 
 var ExtensionKind = {
-  toEnum: toEnum$14,
-  fromEnum: fromEnum$14
+  toEnum: toEnum$15,
+  fromEnum: fromEnum$15
 };
 
 function extensionKind(self) {
-  return fromEnum$14(self.extensionKind);
+  return fromEnum$15(self.extensionKind);
 }
 
 var Extension = {
@@ -952,11 +983,11 @@ var LocationLink = {};
 
 var DiagnosticRelatedInformation = {};
 
-function toEnum$15(x) {
+function toEnum$16(x) {
   return x;
 }
 
-function fromEnum$15(x) {
+function fromEnum$16(x) {
   if (x > 2 || x < 0) {
     return /* Hint */3;
   } else {
@@ -965,11 +996,11 @@ function fromEnum$15(x) {
 }
 
 var DiagnosticSeverity = {
-  toEnum: toEnum$15,
-  fromEnum: fromEnum$15
+  toEnum: toEnum$16,
+  fromEnum: fromEnum$16
 };
 
-function toEnum$16(x) {
+function toEnum$17(x) {
   if (x) {
     return 2;
   } else {
@@ -977,7 +1008,7 @@ function toEnum$16(x) {
   }
 }
 
-function fromEnum$16(x) {
+function fromEnum$17(x) {
   if (x !== 1) {
     return /* Deprecated */1;
   } else {
@@ -986,8 +1017,8 @@ function fromEnum$16(x) {
 }
 
 var DiagnosticTag = {
-  toEnum: toEnum$16,
-  fromEnum: fromEnum$16
+  toEnum: toEnum$17,
+  fromEnum: fromEnum$17
 };
 
 var Diagnostic = {};
@@ -1009,8 +1040,6 @@ var CallHierarchyProvider = {};
 var CodeActionProvider = {};
 
 var CodeActionProviderMetadata = {};
-
-var Command = {};
 
 var CodeLens = {};
 
@@ -1077,6 +1106,7 @@ exports.$$Event = $$Event;
 exports.Memento = Memento;
 exports.Uri = Uri;
 exports.EnvironmentVariableMutatorType = EnvironmentVariableMutatorType;
+exports.Command = Command;
 exports.EnvironmentVariableMutator = EnvironmentVariableMutator;
 exports.EnvironmentVariableCollection = EnvironmentVariableCollection;
 exports.ExtensionMode = ExtensionMode;
@@ -1136,6 +1166,8 @@ exports.InputBox = InputBox;
 exports.OutputChannel = OutputChannel;
 exports.QuickPickItem = QuickPickItem;
 exports.QuickPick = QuickPick;
+exports.AccessibilityInformation = AccessibilityInformation;
+exports.StatusBarAlignment = StatusBarAlignment;
 exports.StatusBarItem = StatusBarItem;
 exports.OverviewRulerLane = OverviewRulerLane;
 exports.DecorationRangeBehavior = DecorationRangeBehavior;
@@ -1214,7 +1246,6 @@ exports.CallHierarchyIncomingCall = CallHierarchyIncomingCall;
 exports.CallHierarchyProvider = CallHierarchyProvider;
 exports.CodeActionProvider = CodeActionProvider;
 exports.CodeActionProviderMetadata = CodeActionProviderMetadata;
-exports.Command = Command;
 exports.CodeLens = CodeLens;
 exports.CodeLensProvider = CodeLensProvider;
 exports.DocumentColorProvider = DocumentColorProvider;
