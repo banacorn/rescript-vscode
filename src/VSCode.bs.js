@@ -61,6 +61,46 @@ var StringOr = {
   map: map$1
 };
 
+function array(v) {
+  return v;
+}
+
+function single(v) {
+  return v;
+}
+
+function classify$1(v) {
+  if (Array.isArray(v)) {
+    return {
+            TAG: 0,
+            _0: v,
+            [Symbol.for("name")]: "Array"
+          };
+  } else {
+    return {
+            TAG: 1,
+            _0: v,
+            [Symbol.for("name")]: "Single"
+          };
+  }
+}
+
+function map$2(f, xs) {
+  var s = classify$1(xs);
+  if (s.TAG === /* Array */0) {
+    return s._0.map(Curry.__1(f));
+  } else {
+    return Curry._1(f, s._0);
+  }
+}
+
+var ArrayOr = {
+  array: array,
+  single: single,
+  classify: classify$1,
+  map: map$2
+};
+
 function onMessage(callback) {
   var onMessage$1 = (callback => window.addEventListener('message', event => callback(event.data)));
   return onMessage$1(callback);
@@ -529,7 +569,7 @@ function extensionTerminalOptions(v) {
   return v;
 }
 
-function classify$1(v) {
+function classify$2(v) {
   if ((v.hasOwnProperty('pty'))) {
     return {
             TAG: 1,
@@ -548,7 +588,7 @@ function classify$1(v) {
 var TerminalOptionsOrExtensionTerminalOptions = {
   terminalOptions: terminalOptions,
   extensionTerminalOptions: extensionTerminalOptions,
-  classify: classify$1
+  classify: classify$2
 };
 
 var Terminal = {};
@@ -750,7 +790,7 @@ function encode(x) {
   }
 }
 
-function classify$2(v) {
+function classify$3(v) {
   if (typeof v === "int") {
     if (v !== 1) {
       if (v !== 15) {
@@ -771,7 +811,7 @@ function classify$2(v) {
 
 var ProcessLocationOrViewId = {
   encode: encode,
-  classify: classify$2
+  classify: classify$3
 };
 
 var ProgressOptions = {
@@ -839,6 +879,10 @@ var WebviewViewResolveContext = {};
 var WebviewViewProvider = {};
 
 var UriHandler = {};
+
+var FileDecoration = {};
+
+var FileDecorationProvider = {};
 
 var $$Window = {};
 
@@ -1112,7 +1156,7 @@ function locationLinks(v) {
   return v;
 }
 
-function classify$3(v) {
+function classify$4(v) {
   if ((function (a) { return a.targetRange === undefined})(v)) {
     return {
             TAG: 0,
@@ -1131,7 +1175,7 @@ function classify$3(v) {
 var LocationLinkOrLocation = {
   locations: locations,
   locationLinks: locationLinks,
-  classify: classify$3
+  classify: classify$4
 };
 
 var DefinitionProvider = {};
@@ -1149,6 +1193,7 @@ var Languages = {};
 exports.ProviderResult = ProviderResult;
 exports.ThemeColor = ThemeColor;
 exports.StringOr = StringOr;
+exports.ArrayOr = ArrayOr;
 exports.Api = Api;
 exports.Disposable = Disposable;
 exports.$$Event = $$Event;
@@ -1249,6 +1294,8 @@ exports.WebviewView = WebviewView;
 exports.WebviewViewResolveContext = WebviewViewResolveContext;
 exports.WebviewViewProvider = WebviewViewProvider;
 exports.UriHandler = UriHandler;
+exports.FileDecoration = FileDecoration;
+exports.FileDecorationProvider = FileDecorationProvider;
 exports.$$Window = $$Window;
 exports.FileType = FileType;
 exports.FileStat = FileStat;

@@ -9,10 +9,10 @@ module ProviderResult = {
 module ThemeColor = {
   type t
   // constructors
-  @bs.module("vscode") @bs.new external make: string => t = "ThemeColor"
+  @module("vscode") @new external make: string => t = "ThemeColor"
 }
 
-// "string | xxx", for modeling union type of String and something else
+// "string | xxx", for modeling the union type of String and something else
 module StringOr: {
   type t<'a>
   type case<'a> =
@@ -44,10 +44,41 @@ module StringOr: {
     }
 }
 
+// "A | A[]", for modeling the union type of something or array of that thing
+module ArrayOr: {
+  type t<'a>
+  type case<'a> =
+    | Array(array<'a>)
+    | Single('a)
+  let array: array<'a> => t<'a>
+  let single: 'a => t<'a>
+  let classify: t<'a> => case<'a>
+  let map: ('a => 'b, t<'a>) => t<'b>
+} = {
+  @unboxed
+  type rec t<'a> = Any('x): t<'a>
+  type case<'a> =
+    | Array(array<'a>)
+    | Single('a)
+  let array = (v: array<'a>) => Any(v)
+  let single = (v: 'a) => Any(v)
+  let classify = (Any(v): t<'a>): case<'a> =>
+    if Js.Array.isArray(v) {
+      Array((Obj.magic(v): array<'a>))
+    } else {
+      Single((Obj.magic(v): 'a))
+    }
+  let map = (f: 'a => 'b, xs: t<'a>): t<'b> =>
+    switch classify(xs) {
+    | Array(s) => array(Js.Array.map(f, s))
+    | Single(x) => single(f(x))
+    }
+}
+
 module Api = {
   type t
 
-  @bs.val external acquireVsCodeApi: unit => t = "acquireVsCodeApi"
+  @val external acquireVsCodeApi: unit => t = "acquireVsCodeApi"
 
   @bs.send external postMessage: (t, 'a) => unit = "postMessage"
 
@@ -62,10 +93,10 @@ module Api = {
 module Disposable = {
   type t
   // static
-  @bs.module("vscode") @bs.scope("Disposable")
+  @module("vscode") @scope("Disposable")
   external from: array<{"dispose": unit => 'a}> => t = "from"
   // constructor
-  @bs.module("vscode") @bs.new
+  @module("vscode") @new
   external make: (unit => unit) => t = "Disposable"
   // methods
   @bs.send external dispose: t => 'a = "dispose"
@@ -91,21 +122,21 @@ module Uri = {
   type t
 
   // static
-  @bs.module("vscode") @bs.scope("Uri") external file: string => t = "file"
-  @bs.module("vscode") @bs.scope("Uri") @bs.variadic
+  @module("vscode") @scope("Uri") external file: string => t = "file"
+  @module("vscode") @scope("Uri") @variadic
   external joinPath: (t, array<string>) => t = "joinPath"
-  @bs.module("vscode") @bs.scope("Uri")
+  @module("vscode") @scope("Uri")
   external parse: (string, option<bool>) => t = "file"
 
-  @bs.new
+  @new
   external make: (string, string, string, string, string) => t = "Uri"
 
-  @bs.get external authority: t => string = "authority"
-  @bs.get external fragment: t => string = "fragment"
-  @bs.get external fsPath: t => string = "fsPath"
-  @bs.get external path: t => string = "path"
-  @bs.get external prompt: t => string = "prompt"
-  @bs.get external scheme: t => string = "scheme"
+  @get external authority: t => string = "authority"
+  @get external fragment: t => string = "fragment"
+  @get external fsPath: t => string = "fsPath"
+  @get external path: t => string = "path"
+  @get external prompt: t => string = "prompt"
+  @get external scheme: t => string = "scheme"
 
   @bs.send external toJSON: t => Js.Json.t = "toJSON"
   @bs.send external toString: t => string = "toString"
@@ -150,10 +181,10 @@ module EnvironmentVariableMutatorType = {
 module Command = {
   type t
   // properties
-  @bs.get external arguments: t => option<array<'a>> = "arguments"
-  @bs.get external command: t => string = "command"
-  @bs.get external title: t => string = "title"
-  @bs.get external tooltip: t => option<string> = "tooltip"
+  @get external arguments: t => option<array<'a>> = "arguments"
+  @get external command: t => string = "command"
+  @get external title: t => string = "title"
+  @get external tooltip: t => option<string> = "tooltip"
 }
 // module Command = {
 //   type t<'a> = {
@@ -169,9 +200,9 @@ module Command = {
 module EnvironmentVariableMutator = {
   type t
   // properties
-  @bs.get external type_raw: t => int = "type"
+  @get external type_raw: t => int = "type"
   let type_ = self => EnvironmentVariableMutatorType.fromEnum(type_raw(self))
-  @bs.get external value: t => bool = "value"
+  @get external value: t => bool = "value"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#EnvironmentVariableCollection
@@ -179,7 +210,7 @@ module EnvironmentVariableMutator = {
 module EnvironmentVariableCollection = {
   type t
   // properties
-  @bs.get external persistent: t => bool = "persistent"
+  @get external persistent: t => bool = "persistent"
   // methods
   @bs.send external append: (t, string, string) => unit = "append"
   @bs.send external clear: t => unit = "clear"
@@ -220,23 +251,23 @@ module ExtensionMode = {
 module ExtensionContext = {
   type t
   // properties
-  @bs.get
+  @get
   external environmentVariableCollection: t => EnvironmentVariableCollection.t =
     "environmentVariableCollection"
-  @bs.get external extensionMode_raw: t => int = "extensionMode"
+  @get external extensionMode_raw: t => int = "extensionMode"
   let extensionMode = self => ExtensionMode.fromEnum(extensionMode_raw(self))
-  @bs.get external extensionMode_raw: t => ExtensionMode.t = "extensionMode"
-  @bs.get external extensionPath: t => string = "extensionPath"
-  @bs.get external extensionUri: t => Uri.t = "extensionUri"
-  @bs.get external globalState: t => Memento.t = "globalState"
-  @bs.get external globalStoragePath: t => string = "globalStoragePath"
-  @bs.get external logPath: t => string = "logPath"
-  @bs.get external logUri: t => Uri.t = "logUri"
-  @bs.get external storagePath: t => option<string> = "storagePath"
-  @bs.get external storageUri: t => option<Uri.t> = "storageUri"
-  @bs.get
+  @get external extensionMode_raw: t => ExtensionMode.t = "extensionMode"
+  @get external extensionPath: t => string = "extensionPath"
+  @get external extensionUri: t => Uri.t = "extensionUri"
+  @get external globalState: t => Memento.t = "globalState"
+  @get external globalStoragePath: t => string = "globalStoragePath"
+  @get external logPath: t => string = "logPath"
+  @get external logUri: t => Uri.t = "logUri"
+  @get external storagePath: t => option<string> = "storagePath"
+  @get external storageUri: t => option<Uri.t> = "storageUri"
+  @get
   external subscriptions: t => array<Disposable.t> = "subscriptions"
-  @bs.get external workspaceState: t => Memento.t = "workspaceState"
+  @get external workspaceState: t => Memento.t = "workspaceState"
   // methods
   @bs.send external asAbsolutePath: (t, string) => string = "asAbsolutePath"
 }
@@ -261,22 +292,22 @@ module Commands = {
   }
 
   // methods
-  @bs.module("vscode") @bs.scope("commands")
-  external executeCommand: @bs.string
+  @module("vscode") @scope("commands")
+  external executeCommand: @string
   [
-    | @bs.as("vscode.setEditorLayout") #setEditorLayout(Layout.t)
-    | @bs.as("setContext") #setContext(string, bool)
+    | @as("vscode.setEditorLayout") #setEditorLayout(Layout.t)
+    | @as("setContext") #setContext(string, bool)
   ] => Promise.t<'a> = "executeCommand"
-  @bs.module("vscode") @bs.scope("commands")
+  @module("vscode") @scope("commands")
   external executeCommand0: string => Promise.t<'a> = "executeCommand"
-  @bs.module("vscode") @bs.scope("commands")
+  @module("vscode") @scope("commands")
   external executeCommand1: (string, 'arg0) => Promise.t<'a> = "executeCommand"
-  @bs.module("vscode") @bs.scope("commands")
-  external setContext: (@bs.as("setContext") _, string, bool) => Promise.t<unit> = "executeCommand"
+  @module("vscode") @scope("commands")
+  external setContext: (@as("setContext") _, string, bool) => Promise.t<unit> = "executeCommand"
 
-  @bs.module("vscode") @bs.scope("commands")
+  @module("vscode") @scope("commands")
   external getCommands: option<bool> => Promise.t<array<string>> = "getCommands"
-  @bs.module("vscode") @bs.scope("commands")
+  @module("vscode") @scope("commands")
   external registerCommand: (string, unit => 'a) => Disposable.t = "registerCommand"
 }
 
@@ -294,9 +325,9 @@ module DebugConsole = {
 module DebugConfiguration = {
   type t
   // properties
-  @bs.get external name: t => string = "name"
-  @bs.get external request: t => string = "request"
-  @bs.get external type_: t => string = "type"
+  @get external name: t => string = "name"
+  @get external request: t => string = "request"
+  @get external type_: t => string = "type"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#WorkspaceFolder
@@ -304,9 +335,9 @@ module DebugConfiguration = {
 module WorkspaceFolder = {
   type t
   // properties
-  @bs.get external index: t => int = "index"
-  @bs.get external name: t => string = "name"
-  @bs.get external uri: t => Uri.t = "uri"
+  @get external index: t => int = "index"
+  @get external name: t => string = "name"
+  @get external uri: t => Uri.t = "uri"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#Breakpoint
@@ -314,14 +345,14 @@ module WorkspaceFolder = {
 module Breakpoint = {
   type t
   // constructors
-  @bs.module("vscode") @bs.new
+  @module("vscode") @new
   external make: (option<bool>, option<string>, option<string>, option<string>) => t = "Breakpoint"
   // properties
-  @bs.get external condition: t => option<string> = "condition"
-  @bs.get external enabled: t => bool = "enabled"
-  @bs.get external hitCondition: t => option<string> = "hitCondition"
-  @bs.get external id: t => string = "id"
-  @bs.get external logMessage: t => option<string> = "logMessage"
+  @get external condition: t => option<string> = "condition"
+  @get external enabled: t => bool = "enabled"
+  @get external hitCondition: t => option<string> = "hitCondition"
+  @get external id: t => string = "id"
+  @get external logMessage: t => option<string> = "logMessage"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#DebugProtocolBreakpoint
@@ -336,11 +367,11 @@ module DebugProtocolBreakpoint = {
 module DebugSession = {
   type t
   // properties
-  @bs.get external configuration: t => DebugConfiguration.t = "configuration"
-  @bs.get external id: t => string = "id"
-  @bs.get external name: t => string = "name"
-  @bs.get external type_: t => string = "type"
-  @bs.get external workspaceFolder: t => option<WorkspaceFolder.t> = "workspaceFolder"
+  @get external configuration: t => DebugConfiguration.t = "configuration"
+  @get external id: t => string = "id"
+  @get external name: t => string = "name"
+  @get external type_: t => string = "type"
+  @get external workspaceFolder: t => option<WorkspaceFolder.t> = "workspaceFolder"
   // methods
   @bs.send external customRequest: (t, string) => Promise.t<'a> = "customRequest"
   @bs.send external customRequestWithArgs: (t, string, 'a) => Promise.t<'b> = "customRequest"
@@ -356,9 +387,9 @@ module DebugSession = {
 module BreakpointsChangeEvent = {
   type t
   // properties
-  @bs.get external added: t => array<Breakpoint.t> = "added"
-  @bs.get external changed: t => array<Breakpoint.t> = "changed"
-  @bs.get external removed: t => array<Breakpoint.t> = "removed"
+  @get external added: t => array<Breakpoint.t> = "added"
+  @get external changed: t => array<Breakpoint.t> = "changed"
+  @get external removed: t => array<Breakpoint.t> = "removed"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#DebugSessionCustomEvent
@@ -366,9 +397,9 @@ module BreakpointsChangeEvent = {
 module DebugSessionCustomEvent = {
   type t
   // properties
-  @bs.get external body: t => option<'a> = "body"
-  @bs.get external event: t => string = "event"
-  @bs.get external session: t => DebugSession.t = "session"
+  @get external body: t => option<'a> = "body"
+  @get external event: t => string = "event"
+  @get external session: t => DebugSession.t = "session"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#DebugProtocolSource
@@ -383,8 +414,8 @@ module DebugProtocolSource = {
 module DebugAdapterExecutableOptions = {
   type t
   // properties
-  @bs.get external cwd: t => option<string> = "cwd"
-  @bs.get external env: t => option<'a> = "env"
+  @get external cwd: t => option<string> = "cwd"
+  @get external env: t => option<'a> = "env"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#DebugAdapterExecutable
@@ -392,9 +423,9 @@ module DebugAdapterExecutableOptions = {
 module DebugAdapterExecutable = {
   type t
   // constructor
-  @bs.module("vscode") @bs.new
+  @module("vscode") @new
   external make: (string, array<string>) => t = "DebugAdapterExecutable"
-  @bs.module("vscode") @bs.new
+  @module("vscode") @new
   external makeWithOptions: (string, array<string>, DebugAdapterExecutableOptions.t) => t =
     "DebugAdapterExecutable"
 }
@@ -416,36 +447,36 @@ module DebugAdapterDescriptorFactory = {
 // 1.52.0 (WIP)
 module Debug = {
   // variables
-  @bs.module("vscode") @bs.scope("debug")
+  @module("vscode") @scope("debug")
   external activeDebugConsole: option<DebugConsole.t> = "activeDebugConsole"
-  @bs.module("vscode") @bs.scope("debug")
+  @module("vscode") @scope("debug")
   external activeDebugSession: option<DebugSession.t> = "activeDebugSession"
-  @bs.module("vscode") @bs.scope("debug")
+  @module("vscode") @scope("debug")
   external breakpoints: array<Breakpoint.t> = "breakpoints"
 
   // events
-  @bs.module("vscode") @bs.scope("debug")
+  @module("vscode") @scope("debug")
   external onDidChangeActiveDebugSession: Event.t<option<DebugSession.t>> =
     "onDidChangeActiveDebugSession"
-  @bs.module("vscode") @bs.scope("debug")
+  @module("vscode") @scope("debug")
   external onDidChangeBreakpoints: Event.t<BreakpointsChangeEvent.t> = "onDidChangeBreakpoints"
-  @bs.module("vscode") @bs.scope("debug")
+  @module("vscode") @scope("debug")
   external onDidReceiveDebugSessionCustomEvent: Event.t<DebugSessionCustomEvent.t> =
     "onDidReceiveDebugSessionCustomEvent"
-  @bs.module("vscode") @bs.scope("debug")
+  @module("vscode") @scope("debug")
   external onDidStartDebugSession: Event.t<DebugSession.t> = "onDidStartDebugSession"
-  @bs.module("vscode") @bs.scope("debug")
+  @module("vscode") @scope("debug")
   external onDidTerminateDebugSession: Event.t<DebugSession.t> = "onDidTerminateDebugSession"
 
   // functions
-  @bs.module("vscode") @bs.scope("debug")
+  @module("vscode") @scope("debug")
   external addBreakpoints: array<Breakpoint.t> => unit = "addBreakpoints"
-  @bs.module("vscode") @bs.scope("debug")
+  @module("vscode") @scope("debug")
   external asDebugSourceUri: DebugProtocolSource.t => unit = "asDebugSourceUri"
-  @bs.module("vscode") @bs.scope("debug")
+  @module("vscode") @scope("debug")
   external asDebugSourceUriWithSession: (DebugProtocolSource.t, DebugSession.t) => unit =
     "asDebugSourceUri"
-  @bs.module("vscode") @bs.scope("debug")
+  @module("vscode") @scope("debug")
   external registerDebugAdapterDescriptorFactory: (
     string,
     DebugAdapterDescriptorFactory.t,
@@ -484,28 +515,28 @@ module Env = {
   type t
 
   // variables
-  @bs.module("vscode") @bs.scope("env") external appName: string = "appName"
-  @bs.module("vscode") @bs.scope("env") external appRoot: string = "appRoot"
-  @bs.module("vscode") @bs.scope("env")
+  @module("vscode") @scope("env") external appName: string = "appName"
+  @module("vscode") @scope("env") external appRoot: string = "appRoot"
+  @module("vscode") @scope("env")
   external clipboard: Clipboard.t = "clipboard"
-  @bs.module("vscode") @bs.scope("env")
+  @module("vscode") @scope("env")
   external language: string = "language"
-  @bs.module("vscode") @bs.scope("env")
+  @module("vscode") @scope("env")
   external machineId: string = "machineId"
-  @bs.module("vscode") @bs.scope("env")
+  @module("vscode") @scope("env")
   external remoteName: option<string> = "remoteName"
-  @bs.module("vscode") @bs.scope("env")
+  @module("vscode") @scope("env")
   external sessionId: string = "sessionId"
-  @bs.module("vscode") @bs.scope("env") external shell: string = "shell"
-  @bs.module("vscode") @bs.scope("env") external uiKind_raw: int = "uiKind"
+  @module("vscode") @scope("env") external shell: string = "shell"
+  @module("vscode") @scope("env") external uiKind_raw: int = "uiKind"
   let uiKind: unit => UIKind.t = () => UIKind.fromEnum(uiKind_raw)
-  @bs.module("vscode") @bs.scope("env")
+  @module("vscode") @scope("env")
   external uriScheme: string = "uriScheme"
 
   // functions
-  @bs.module("vscode") @bs.scope("env")
+  @module("vscode") @scope("env")
   external asExternalUri: Uri.t => Promise.t<Uri.t> = "asExternalUri"
-  @bs.module("vscode") @bs.scope("env")
+  @module("vscode") @scope("env")
   external openExternal: Uri.t => Promise.t<bool> = "openExternal"
 }
 
@@ -569,10 +600,10 @@ module Webview = {
   @bs.send
   external onDidReceiveMessage: (t, 'a => unit) => Disposable.t = "onDidReceiveMessage"
   // properties
-  @bs.get external cspSource: t => string = "cspSource"
-  @bs.get external html: t => string = "html"
-  @bs.set external setHtml: (t, string) => unit = "html"
-  @bs.get external options: t => WebviewOptions.t = "options"
+  @get external cspSource: t => string = "cspSource"
+  @get external html: t => string = "html"
+  @set external setHtml: (t, string) => unit = "html"
+  @get external options: t => WebviewOptions.t = "options"
   // methods
   @bs.send external asWebviewUri: (t, Uri.t) => Uri.t = "asWebviewUri"
   @bs.send external postMessage: (t, 'a) => Promise.t<bool> = "postMessage"
@@ -586,16 +617,16 @@ module WebviewPanel = {
     type webviewPanel = t
     type t
     // properties
-    @bs.get external webviewPanel: t => webviewPanel = "webviewPanel"
+    @get external webviewPanel: t => webviewPanel = "webviewPanel"
   }
 
   // https://code.visualstudio.com/api/references/vscode-api#WebviewPanelOptions
   module Options = {
     type t
     // properties
-    @bs.get
+    @get
     external enableFindWidget: t => option<bool> = "enableFindWidget"
-    @bs.get
+    @get
     external retainContextWhenHidden: t => option<bool> = "retainContextWhenHidden"
   }
 
@@ -607,29 +638,30 @@ module WebviewPanel = {
   external onDidDispose: (t, unit => unit) => Disposable.t = "onDidDispose"
 
   // properties
-  @bs.get external active: t => bool = "active"
+  @get external active: t => bool = "active"
   type uriOrLightAndDark =
     | Uri(Uri.t)
     | LightAndDark({"dark": Uri.t, "light": Uri.t})
 
-  @bs.get
+  @get
   external iconPath_raw: t => option<Js.Dict.t<Uri.t>> = "iconPath"
-  let iconPath = (self): option<uriOrLightAndDark> => iconPath_raw(self)->Belt.Option.map(case =>
+  let iconPath = (self): option<uriOrLightAndDark> =>
+    iconPath_raw(self)->Belt.Option.map(case =>
       if Belt.Option.isSome(Js.Dict.get(case, "dark")) {
         LightAndDark((Obj.magic(case): {"dark": Uri.t, "light": Uri.t}))
       } else {
         Uri((Obj.magic(case): Uri.t))
       }
     )
-  @bs.get external options: t => Options.t = "options"
-  @bs.get external title: t => string = "title"
-  @bs.get external viewColumn_raw: t => option<int> = "viewColumn"
+  @get external options: t => Options.t = "options"
+  @get external title: t => string = "title"
+  @get external viewColumn_raw: t => option<int> = "viewColumn"
   let viewColumn = (self: t): option<ViewColumn.t> =>
     viewColumn_raw(self)->Belt.Option.map(ViewColumn.fromEnum)
 
-  @bs.get external viewType: t => string = "viewType"
-  @bs.get external visible: t => bool = "visible"
-  @bs.get external webview: t => Webview.t = "webview"
+  @get external viewType: t => string = "viewType"
+  @get external visible: t => bool = "visible"
+  @get external webview: t => Webview.t = "webview"
   // methods
   @bs.send external dispose: t => unit = "dispose"
   @bs.send
@@ -649,10 +681,10 @@ module WebviewPanel = {
 module Position = {
   type t
   // constructor
-  @bs.module("vscode") @bs.new external make: (int, int) => t = "Position"
+  @module("vscode") @new external make: (int, int) => t = "Position"
   // properties
-  @bs.get external character: t => int = "character"
-  @bs.get external line: t => int = "line"
+  @get external character: t => int = "character"
+  @get external line: t => int = "line"
   // methods
   @bs.send external compareTo: (t, t) => int = "compareTo"
   @bs.send external isAfter: (t, t) => bool = "isAfter"
@@ -668,15 +700,15 @@ module Position = {
 module Range = {
   type t
   // constructor
-  @bs.module("vscode") @bs.new
+  @module("vscode") @new
   external make: (Position.t, Position.t) => t = "Range"
-  @bs.module("vscode") @bs.new
+  @module("vscode") @new
   external makeWithNumbers: (int, int, int, int) => t = "Range"
   // properties
-  @bs.get external end_: t => Position.t = "end"
-  @bs.get external isEmpty: t => bool = "isEmpty"
-  @bs.get external isSingleLine: t => bool = "isSingleLine"
-  @bs.get external start: t => Position.t = "start"
+  @get external end_: t => Position.t = "end"
+  @get external isEmpty: t => bool = "isEmpty"
+  @get external isSingleLine: t => bool = "isSingleLine"
+  @get external start: t => Position.t = "start"
   // methods
   @bs.send external contains: (t, Position.t) => bool = "contains"
   @bs.send external containsRange: (t, t) => bool = "contains"
@@ -690,14 +722,14 @@ module Range = {
 module TextLine = {
   type t
   // properties
-  @bs.get
+  @get
   external firstNonWhitespaceCharacterIndex: t => int = "firstNonWhitespaceCharacterIndex"
-  @bs.get external isEmptyOrWhitespace: t => bool = "isEmptyOrWhitespace"
-  @bs.get external lineNumber: t => int = "lineNumber"
-  @bs.get external range: t => Range.t = "range"
-  @bs.get
+  @get external isEmptyOrWhitespace: t => bool = "isEmptyOrWhitespace"
+  @get external lineNumber: t => int = "lineNumber"
+  @get external range: t => Range.t = "range"
+  @get
   external rangeIncludingLineBreak: t => Range.t = "rangeIncludingLineBreak"
-  @bs.get external text: t => string = "text"
+  @get external text: t => string = "text"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#EndOfLine
@@ -721,16 +753,16 @@ module EndOfLine = {
 module TextDocument = {
   type t
   // properties
-  @bs.get external eol_raw: t => int = "eol"
+  @get external eol_raw: t => int = "eol"
   let eol = (self: t): EndOfLine.t => EndOfLine.fromEnum(eol_raw(self))
-  @bs.get external fileName: t => string = "fileName"
-  @bs.get external isClosed: t => bool = "isClosed"
-  @bs.get external isDirty: t => bool = "isDirty"
-  @bs.get external isUntitled: t => bool = "isUntitled"
-  @bs.get external languageId: t => string = "languageId"
-  @bs.get external lineCount: t => int = "lineCount"
-  @bs.get external uri: t => Uri.t = "uri"
-  @bs.get external version: t => int = "version"
+  @get external fileName: t => string = "fileName"
+  @get external isClosed: t => bool = "isClosed"
+  @get external isDirty: t => bool = "isDirty"
+  @get external isUntitled: t => bool = "isUntitled"
+  @get external languageId: t => string = "languageId"
+  @get external lineCount: t => int = "lineCount"
+  @get external uri: t => Uri.t = "uri"
+  @get external version: t => int = "version"
   // methods
   @bs.send external getText: (t, option<Range.t>) => string = "getText"
   @bs.send
@@ -799,33 +831,33 @@ module TextEditorLineNumbersStyle = {
 module TextEditorOptions = {
   type t
   // properties
-  @bs.get external cursorStyle_raw: t => option<int> = "cursorStyle"
+  @get external cursorStyle_raw: t => option<int> = "cursorStyle"
   let cursorStyle = (self: t): option<TextEditorCursorStyle.t> =>
     cursorStyle_raw(self)->Belt.Option.map(TextEditorCursorStyle.fromEnum)
-  @bs.get
+  @get
   external insertSpaces: t => option<StringOr.t<bool>> = "insertSpaces"
-  @bs.get external lineNumbers_raw: t => option<int> = "lineNumbers"
+  @get external lineNumbers_raw: t => option<int> = "lineNumbers"
   let lineNumbers = (self: t): option<TextEditorLineNumbersStyle.t> =>
     lineNumbers_raw(self)->Belt.Option.map(TextEditorLineNumbersStyle.fromEnum)
-  @bs.get external tabSize: t => option<StringOr.t<int>> = "tabSize"
+  @get external tabSize: t => option<StringOr.t<int>> = "tabSize"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#Selection
 module Selection = {
   type t
   // constructors
-  @bs.module("vscode") @bs.new
+  @module("vscode") @new
   external make: (Position.t, Position.t) => t = "Selection"
-  @bs.module("vscode") @bs.new
+  @module("vscode") @new
   external makeWithNumbers: (int, int, int, int) => t = "Selection"
   // properties
-  @bs.get external active: t => Position.t = "active"
-  @bs.get external anchor: t => Position.t = "anchor"
-  @bs.get external end_: t => Position.t = "end"
-  @bs.get external isEmpty: t => bool = "isEmpty"
-  @bs.get external isReversed: t => bool = "isReversed"
-  @bs.get external isSingleLine: t => bool = "isSingleLine"
-  @bs.get external start: t => Position.t = "start"
+  @get external active: t => Position.t = "active"
+  @get external anchor: t => Position.t = "anchor"
+  @get external end_: t => Position.t = "end"
+  @get external isEmpty: t => bool = "isEmpty"
+  @get external isReversed: t => bool = "isReversed"
+  @get external isSingleLine: t => bool = "isSingleLine"
+  @get external start: t => Position.t = "start"
   // methods
   @bs.send external contains: (t, Position.t) => bool = "contains"
   @bs.send external containsRange: (t, Range.t) => bool = "contains"
@@ -886,7 +918,7 @@ module TextEditorRevealType = {
 module TextEditorDecorationType = {
   type t
   // properties
-  @bs.get external key: t => string = "key"
+  @get external key: t => string = "key"
   // methods
   @bs.send external dispose: t => unit = "dispose"
 }
@@ -895,11 +927,11 @@ module TextEditorDecorationType = {
 module MarkdownString = {
   type t
   // constructors
-  @bs.module("vscode") @bs.new
+  @module("vscode") @new
   external make: (string, bool) => t = "MarkdownString"
   // properties
-  @bs.get external isTrusted: t => option<bool> = "isTrusted"
-  @bs.get external value: t => string = "value"
+  @get external isTrusted: t => option<bool> = "isTrusted"
+  @get external value: t => string = "value"
   // methods
   @bs.send
   external appendCodeblock: (t, string, option<string>) => t = "appendCodeblock"
@@ -909,57 +941,57 @@ module MarkdownString = {
 
 // https://code.visualstudio.com/api/references/vscode-api#ThemableDecorationAttachmentRenderOptions
 module ThemableDecorationAttachmentRenderOptions = {
-  @bs.deriving(abstract)
+  @deriving(abstract)
   type t = {
-    @bs.optional
+    @optional
     backgroundColor: StringOr.t<ThemeColor.t>,
-    @bs.optional
+    @optional
     border: string,
-    @bs.optional
+    @optional
     borderColor: StringOr.t<ThemeColor.t>,
-    @bs.optional
+    @optional
     color: StringOr.t<ThemeColor.t>,
-    @bs.optional
+    @optional
     contentIconPath: StringOr.t<Uri.t>,
-    @bs.optional
+    @optional
     contentText: string,
-    @bs.optional
+    @optional
     fontStyle: string,
-    @bs.optional
+    @optional
     fontWeight: string,
-    @bs.optional
+    @optional
     height: string,
-    @bs.optional
+    @optional
     margin: string,
-    @bs.optional
+    @optional
     textDecoration: string,
-    @bs.optional
+    @optional
     width: string,
   }
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#ThemableDecorationInstanceRenderOptions
 module ThemableDecorationInstanceRenderOptions = {
-  @bs.deriving(abstract)
+  @deriving(abstract)
   type t = {
-    @bs.optional
+    @optional
     after: ThemableDecorationAttachmentRenderOptions.t,
-    @bs.optional
+    @optional
     before: ThemableDecorationAttachmentRenderOptions.t,
   }
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#DecorationInstanceRenderOptions;
 module DecorationInstanceRenderOptions = {
-  @bs.deriving(abstract)
+  @deriving(abstract)
   type t = {
-    @bs.optional
+    @optional
     after: ThemableDecorationAttachmentRenderOptions.t,
-    @bs.optional
+    @optional
     before: ThemableDecorationAttachmentRenderOptions.t,
-    @bs.optional
+    @optional
     dark: ThemableDecorationInstanceRenderOptions.t,
-    @bs.optional
+    @optional
     light: ThemableDecorationInstanceRenderOptions.t,
   }
 }
@@ -968,27 +1000,27 @@ module DecorationInstanceRenderOptions = {
 module DecorationOptions = {
   type t
   // properties
-  @bs.get
+  @get
   external hoverMessage: t => option<MarkdownString.t> = "hoverMessage"
-  @bs.get external range: t => Range.t = "range"
-  @bs.get
+  @get external range: t => Range.t = "range"
+  @get
   external renderOptions: t => option<DecorationInstanceRenderOptions.t> = "renderOptions"
 }
 
 module TextEditor = {
   type t
   // properties
-  @bs.get external document: t => TextDocument.t = "document"
-  @bs.get external options: t => TextEditorOptions.t = "options"
-  @bs.get external selection: t => Selection.t = "selection"
-  @bs.set external setSelection: (t, Selection.t) => unit = "selection"
-  @bs.get external selections: t => array<Selection.t> = "selections"
-  @bs.set
+  @get external document: t => TextDocument.t = "document"
+  @get external options: t => TextEditorOptions.t = "options"
+  @get external selection: t => Selection.t = "selection"
+  @set external setSelection: (t, Selection.t) => unit = "selection"
+  @get external selections: t => array<Selection.t> = "selections"
+  @set
   external setSelections: (t, array<Selection.t>) => unit = "selections"
-  @bs.get external viewColumn_raw: t => option<int> = "viewColumn"
+  @get external viewColumn_raw: t => option<int> = "viewColumn"
   let viewColumn = (self: t): option<ViewColumn.t> =>
     viewColumn_raw(self)->Belt.Option.map(ViewColumn.fromEnum)
-  @bs.get external visibleRanges: t => array<Range.t> = "visibleRanges"
+  @get external visibleRanges: t => array<Range.t> = "visibleRanges"
   // methods
   @bs.send
   external edit: (
@@ -1048,13 +1080,13 @@ module TextEditor = {
 module TerminalOptions = {
   type t
   // properties
-  @bs.get external cwd: t => option<string> = "cwd"
-  @bs.get external env: t => option<'a> = "env"
-  @bs.get external hideFromUser: t => option<bool> = "hideFromUser"
-  @bs.get external name: t => option<string> = "name"
-  @bs.get external shellArgs: t => StringOr.t<array<string>> = "shellArgs"
-  @bs.get external shellPath: t => option<string> = "shellPath"
-  @bs.get external strictEnv: t => option<bool> = "strictEnv"
+  @get external cwd: t => option<string> = "cwd"
+  @get external env: t => option<'a> = "env"
+  @get external hideFromUser: t => option<bool> = "hideFromUser"
+  @get external name: t => option<string> = "name"
+  @get external shellArgs: t => StringOr.t<array<string>> = "shellArgs"
+  @get external shellPath: t => option<string> = "shellPath"
+  @get external strictEnv: t => option<bool> = "strictEnv"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#Pseudoterminal
@@ -1067,8 +1099,8 @@ module Pseudoterminal = {
 module ExtensionTerminalOptions = {
   type t
   // properties
-  @bs.get external name: t => string = "name"
-  @bs.get external pty: t => Pseudoterminal.t = "pty"
+  @get external name: t => string = "name"
+  @get external pty: t => Pseudoterminal.t = "pty"
 }
 
 // "TerminalOptions | ExtensionTerminalOptions", FUCK UNION TYPE
@@ -1102,11 +1134,11 @@ module TerminalOptionsOrExtensionTerminalOptions: {
 module Terminal = {
   type t
   // properties
-  @bs.get
+  @get
   external creationOptions: t => TerminalOptionsOrExtensionTerminalOptions.t = "creationOptions"
-  @bs.get external exitStatus: t => option<int> = "exitStatus"
-  @bs.get external name: t => string = "name"
-  @bs.get external processId: t => option<int> = "processId"
+  @get external exitStatus: t => option<int> = "exitStatus"
+  @get external name: t => string = "name"
+  @get external processId: t => option<int> = "processId"
   // methods
   @bs.send external dispose: t => unit = "dispose"
   @bs.send external hide: t => unit = "hide"
@@ -1122,7 +1154,7 @@ module Terminal = {
 module WindowState = {
   type t
   // properties
-  @bs.get external focused: t => bool = "focused"
+  @get external focused: t => bool = "focused"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#TextEditorOptionsChangeEvent
@@ -1155,15 +1187,15 @@ module TextEditorSelectionChangeKind = {
 module TextEditorSelectionChangeEvent = {
   type t
   // properties
-  @bs.get
+  @get
   external kind_raw: t => option<TextEditorSelectionChangeKind.raw> = "kind"
   let kind: t => option<TextEditorSelectionChangeKind.t> = self =>
     switch kind_raw(self) {
     | None => None
     | Some(n) => Some(TextEditorSelectionChangeKind.fromEnum(n))
     }
-  @bs.get external selections: t => array<Selection.t> = "selections"
-  @bs.get external textEditor: t => TextEditor.t = "textEditor"
+  @get external selections: t => array<Selection.t> = "selections"
+  @get external textEditor: t => TextEditor.t = "textEditor"
 }
 // https://code.visualstudio.com/api/references/vscode-api#TextEditorViewColumnChangeEvent
 module TextEditorViewColumnChangeEvent = {
@@ -1198,8 +1230,8 @@ module QuickPick = {
 module AccessibilityInformation = {
   type t
   // properties
-  @bs.get external label: t => string = "label"
-  @bs.get external role: t => option<string> = "role"
+  @get external label: t => string = "label"
+  @get external role: t => option<string> = "role"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#StatusBarAlignment
@@ -1227,40 +1259,40 @@ module StatusBarAlignment = {
 module StatusBarItem = {
   type t
   // properties
-  @bs.get
+  @get
   external accessibilityInformation: t => option<AccessibilityInformation.t> =
     "accessibilityInformation"
-  @bs.set
+  @set
   external setAccessibilityInformation: (t, AccessibilityInformation.t) => unit =
     "accessibilityInformation"
-  @bs.get external alignment_raw: t => int = "alignment"
+  @get external alignment_raw: t => int = "alignment"
   let alignment: t => StatusBarAlignment.t = self =>
     StatusBarAlignment.fromEnum(self->alignment_raw)
-  @bs.set
+  @set
   external setAlignment_raw: (t, int) => unit = "alignment"
   let setAlignment: (t, StatusBarAlignment.t) => unit = (self, alignment) =>
     setAlignment_raw(self, StatusBarAlignment.toEnum(alignment))
-  @bs.get external backgroundColor: t => option<ThemeColor.t> = "backgroundColor"
-  @bs.set
+  @get external backgroundColor: t => option<ThemeColor.t> = "backgroundColor"
+  @set
   external setBackgroundColor: (t, ThemeColor.t) => unit = "backgroundColor"
-  @bs.get external color: t => option<StringOr.t<ThemeColor.t>> = "color"
-  @bs.set
+  @get external color: t => option<StringOr.t<ThemeColor.t>> = "color"
+  @set
   external setColor: (t, ThemeColor.t) => unit = "color"
-  @bs.set
+  @set
   external setColorWithString: (t, string) => unit = "color"
-  @bs.get external command: t => option<StringOr.t<Command.t>> = "command"
-  @bs.set
+  @get external command: t => option<StringOr.t<Command.t>> = "command"
+  @set
   external setCommand: (t, Command.t) => unit = "command"
-  @bs.set
+  @set
   external setCommandWithString: (t, string) => unit = "command"
-  @bs.get external priority: t => option<int> = "priority"
-  @bs.set
+  @get external priority: t => option<int> = "priority"
+  @set
   external setPriority: (t, int) => unit = "priority"
-  @bs.get external text: t => string = "text"
-  @bs.set
+  @get external text: t => string = "text"
+  @set
   external setText: (t, string) => unit = "text"
-  @bs.get external tooltip: t => option<string> = "tooltip"
-  @bs.set
+  @get external tooltip: t => option<string> = "tooltip"
+  @set
   external setTooltip: (t, string) => unit = "tooltip"
   // methods
   @bs.send external dispose: t => unit = "dispose"
@@ -1319,63 +1351,63 @@ module DecorationRangeBehavior = {
 
 // https://code.visualstudio.com/api/references/vscode-api#DecorationRenderOptions
 module DecorationRenderOptions = {
-  @bs.deriving(abstract)
+  @deriving(abstract)
   type t = {
-    @bs.optional
+    @optional
     after: ThemableDecorationAttachmentRenderOptions.t,
-    @bs.optional
+    @optional
     backgroundColor: StringOr.t<ThemeColor.t>,
-    @bs.optional
+    @optional
     before: ThemableDecorationAttachmentRenderOptions.t,
-    @bs.optional
+    @optional
     border: string,
-    @bs.optional
+    @optional
     borderColor: StringOr.t<ThemeColor.t>,
-    @bs.optional
+    @optional
     borderRadius: string,
-    @bs.optional
+    @optional
     borderSpacing: string,
-    @bs.optional
+    @optional
     borderStyle: string,
-    @bs.optional
+    @optional
     borderWidth: string,
-    @bs.optional
+    @optional
     color: StringOr.t<ThemeColor.t>,
-    @bs.optional
+    @optional
     cursor: string,
-    @bs.optional
+    @optional
     dark: ThemableDecorationInstanceRenderOptions.t,
-    @bs.optional
+    @optional
     fontStyle: string,
-    @bs.optional
+    @optional
     fontWeight: string,
-    @bs.optional
+    @optional
     gutterIconPath: StringOr.t<Uri.t>,
-    @bs.optional
+    @optional
     gutterIconSize: string,
-    @bs.optional
+    @optional
     isWholeLine: bool,
-    @bs.optional
+    @optional
     letterSpacing: string,
-    @bs.optional
+    @optional
     light: ThemableDecorationInstanceRenderOptions.t,
-    @bs.optional
+    @optional
     opacity: string,
-    @bs.optional
+    @optional
     outline: string,
-    @bs.optional
+    @optional
     outlineColor: StringOr.t<ThemeColor.t>,
-    @bs.optional
+    @optional
     outlineStyle: string,
-    @bs.optional
+    @optional
     outlineWidth: string,
-    @bs.optional
+    @optional
     overviewRulerColor: StringOr.t<ThemeColor.t>,
-    @bs.optional
+    @optional
     overviewRulerLane: OverviewRulerLane.raw,
-    @bs.optional
+    @optional
     rangeBehavior: DecorationRangeBehavior.raw,
-    @bs.optional
+    @optional
     textDecoration: string,
   }
 }
@@ -1448,7 +1480,7 @@ module InputBoxOptions = {
 module CancellationToken = {
   type t
   // properties
-  @bs.get
+  @get
   external isCancellationRequested: t => bool = "isCancellationRequested"
   // methods
   @bs.send
@@ -1459,7 +1491,7 @@ module CancellationToken = {
 module CancellationTokenSource = {
   type t
   // properties
-  @bs.get external token: t => CancellationToken.t = "token"
+  @get external token: t => CancellationToken.t = "token"
   // methods
   @bs.send external cancel: t => unit = "cancel"
   @bs.send external dispose: t => unit = "dispose"
@@ -1483,20 +1515,19 @@ module SaveDialogOptions = {
 module WorkspaceFolderPickOptions = {
   type t
   // properties
-  @bs.get external ignoreFocusOut: t => option<bool> = "ignoreFocusOut"
-  @bs.get external placeHolder: t => option<string> = "placeHolder"
+  @get external ignoreFocusOut: t => option<bool> = "ignoreFocusOut"
+  @get external placeHolder: t => option<string> = "placeHolder"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#ProgressOptions
 // 1.5560
 module ProgressOptions = {
-
   // "ProcessLocation | {viewId: string}"
   module ProcessLocationOrViewId: {
     type t
     type case =
       | Notification
-      | SourceControl 
+      | SourceControl
       | Window
       | ViewId(string)
     let encode: case => t
@@ -1506,15 +1537,16 @@ module ProgressOptions = {
     type rec t = Any('x): t
     type case =
       | Notification
-      | SourceControl 
+      | SourceControl
       | Window
       | ViewId(string)
-    let encode = x => switch x {
-    | Notification => Any(15)
-    | SourceControl => Any(1)
-    | Window => Any(10)
-    | ViewId(string) => Any({"viewId": string})
-    }
+    let encode = x =>
+      switch x {
+      | Notification => Any(15)
+      | SourceControl => Any(1)
+      | Window => Any(10)
+      | ViewId(string) => Any({"viewId": string})
+      }
     let classify = (Any(v): t): case =>
       if Js.typeof(v) == "int" {
         switch (Obj.magic(v): int) {
@@ -1523,19 +1555,19 @@ module ProgressOptions = {
         | _ => Window
         }
       } else {
-        ViewId((Obj.magic(v)))
+        ViewId(Obj.magic(v))
       }
   }
 
-
   type t
   // properties
-  @bs.get external cancellable: t => option<bool> = "cancellable"
-  @bs.get external location: t => ProcessLocationOrViewId.t = "location"
-  @bs.get external title: t => option<string> = "title"
+  @get external cancellable: t => option<bool> = "cancellable"
+  @get external location: t => ProcessLocationOrViewId.t = "location"
+  @get external title: t => option<string> = "title"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#Progress
+// 1.56.0
 module Progress = {
   type t<'a>
   // methods
@@ -1586,7 +1618,7 @@ module ColorThemeKind = {
 module ColorTheme = {
   type t
   // properties
-  @bs.get external kind_raw: t => int = "kind"
+  @get external kind_raw: t => int = "kind"
   let kind: t => ColorThemeKind.t = self => ColorThemeKind.fromEnum(self->kind_raw)
 }
 
@@ -1594,7 +1626,7 @@ module ColorTheme = {
 module CustomDocumentOpenContext = {
   type t
   // properties
-  @bs.get external backupId: t => option<string> = "backupId"
+  @get external backupId: t => option<string> = "backupId"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#CustomEditorProvider
@@ -1670,11 +1702,11 @@ module WebviewView = {
   @bs.send
   external onDidDispose: (t, unit => unit) => Disposable.t = "onDidDispose"
   // properties
-  @bs.get external description: t => option<string> = "description"
-  @bs.get external title: t => option<string> = "title"
-  @bs.get external viewType: t => string = "viewType"
-  @bs.get external visible: t => bool = "visible"
-  @bs.get external webview: t => Webview.t = "webview"
+  @get external description: t => option<string> = "description"
+  @get external title: t => option<string> = "title"
+  @get external viewType: t => string = "viewType"
+  @get external visible: t => bool = "visible"
+  @get external webview: t => Webview.t = "webview"
   // methods
   @bs.send external show: t => unit = "show"
   @bs.send external showWithOptions: (t, bool) => unit = "show"
@@ -1685,7 +1717,7 @@ module WebviewView = {
 module WebviewViewResolveContext = {
   type t<'a>
   // properties
-  @bs.get external state: t<'a> => option<'a> = "state"
+  @get external state: t<'a> => option<'a> = "state"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#WebviewViewProvider
@@ -1711,216 +1743,249 @@ module UriHandler = {
   external handleUri: (t, Uri.t) => ProviderResult.t<unit> = "handleUri"
 }
 
+// https://code.visualstudio.com/api/references/vscode-api#FileDecoration
+// 1.56.0
+module FileDecoration = {
+  type t
+  // constructors
+  @module("vscode") @new
+  external make: (option<string>, option<string>, option<ThemeColor.t>) => t = "FileDecoration"
+  // properties
+  @get external badge: t => option<string> = "badge"
+  @get external color: t => option<ThemeColor.t> = "color"
+  @get external propagate: t => option<bool> = "propagate"
+  @get external tooltip: t => option<string> = "tooltip"
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#FileDecorationProvider
+// 1.56.0
+module FileDecorationProvider = {
+  type t
+  // events
+  @bs.send
+  external onDidChangeFileDecorations: (t, option<ArrayOr.t<Uri.t>> => unit) => Disposable.t =
+    "onDidChangeFileDecorations"
+  // methods
+  @bs.send
+  external provideFileDecoration: (
+    t,
+    Uri.t,
+    CancellationToken.t,
+  ) => ProviderResult.t<FileDecoration.t> = "show"
+}
+
 // https://code.visualstudio.com/api/references/vscode-api#window
 // 1.51.0
 module Window = {
   // variables
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external activeColorTheme: ColorTheme.t = "activeColorTheme"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external activeTerminal: option<Terminal.t> = "activeTerminal"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external activeTextEditor: option<TextEditor.t> = "activeTextEditor"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external state: WindowState.t = "state"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external terminals: array<Terminal.t> = "terminals"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external visibleTextEditors: array<TextEditor.t> = "visibleTextEditors"
   // events
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external onDidChangeActiveColorTheme: Event.t<ColorTheme.t> = "onDidChangeActiveColorTheme"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external onDidChangeActiveTerminal: Event.t<option<Terminal.t>> = "onDidChangeActiveTerminal"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external onDidChangeActiveTextEditor: Event.t<option<TextEditor.t>> =
     "onDidChangeActiveTextEditor"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external onDidChangeTextEditorOptions: Event.t<TextEditorOptionsChangeEvent.t> =
     "onDidChangeTextEditorOptions"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external onDidChangeTextEditorSelection: Event.t<TextEditorSelectionChangeEvent.t> =
     "onDidChangeTextEditorSelection"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external onDidChangeTextEditorViewColumn: Event.t<TextEditorViewColumnChangeEvent.t> =
     "onDidChangeTextEditorViewColumn"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external onDidChangeTextEditorVisibleRanges: Event.t<TextEditorVisibleRangesChangeEvent.t> =
     "onDidChangeTextEditorVisibleRanges"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external onDidChangeVisibleTextEditors: Event.t<array<TextEditor.t>> =
     "onDidChangeVisibleTextEditors"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external onDidChangeWindowState: Event.t<WindowState.t> = "onDidChangeWindowState"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external onDidCloseTerminal: Event.t<Terminal.t> = "onDidCloseTerminal"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external onDidOpenTerminal: Event.t<Terminal.t> = "onDidOpenTerminal"
 
   // functions
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external createInputBox: unit => InputBox.t = "createInputBox"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external createOutputChannel: string => OutputChannel.t = "createOutputChannel"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external createQuickPick: QuickPickItem.t => QuickPick.t = "createQuickPick"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external createStatusBarItem: (option<StatusBarAlignment.t>, option<int>) => StatusBarItem.t =
     "createStatusBarItem"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external createTerminal: (
     ~name: string=?,
     ~shellPath: string=?,
     ~shellArgs: array<string>=?,
     unit,
   ) => Terminal.t = "createTerminal"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external createTerminalWithTerminalOptions: TerminalOptions.t => Terminal.t = "createTerminal"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external createTerminalWithExtensionTerminalOptions: ExtensionTerminalOptions.t => Terminal.t =
     "createTerminal"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external createTextEditorDecorationType: DecorationRenderOptions.t => TextEditorDecorationType.t =
     "createTextEditorDecorationType"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external createTreeView: (string, TreeViewOptions.t) => TreeView.t = "createTreeView"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external createWebviewPanel: (
     string,
     string,
     {"preserveFocus": bool, "viewColumn": int},
     option<WebviewAndWebviewPanelOptions.t>,
   ) => WebviewPanel.t = "createWebviewPanel"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external registerCustomTextEditorProvider: (string, CustomTextEditorProvider.t) => Disposable.t =
     "registerCustomEditorProvider"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external registerCustomTextEditorProviderWithOptions: (
     string,
     CustomTextEditorProvider.t,
     {"supportsMultipleEditorsPerDocument": bool, "webviewOption": WebviewPanel.Options.t},
   ) => Disposable.t = "registerCustomEditorProvider"
 
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external registerCustomReadonlyEditorProvider: (
     string,
     CustomReadonlyEditorProvider.t<'a>,
   ) => Disposable.t = "registerCustomEditorProvider"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external registerCustomReadonlyEditorProviderWithOptions: (
     string,
     CustomReadonlyEditorProvider.t<'a>,
     {"supportsMultipleEditorsPerDocument": bool, "webviewOption": WebviewPanel.Options.t},
   ) => Disposable.t = "registerCustomEditorProvider"
 
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external registerCustomEditorProvider: (string, CustomEditorProvider.t<'a>) => Disposable.t =
     "registerCustomEditorProvider"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external registerCustomEditorProviderWithOptions: (
     string,
     CustomEditorProvider.t<'a>,
     {"supportsMultipleEditorsPerDocument": bool, "webviewOption": WebviewPanel.Options.t},
   ) => Disposable.t = "registerCustomEditorProvider"
-
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
+  external registerFileDecorationProvider: FileDecorationProvider.t => Disposable.t =
+    "registerFileDecorationProvider"
+  @module("vscode") @scope("window")
   external registerTerminalLinkProvider: (string, TerminalLinkProvider.t) => Disposable.t =
     "registerTerminalLinkProvider"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external registerTreeDataProvider: (string, TreeDataProvider.t) => Disposable.t =
     "registerTreeDataProvider"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external registerUriHandler: UriHandler.t => Disposable.t = "registerUriHandler"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external registerWebviewPanelSerializer: (string, WebviewPanelSerializer.t) => Disposable.t =
     "registerWebviewPanelSerializer"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external registerWebviewViewProvider: (string, WebviewViewProvider.t) => Disposable.t =
     "registerWebviewViewProvider"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external registerWebviewViewProviderWithOptions: (
     string,
     WebviewViewProvider.t,
     {"webviewOptions": {"retainContextWhenHidden": bool}},
   ) => Disposable.t = "registerWebviewViewProvider"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external setStatusBarMessageAndHideAfterTimeout: (string, int) => Disposable.t =
     "setStatusBarMessage"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external setStatusBarMessageAndHideWhenDone: (string, Promise.t<'a>) => Disposable.t =
     "setStatusBarMessage"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external setStatusBarMessage: string => Disposable.t = "setStatusBarMessage"
-  @bs.module("vscode") @bs.scope("window") @bs.variadic
+  @module("vscode") @scope("window") @variadic
   external showErrorMessage: (string, array<string>) => Promise.t<option<string>> =
     "showErrorMessage"
-  @bs.module("vscode") @bs.scope("window") @bs.variadic
+  @module("vscode") @scope("window") @variadic
   external showErrorMessageWithOptions: (
     string,
     MessageOptions.t,
     array<string>,
   ) => Promise.t<option<string>> = "showErrorMessage"
-  @bs.module("vscode") @bs.scope("window") @bs.variadic
+  @module("vscode") @scope("window") @variadic
   external showInformationMessage: (string, array<string>) => Promise.t<option<string>> =
     "showInformationMessage"
-  @bs.module("vscode") @bs.scope("window") @bs.variadic
+  @module("vscode") @scope("window") @variadic
   external showInformationMessageWithOptions: (
     string,
     MessageOptions.t,
     array<string>,
   ) => Promise.t<option<string>> = "showInformationMessage"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external showInputBox: (
     ~option: InputBoxOptions.t=?,
     ~token: CancellationToken.t=?,
     unit,
   ) => Promise.t<option<string>> = "showInputBox"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external showOpenDialog: OpenDialogOptions.t => Promise.t<option<Uri.t>> = "shoeOpenDialog"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external showQuickPick: (
     Promise.t<array<string>>,
     QuickPickOptions.t,
     option<CancellationToken.t>,
   ) => Promise.t<option<array<string>>> = "showQuickPick"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external showSaveDialog: SaveDialogOptions.t => Promise.t<option<Uri.t>> = "showSaveDialog"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external showTextDocument: (
     TextDocument.t,
     ~column: ViewColumn.t=?,
     ~preserveFocus: bool=?,
     unit,
   ) => Promise.t<TextEditor.t> = "showTextDocument"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external showTextDocumentWithShowOptions: (
     TextDocument.t,
     option<TextDocumentShowOptions.t>,
   ) => Promise.t<TextEditor.t> = "showTextDocument"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external showTextDocumentWithUri: (
     Uri.t,
     option<TextDocumentShowOptions.t>,
   ) => Promise.t<TextEditor.t> = "showTextDocument"
-  @bs.module("vscode") @bs.scope("window") @bs.variadic
+  @module("vscode") @scope("window") @variadic
   external showWarningMessage: (string, array<string>) => Promise.t<option<string>> =
     "showWarningMessage"
-  @bs.module("vscode") @bs.scope("window") @bs.variadic
+  @module("vscode") @scope("window") @variadic
   external showWarningMessageWithOptions: (
     string,
     MessageOptions.t,
     array<string>,
   ) => Promise.t<option<string>> = "showWarningMessage"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external showWorkspaceFolderPick: option<WorkspaceFolderPickOptions.t> => Promise.t<
     option<WorkspaceFolder.t>,
   > = "showWorkspaceFolderPick"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external withProgress: (
     ProgressOptions.t,
     (Progress.t<{"increment": int, "message": string}>, CancellationToken.t) => Promise.t<'a>,
   ) => Promise.t<'a> = "withProgress"
-  @bs.module("vscode") @bs.scope("window")
+  @module("vscode") @scope("window")
   external withScmProgress: ((Progress.t<int>, CancellationToken.t) => Promise.t<'a>) => Promise.t<
     'a,
   > = "withScmProgress"
@@ -1955,10 +2020,10 @@ module FileType = {
 // https://code.visualstudio.com/api/references/vscode-api#FileStat
 module FileStat = {
   type t
-  @bs.get external ctime: t => int = "ctime"
-  @bs.get external mtime: t => int = "mtime"
-  @bs.get external size: t => int = "size"
-  @bs.get external type_raw: t => FileType.raw = "type"
+  @get external ctime: t => int = "ctime"
+  @get external mtime: t => int = "mtime"
+  @get external size: t => int = "size"
+  @get external type_raw: t => FileType.raw = "type"
   let type_ = (self: t): FileType.t => type_raw(self)->FileType.fromEnum
 }
 
@@ -2001,7 +2066,7 @@ module ConfigurationChangeEvent = {
   external affectsConfiguration: (
     t,
     string,
-    @bs.unwrap
+    @unwrap
     [
       | #Uri(Uri.t)
       | #TextDocument(TextDocument.t)
@@ -2015,48 +2080,48 @@ module ConfigurationChangeEvent = {
 module TextDocumentContentChangeEvent = {
   type t
   // properties
-  @bs.get external range: t => Range.t = "range"
-  @bs.get external rangeLength: t => int = "rangeLength"
-  @bs.get external rangeOffset: t => int = "rangeOffset"
-  @bs.get external text: t => string = "text"
+  @get external range: t => Range.t = "range"
+  @get external rangeLength: t => int = "rangeLength"
+  @get external rangeOffset: t => int = "rangeOffset"
+  @get external text: t => string = "text"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#TextDocumentChangeEvent
 module TextDocumentChangeEvent = {
   type t
   // properties
-  @bs.get
+  @get
   external contentChanges: t => array<TextDocumentContentChangeEvent.t> = "contentChanges"
-  @bs.get external document: t => TextDocument.t = "document"
+  @get external document: t => TextDocument.t = "document"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#WorkspaceFoldersChangeEvent
 module WorkspaceFoldersChangeEvent = {
   type t
   // properties
-  @bs.get external added: t => array<WorkspaceFolder.t> = "added"
-  @bs.get external removed: t => array<WorkspaceFolder.t> = "removed"
+  @get external added: t => array<WorkspaceFolder.t> = "added"
+  @get external removed: t => array<WorkspaceFolder.t> = "removed"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#FileCreateEvent
 module FileCreateEvent = {
   type t
   // properties
-  @bs.get external files: t => array<Uri.t> = "files"
+  @get external files: t => array<Uri.t> = "files"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#FileDeleteEvent
 module FileDeleteEvent = {
   type t
   // properties
-  @bs.get external files: t => array<Uri.t> = "files"
+  @get external files: t => array<Uri.t> = "files"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#FileRenameEvent
 module FileRenameEvent = {
   type t
   // properties
-  @bs.get
+  @get
   external files: t => array<{"newUri": Uri.t, "oldUri": Uri.t}> = "files"
 }
 
@@ -2064,10 +2129,10 @@ module FileRenameEvent = {
 module WorkspaceEditEntryMetadata = {
   type t
   // properties
-  @bs.get external description: t => option<string> = "description"
+  @get external description: t => option<string> = "description"
   // TODO: [@bs.get] external iconPath: t => ??? = "iconPath";
-  @bs.get external label: t => string = "label"
-  @bs.get external needsConfirmation: t => bool = "needsConfirmation"
+  @get external label: t => string = "label"
+  @get external needsConfirmation: t => bool = "needsConfirmation"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#TextEdit
@@ -2075,24 +2140,24 @@ module TextEdit = {
   type t
 
   // static
-  @bs.module("vscode") @bs.scope("TextEdit")
+  @module("vscode") @scope("TextEdit")
   external delete: Range.t => t = "delete"
-  @bs.module("vscode") @bs.scope("TextEdit")
+  @module("vscode") @scope("TextEdit")
   external insert: (Position.t, string) => t = "insert"
-  @bs.module("vscode") @bs.scope("TextEdit")
+  @module("vscode") @scope("TextEdit")
   external replace: (Range.t, string) => t = "replace"
-  @bs.module("vscode") @bs.scope("TextEdit")
+  @module("vscode") @scope("TextEdit")
   external setEndOfLine_raw: int => t = "setEndOfLine"
   let setEndOfLine = (eol: EndOfLine.t): t => setEndOfLine_raw(EndOfLine.toEnum(eol))
 
   // constructors
-  @bs.module("vscode") @bs.new
+  @module("vscode") @new
   external make: (Range.t, string) => t = "TextEdit"
 
   // properties
-  @bs.get external newEol: t => option<EndOfLine.t> = "newEol"
-  @bs.get external newText: t => string = "newText"
-  @bs.get external range: t => Range.t = "range"
+  @get external newEol: t => option<EndOfLine.t> = "newEol"
+  @get external newText: t => string = "newText"
+  @get external range: t => Range.t = "range"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#WorkspaceEdit
@@ -2100,10 +2165,10 @@ module WorkspaceEdit = {
   type t
   // NOTE: this is missing in the API
   // constructors
-  @bs.module("vscode") @bs.new external make: unit => t = "WorkspaceEdit"
+  @module("vscode") @new external make: unit => t = "WorkspaceEdit"
 
   // properties
-  @bs.get external size: t => int = "size"
+  @get external size: t => int = "size"
   // methods
   @bs.send
   external createFile: (
@@ -2152,7 +2217,7 @@ module WorkspaceEdit = {
 module FileWillCreateEvent = {
   type t
   // properties
-  @bs.get external files: t => array<Uri.t> = "files"
+  @get external files: t => array<Uri.t> = "files"
   // methods
   @bs.send
   external waitUntilWithWorkspaceEdit: (t, Promise.t<WorkspaceEdit.t>) => unit = "waitUntil"
@@ -2162,7 +2227,7 @@ module FileWillCreateEvent = {
 module FileWillDeleteEvent = {
   type t
   // properties
-  @bs.get external files: t => array<Uri.t> = "files"
+  @get external files: t => array<Uri.t> = "files"
   // methods
   @bs.send
   external waitUntilWithWorkspaceEdit: (t, Promise.t<WorkspaceEdit.t>) => unit = "waitUntil"
@@ -2172,7 +2237,7 @@ module FileWillDeleteEvent = {
 module FileWillRenameEvent = {
   type t
   // properties
-  @bs.get
+  @get
   external files: t => array<{"newUri": Uri.t, "oldUri": Uri.t}> = "files"
   // methods
   @bs.send
@@ -2205,8 +2270,8 @@ module TextDocumentSaveReason = {
 module TextDocumentWillSaveEvent = {
   type t
   // properties
-  @bs.get external document: t => TextDocument.t = "document"
-  @bs.get external reason_raw: t => int = "reason"
+  @get external document: t => TextDocument.t = "document"
+  @get external reason_raw: t => int = "reason"
   let reason = self => TextDocumentSaveReason.fromEnum(self->reason_raw)
   // methods
   @bs.send
@@ -2218,13 +2283,13 @@ module TextDocumentWillSaveEvent = {
 module RelativePattern = {
   type t
   // constructors
-  @bs.module("vscode") @bs.new
+  @module("vscode") @new
   external make: (string, string) => t = "RelativePattern"
-  @bs.module("vscode") @bs.new
+  @module("vscode") @new
   external makeWithWorkspaceFolder: (WorkspaceFolder.t, string) => t = "RelativePattern"
   // properties
-  @bs.get external base: t => string = "base"
-  @bs.get external pattern: t => string = "pattern"
+  @get external base: t => string = "base"
+  @get external pattern: t => string = "pattern"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#GlobPattern
@@ -2243,15 +2308,15 @@ module FileSystemWatcher = {
   @bs.send
   external onDidDelete: (t, Uri.t => unit) => Disposable.t = "onDidDelete"
   // static
-  @bs.module("vscode") @bs.scope("FileSystemWatcher")
+  @module("vscode") @scope("FileSystemWatcher")
   external from: array<{"dispose": unit => 'a}> => Disposable.t = "from"
   // constructors
-  @bs.module("vscode") @bs.new
+  @module("vscode") @new
   external make: (unit => unit) => t = "FileSystemWatcher"
   // properties
-  @bs.get external ignoreChangeEvents: t => bool = "ignoreChangeEvents"
-  @bs.get external ignoreCreateEvents: t => bool = "ignoreCreateEvents"
-  @bs.get external ignoreDeleteEvents: t => bool = "ignoreDeleteEvents"
+  @get external ignoreChangeEvents: t => bool = "ignoreChangeEvents"
+  @get external ignoreCreateEvents: t => bool = "ignoreCreateEvents"
+  @get external ignoreDeleteEvents: t => bool = "ignoreDeleteEvents"
   // methods
   @bs.send external dispose: t => 'a = "dispose"
 }
@@ -2280,17 +2345,17 @@ module WorkspaceConfiguration = {
     "workspaceValue": 'a,
   }> = "inspect"
   @bs.send
-  external updateGlobalSettings: (t, string, 'a, @bs.as(1) _, option<bool>) => Promise.t<unit> =
+  external updateGlobalSettings: (t, string, 'a, @as(1) _, option<bool>) => Promise.t<unit> =
     "update"
   @bs.send
-  external updateWorkspaceSettings: (t, string, 'a, @bs.as(2) _, option<bool>) => Promise.t<unit> =
+  external updateWorkspaceSettings: (t, string, 'a, @as(2) _, option<bool>) => Promise.t<unit> =
     "update"
   @bs.send
   external updateWorkspaceFolderSettings: (
     t,
     string,
     'a,
-    @bs.as(3) _,
+    @as(3) _,
     option<bool>,
   ) => Promise.t<unit> = "update"
 }
@@ -2313,69 +2378,69 @@ module FileSystemProvider = {
 // https://code.visualstudio.com/api/references/vscode-api#workspace
 module Workspace = {
   // variables
-  @bs.module("vscode") @bs.scope("workspace")
+  @module("vscode") @scope("workspace")
   external fs: FileSystem.t = "fs"
-  @bs.module("vscode") @bs.scope("workspace")
+  @module("vscode") @scope("workspace")
   external name: option<string> = "name"
-  @bs.module("vscode") @bs.scope("workspace")
+  @module("vscode") @scope("workspace")
   external rootPath: option<string> = "rootPath"
-  @bs.module("vscode") @bs.scope("workspace")
+  @module("vscode") @scope("workspace")
   external textDocuments: array<TextDocument.t> = "textDocuments"
-  @bs.module("vscode") @bs.scope("workspace")
+  @module("vscode") @scope("workspace")
   external workspaceFile: option<Uri.t> = "workspaceFile"
-  @bs.module("vscode") @bs.scope("workspace")
+  @module("vscode") @scope("workspace")
   external workspaceFolders: option<array<WorkspaceFolder.t>> = "workspaceFolders"
 
   // events
-  @bs.module("vscode") @bs.scope("workspace")
+  @module("vscode") @scope("workspace")
   external onDidChangeConfiguration: Event.t<ConfigurationChangeEvent.t> =
     "onDidChangeConfiguration"
-  @bs.module("vscode") @bs.scope("workspace")
+  @module("vscode") @scope("workspace")
   external onDidChangeTextDocument: Event.t<TextDocumentChangeEvent.t> = "onDidChangeTextDocument"
-  @bs.module("vscode") @bs.scope("workspace")
+  @module("vscode") @scope("workspace")
   external onDidChangeWorkspaceFolders: Event.t<WorkspaceFoldersChangeEvent.t> =
     "onDidChangeWorkspaceFolders"
-  @bs.module("vscode") @bs.scope("workspace")
+  @module("vscode") @scope("workspace")
   external onDidCloseTextDocument: Event.t<TextDocument.t> = "onDidCloseTextDocument"
-  @bs.module("vscode") @bs.scope("workspace")
+  @module("vscode") @scope("workspace")
   external onDidCreateFiles: Event.t<FileCreateEvent.t> = "onDidCreateFiles"
-  @bs.module("vscode") @bs.scope("workspace")
+  @module("vscode") @scope("workspace")
   external onDidDeleteFiles: Event.t<FileDeleteEvent.t> = "onDidDeleteFiles"
-  @bs.module("vscode") @bs.scope("workspace")
+  @module("vscode") @scope("workspace")
   external onDidOpenTextDocument: Event.t<TextDocument.t> = "onDidOpenTextDocument"
-  @bs.module("vscode") @bs.scope("workspace")
+  @module("vscode") @scope("workspace")
   external onDidRenameFiles: Event.t<FileRenameEvent.t> = "onDidRenameFiles"
-  @bs.module("vscode") @bs.scope("workspace")
+  @module("vscode") @scope("workspace")
   external onDidSaveTextDocument: Event.t<TextDocument.t> = "onDidSaveTextDocument"
-  @bs.module("vscode") @bs.scope("workspace")
+  @module("vscode") @scope("workspace")
   external onWillCreateFiles: Event.t<FileWillCreateEvent.t> = "onWillCreateFiles"
-  @bs.module("vscode") @bs.scope("workspace")
+  @module("vscode") @scope("workspace")
   external onWillDeleteFiles: Event.t<FileWillDeleteEvent.t> = "onWillDeleteFiles"
-  @bs.module("vscode") @bs.scope("workspace")
+  @module("vscode") @scope("workspace")
   external onWillRenameFiles: Event.t<FileWillRenameEvent.t> = "onWillRenameFiles"
-  @bs.module("vscode") @bs.scope("workspace")
+  @module("vscode") @scope("workspace")
   external onWillSaveTextDocument: Event.t<TextDocumentWillSaveEvent.t> = "onWillSaveTextDocument"
   // functions
-  @bs.module("vscode") @bs.scope("workspace")
+  @module("vscode") @scope("workspace")
   external applyEdit: WorkspaceEdit.t => Promise.t<bool> = "applyEdit"
-  @bs.module("vscode") @bs.scope("workspace")
+  @module("vscode") @scope("workspace")
   external asRelativePath: (string, option<bool>) => string = "asRelativePath"
-  @bs.module("vscode") @bs.scope("workspace")
+  @module("vscode") @scope("workspace")
   external asRelativePathWithUri: (Uri.t, option<bool>) => string = "asRelativePath"
-  @bs.module("vscode") @bs.scope("workspace")
+  @module("vscode") @scope("workspace")
   external createFileSystemWatcher: (
     GlobPattern.t,
     ~ignoreCreateEvents: bool=?,
     ~ignoreChangeEvents: bool=?,
     ~ignoreDeleteEvents: bool=?,
   ) => FileSystemWatcher.t = "createFileSystemWatcher"
-  @bs.module("vscode") @bs.scope("workspace")
+  @module("vscode") @scope("workspace")
   external findFiles: (
     GlobPattern.t,
     ~exclude: Js.nullable<GlobPattern.t>=?,
     ~token: CancellationToken.t=?,
   ) => Promise.t<array<Uri.t>> = "findFiles"
-  @bs.module("vscode") @bs.scope("workspace")
+  @module("vscode") @scope("workspace")
   external getConfiguration: (option<string>, option<Uri.t>) => WorkspaceConfiguration.t =
     "getConfiguration"
   external getConfigurationOfTextDocument: (
@@ -2390,33 +2455,33 @@ module Workspace = {
     option<string>,
     option<{"languageId": string, "uri": Uri.t}>,
   ) => WorkspaceConfiguration.t = "getConfiguration"
-  @bs.module("vscode") @bs.scope("workspace")
+  @module("vscode") @scope("workspace")
   external getWorkspaceFolder: Uri.t => option<WorkspaceFolder.t> = "getWorkspaceFolder"
-  @bs.module("vscode") @bs.scope("workspace")
+  @module("vscode") @scope("workspace")
   external openTextDocument: Uri.t => Promise.t<TextDocument.t> = "openTextDocument"
-  @bs.module("vscode") @bs.scope("workspace")
+  @module("vscode") @scope("workspace")
   external openTextDocumentWithFileName: string => Promise.t<TextDocument.t> = "openTextDocument"
-  @bs.module("vscode") @bs.scope("workspace")
+  @module("vscode") @scope("workspace")
   external openTextDocumentWithOptions: option<{
     "content": string,
     "language": string,
   }> => Promise.t<TextDocument.t> = "openTextDocument"
-  @bs.module("vscode") @bs.scope("workspace")
+  @module("vscode") @scope("workspace")
   external registerFileSystemProvider: (
     string,
     FileSystemProvider.t,
     option<{"isCaseSensitive": bool, "isReadonly": bool}>,
   ) => Disposable.t = "registerFileSystemProvider"
-  @bs.module("vscode") @bs.scope("workspace")
+  @module("vscode") @scope("workspace")
   external registerTaskProvider: (string, TaskProvider.t) => Disposable.t = "registerTaskProvider"
-  @bs.module("vscode") @bs.scope("workspace")
+  @module("vscode") @scope("workspace")
   external registerTextDocumentContentProvider: (
     string,
     TextDocumentContentProvider.t,
   ) => Disposable.t = "registerTextDocumentContentProvider"
-  @bs.module("vscode") @bs.scope("workspace")
+  @module("vscode") @scope("workspace")
   external saveAll: option<bool> => Promise.t<bool> = "saveAll"
-  @bs.module("vscode") @bs.scope("workspace") @bs.variadic
+  @module("vscode") @scope("workspace") @variadic
   external updateWorkspaceFolders: (
     int,
     option<int>,
@@ -2447,15 +2512,15 @@ module Extension = {
   type t<'a>
 
   // properties
-  @bs.get external exports: t<'a> => 'a = "exports"
-  @bs.get external extensionKind_raw: t<'a> => int = "extensionKind"
+  @get external exports: t<'a> => 'a = "exports"
+  @get external extensionKind_raw: t<'a> => int = "extensionKind"
   let extensionKind = (self: t<'a>): ExtensionKind.t =>
     ExtensionKind.fromEnum(extensionKind_raw(self))
-  @bs.get external extensionPath: t<'a> => string = "extensionPath"
-  @bs.get external extensionUri: t<'a> => Uri.t = "extensionUri"
-  @bs.get external id: t<'a> => string = "id"
-  @bs.get external isActive: t<'a> => bool = "isActive"
-  @bs.get external packageJSON: t<'a> => 'json = "packageJSON"
+  @get external extensionPath: t<'a> => string = "extensionPath"
+  @get external extensionUri: t<'a> => Uri.t = "extensionUri"
+  @get external id: t<'a> => string = "id"
+  @get external isActive: t<'a> => bool = "isActive"
+  @get external packageJSON: t<'a> => 'json = "packageJSON"
 
   // methods
   @bs.send external activate: t<'a> => Promise.t<'a> = "activate"
@@ -2465,13 +2530,13 @@ module Extension = {
 // 1.52.0
 module Extensions = {
   // variables
-  @bs.module("vscode") @bs.scope("extensions")
+  @module("vscode") @scope("extensions")
   external all: array<Extension.t<'a>> = "all"
   // events
-  @bs.module("vscode") @bs.scope("extensions")
+  @module("vscode") @scope("extensions")
   external onDidChange: Event.t<unit> = "onDidChange"
   // functions
-  @bs.module("vscode") @bs.scope("extensions")
+  @module("vscode") @scope("extensions")
   external getExtension: string => option<Extension.t<'a>> = "getExtension"
 }
 
@@ -2479,21 +2544,21 @@ module Extensions = {
 module DiagnosticChangeEvent = {
   type t
   // properties
-  @bs.get external uris: t => array<Uri.t> = "uris"
+  @get external uris: t => array<Uri.t> = "uris"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#Location
 module Location = {
   type t
   // constructors
-  @bs.module("vscode") @bs.new
+  @module("vscode") @new
   external makeWithRange: (Uri.t, Range.t) => t = "Location"
-  @bs.module("vscode") @bs.new
+  @module("vscode") @new
   external makeWithPosition: (Uri.t, Position.t) => t = "Location"
 
   // properties
-  @bs.get external range: t => Range.t = "range"
-  @bs.get external uri: t => Uri.t = "uri"
+  @get external range: t => Range.t = "range"
+  @get external uri: t => Uri.t = "uri"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#LocationLink
@@ -2511,12 +2576,12 @@ module DiagnosticRelatedInformation = {
   type t
 
   // constructors
-  @bs.module("vscode") @bs.new
+  @module("vscode") @new
   external make: (Location.t, string) => t = "DiagnosticRelatedInformation"
 
   // properties
-  @bs.get external location: t => Location.t = "location"
-  @bs.get external message: t => string = "message"
+  @get external location: t => Location.t = "location"
+  @get external message: t => string = "message"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#DiagnosticSeverity
@@ -2566,19 +2631,19 @@ module Diagnostic = {
   type t
 
   // constructors
-  @bs.module("vscode") @bs.new
+  @module("vscode") @new
   external make: (Range.t, string, option<DiagnosticSeverity.t>) => t = "Diagnostic"
 
   // properties
-  @bs.get external code: t => option<string> = "code" // FIX THIS
-  @bs.get external message: t => string = "message"
-  @bs.get external range: t => Range.t = "range"
-  @bs.get
+  @get external code: t => option<string> = "code" // FIX THIS
+  @get external message: t => string = "message"
+  @get external range: t => Range.t = "range"
+  @get
   external relatedInformation: t => option<array<DiagnosticRelatedInformation.t>> =
     "relatedInformation"
-  @bs.get external severity: t => DiagnosticSeverity.t = "severity"
-  @bs.get external source: t => option<string> = "source"
-  @bs.get external tags: t => option<array<DiagnosticTag.t>> = "tags"
+  @get external severity: t => DiagnosticSeverity.t = "severity"
+  @get external source: t => option<string> = "source"
+  @get external tags: t => option<array<DiagnosticTag.t>> = "tags"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#DocumentFilter
@@ -2599,7 +2664,7 @@ module DocumentSelector = {
 module DiagnosticCollection = {
   type t
   // properties
-  @bs.get external name: t => string = "name"
+  @get external name: t => string = "name"
   // methods
   @bs.send external clear: t => unit = "clear"
   @bs.send external delete: (t, Uri.t) => unit = "delete"
@@ -2669,13 +2734,13 @@ module CodeActionProviderMetadata = {
 module CodeLens = {
   type t
   // constructors
-  @bs.module("vscode") @bs.new external make: Range.t => t = "CodeLens"
-  @bs.module("vscode") @bs.new
+  @module("vscode") @new external make: Range.t => t = "CodeLens"
+  @module("vscode") @new
   external makeWithCommand: (Range.t, Command.t) => t = "CodeLens"
   // properties
-  @bs.get external command: t => option<Command.t> = "command"
-  @bs.get external isResolved: t => bool = "isResolved"
-  @bs.get external range: t => Range.t = "range"
+  @get external command: t => option<Command.t> = "command"
+  @get external isResolved: t => bool = "isResolved"
+  @get external range: t => Range.t = "range"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#CodeLensProvider
@@ -2708,13 +2773,13 @@ module DeclarationProvider = {
 module Hover = {
   type t
   // constructors
-  @bs.module("vscode") @bs.new
+  @module("vscode") @new
   external make: array<MarkdownString.t> => t = "Hover"
-  @bs.module("vscode") @bs.new
+  @module("vscode") @new
   external makeWithRange: (array<MarkdownString.t>, Range.t) => t = "Hover"
   // properties
-  @bs.get external contents: t => array<MarkdownString.t> = "contents"
-  @bs.get external range: t => option<Range.t> = "range"
+  @get external contents: t => array<MarkdownString.t> = "contents"
+  @get external range: t => option<Range.t> = "range"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#HoverProvider
@@ -2763,35 +2828,35 @@ module DefinitionProvider = {
 module SemanticsTokens = {
   type t
   // constructors
-  @bs.module("vscode") @bs.new
+  @module("vscode") @new
   external make: array<int> => t = "SemanticsTokens"
-  @bs.module("vscode") @bs.new
+  @module("vscode") @new
   external makeWithResultId: (array<int>, string) => t = "SemanticsTokens"
   // properties
-  @bs.get external data: t => array<int> = "data"
-  @bs.get external resultId: t => option<string> = "resultId"
+  @get external data: t => array<int> = "data"
+  @get external resultId: t => option<string> = "resultId"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#SemanticTokensLegend
 module SemanticTokensLegend = {
   type t
   // constructors
-  @bs.module("vscode") @bs.new
+  @module("vscode") @new
   external make: array<string> => t = "SemanticTokensLegend"
-  @bs.module("vscode") @bs.new
+  @module("vscode") @new
   external makeWithTokenModifiers: (array<string>, array<string>) => t = "SemanticTokensLegend"
   // properties
-  @bs.get external tokenModifiers: t => array<string> = "tokenModifiers"
-  @bs.get external tokenTypes: t => array<string> = "tokenTypes"
+  @get external tokenModifiers: t => array<string> = "tokenModifiers"
+  @get external tokenTypes: t => array<string> = "tokenTypes"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#SemanticTokensBuilder
 module SemanticTokensBuilder = {
   type t
   // constructors
-  @bs.module("vscode") @bs.new
+  @module("vscode") @new
   external make: unit => t = "SemanticTokensBuilder"
-  @bs.module("vscode") @bs.new
+  @module("vscode") @new
   external makeWithLegend: SemanticTokensLegend.t => t = "SemanticTokensBuilder"
   // methods
   @bs.send external build: unit => SemanticsTokens.t = "build"
@@ -2817,57 +2882,57 @@ module DocumentSemanticTokensProvider = {
 // https://code.visualstudio.com/api/references/vscode-api#languages
 module Languages = {
   // events
-  @bs.module("vscode") @bs.scope("languages")
+  @module("vscode") @scope("languages")
   external onDidChangeDiagnostics: Event.t<DiagnosticChangeEvent.t> = "onDidChangeDiagnostics"
 
   // functions
-  @bs.module("vscode") @bs.scope("languages")
+  @module("vscode") @scope("languages")
   external createDiagnosticCollection: option<string> => DiagnosticCollection.t =
     "createDiagnosticCollection"
-  @bs.module("vscode") @bs.scope("languages")
+  @module("vscode") @scope("languages")
   external getDiagnostics: Uri.t => array<Diagnostic.t> = "getDiagnostics"
-  @bs.module("vscode") @bs.scope("languages")
+  @module("vscode") @scope("languages")
   external getDiagnosticEntries: Uri.t => array<(Uri.t, array<Diagnostic.t>)> = "getDiagnostics"
-  @bs.module("vscode") @bs.scope("languages")
+  @module("vscode") @scope("languages")
   external getLanguages: unit => Promise.t<array<string>> = "getLanguages"
-  @bs.module("vscode") @bs.scope("languages")
+  @module("vscode") @scope("languages")
   external match_: (DocumentSelector.t, TextDocument.t) => int = "match"
-  @bs.module("vscode") @bs.scope("languages")
+  @module("vscode") @scope("languages")
   external registerCallHierarchyProvider: (
     DocumentSelector.t,
     CallHierarchyProvider.t,
   ) => Disposable.t = "registerCallHierarchyProvider"
-  @bs.module("vscode") @bs.scope("languages")
+  @module("vscode") @scope("languages")
   external registerCodeActionsProvider: (
     DocumentSelector.t,
     CodeActionProvider.t,
     option<CodeActionProviderMetadata.t>,
   ) => Disposable.t = "registerCodeActionsProvider"
-  @bs.module("vscode") @bs.scope("languages")
+  @module("vscode") @scope("languages")
   external registerCodeLensProvider: (DocumentSelector.t, CodeLensProvider.t<'a>) => Disposable.t =
     "registerCodeLensProvider"
-  @bs.module("vscode") @bs.scope("languages")
+  @module("vscode") @scope("languages")
   external registerColorProvider: (DocumentSelector.t, DocumentColorProvider.t) => Disposable.t =
     "registerColorProvider"
-  @bs.module("vscode") @bs.scope("languages")
+  @module("vscode") @scope("languages")
   external registerCompletionItemProvider0: (
     DocumentSelector.t,
     CompletionItemProvider.t,
   ) => Disposable.t = "registerCompletionItemProvider"
-  @bs.module("vscode") @bs.scope("languages")
+  @module("vscode") @scope("languages")
   external registerCompletionItemProvider1: (
     DocumentSelector.t,
     CompletionItemProvider.t,
     string,
   ) => Disposable.t = "registerCompletionItemProvider"
-  @bs.module("vscode") @bs.scope("languages")
+  @module("vscode") @scope("languages")
   external registerCompletionItemProvider2: (
     DocumentSelector.t,
     CompletionItemProvider.t,
     string,
     string,
   ) => Disposable.t = "registerCompletionItemProvider"
-  @bs.module("vscode") @bs.scope("languages")
+  @module("vscode") @scope("languages")
   external registerCompletionItemProvider3: (
     DocumentSelector.t,
     CompletionItemProvider.t,
@@ -2875,12 +2940,12 @@ module Languages = {
     string,
     string,
   ) => Disposable.t = "registerCompletionItemProvider"
-  @bs.module("vscode") @bs.scope("languages")
+  @module("vscode") @scope("languages")
   external registerDeclarationProvider: (
     DocumentSelector.t,
     DeclarationProvider.t,
   ) => Disposable.t = "registerDeclarationProvider"
-  @bs.module("vscode") @bs.scope("languages")
+  @module("vscode") @scope("languages")
   external registerDefinitionProvider: (DocumentSelector.t, DefinitionProvider.t) => Disposable.t =
     "registerDefinitionProvider"
   // registerDocumentFormattingEditProvider(selector: DocumentSelector, provider: DocumentFormattingEditProvider): Disposable
@@ -2888,7 +2953,7 @@ module Languages = {
   // registerDocumentLinkProvider(selector: DocumentSelector, provider: DocumentLinkProvider): Disposable
   // registerDocumentRangeFormattingEditProvider(selector: DocumentSelector, provider: DocumentRangeFormattingEditProvider): Disposable
   // registerDocumentRangeSemanticTokensProvider(selector: DocumentSelector, provider: DocumentRangeSemanticTokensProvider, legend: SemanticTokensLegend): Disposable
-  @bs.module("vscode") @bs.scope("languages")
+  @module("vscode") @scope("languages")
   external registerDocumentSemanticTokensProvider: (
     DocumentSelector.t,
     DocumentSemanticTokensProvider.t,
@@ -2898,7 +2963,7 @@ module Languages = {
   // registerEvaluatableExpressionProvider(selector: DocumentSelector, provider: EvaluatableExpressionProvider): Disposable
   // registerFoldingRangeProvider(selector: DocumentSelector, provider: FoldingRangeProvider): Disposable
 
-  @bs.module("vscode") @bs.scope("languages")
+  @module("vscode") @scope("languages")
   external registerHoverProvider: (DocumentSelector.t, HoverProvider.t) => Disposable.t =
     "registerHoverProvider"
   // registerImplementationProvider(selector: DocumentSelector, provider: ImplementationProvider): Disposable
