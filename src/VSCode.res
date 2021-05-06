@@ -1488,11 +1488,50 @@ module WorkspaceFolderPickOptions = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#ProgressOptions
+// 1.5560
 module ProgressOptions = {
+
+  // "ProcessLocation | {viewId: string}"
+  module ProcessLocationOrViewId: {
+    type t
+    type case =
+      | Notification
+      | SourceControl 
+      | Window
+      | ViewId(string)
+    let encode: case => t
+    let classify: t => case
+  } = {
+    @unboxed
+    type rec t = Any('x): t
+    type case =
+      | Notification
+      | SourceControl 
+      | Window
+      | ViewId(string)
+    let encode = x => switch x {
+    | Notification => Any(15)
+    | SourceControl => Any(1)
+    | Window => Any(10)
+    | ViewId(string) => Any({"viewId": string})
+    }
+    let classify = (Any(v): t): case =>
+      if Js.typeof(v) == "int" {
+        switch (Obj.magic(v): int) {
+        | 15 => Notification
+        | 1 => SourceControl
+        | _ => Window
+        }
+      } else {
+        ViewId((Obj.magic(v)))
+      }
+  }
+
+
   type t
   // properties
   @bs.get external cancellable: t => option<bool> = "cancellable"
-  // location: ProgressLocation | {viewId: string}
+  @bs.get external location: t => ProcessLocationOrViewId.t = "location"
   @bs.get external title: t => option<string> = "title"
 }
 

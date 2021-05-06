@@ -47,10 +47,10 @@ function classify(v) {
 
 function map$1(f, xs) {
   var s = classify(xs);
-  if (s.TAG) {
-    return Curry._1(f, s._0);
-  } else {
+  if (s.TAG === /* String */0) {
     return s._0;
+  } else {
+    return Curry._1(f, s._0);
   }
 }
 
@@ -733,7 +733,50 @@ var SaveDialogOptions = {};
 
 var WorkspaceFolderPickOptions = {};
 
-var ProgressOptions = {};
+function encode(x) {
+  if (typeof x !== "number") {
+    return {
+            viewId: x._0
+          };
+  }
+  switch (x) {
+    case /* Notification */0 :
+        return 15;
+    case /* SourceControl */1 :
+        return 1;
+    case /* Window */2 :
+        return 10;
+    
+  }
+}
+
+function classify$2(v) {
+  if (typeof v === "int") {
+    if (v !== 1) {
+      if (v !== 15) {
+        return /* Window */2;
+      } else {
+        return /* Notification */0;
+      }
+    } else {
+      return /* SourceControl */1;
+    }
+  } else {
+    return {
+            _0: v,
+            [Symbol.for("name")]: "ViewId"
+          };
+  }
+}
+
+var ProcessLocationOrViewId = {
+  encode: encode,
+  classify: classify$2
+};
+
+var ProgressOptions = {
+  ProcessLocationOrViewId: ProcessLocationOrViewId
+};
 
 var Progress = {};
 
@@ -1069,7 +1112,7 @@ function locationLinks(v) {
   return v;
 }
 
-function classify$2(v) {
+function classify$3(v) {
   if ((function (a) { return a.targetRange === undefined})(v)) {
     return {
             TAG: 0,
@@ -1088,7 +1131,7 @@ function classify$2(v) {
 var LocationLinkOrLocation = {
   locations: locations,
   locationLinks: locationLinks,
-  classify: classify$2
+  classify: classify$3
 };
 
 var DefinitionProvider = {};
