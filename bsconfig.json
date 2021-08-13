@@ -1,5 +1,5 @@
 {
-  "name": "bs-vscode",
+  "name": "rescript-vscode",
   "package-specs": [
     {
       "module": "commonjs",
@@ -15,7 +15,6 @@
   "bsc-flags": [
     "-bs-g"
   ],
-  "refmt": 3,
   "bs-dependencies": [
     "reason-promise"
   ]

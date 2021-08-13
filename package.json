@@ -1,5 +1,5 @@
 {
-  "name": "bs-vscode",
+  "name": "rescript-vscode",
   "version": "0.0.16",
   "description": "VS Code bindings for BuckleScript",
   "main": "index.js",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/banacorn/bs-vscode.git"
+    "url": "git+https://github.com/banacorn/rescript-vscode.git"
   },
   "keywords": [
     "reason",
@@ -20,9 +20,9 @@
   "author": "Ting-Gian LUA (banacorn)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/banacorn/bs-vscode/issues"
+    "url": "https://github.com/banacorn/rescript-vscode/issues"
   },
-  "homepage": "https://github.com/banacorn/bs-vscode#readme",
+  "homepage": "https://github.com/banacorn/rescript-vscode#readme",
   "dependencies": {
     "bs-platform": ">=8.2.0",
     "reason-promise": ">=1.1.0"
