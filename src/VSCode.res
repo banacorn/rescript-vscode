@@ -1472,8 +1472,21 @@ module MessageItem = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#InputBoxOptions
+// 1.59.0
 module InputBoxOptions = {
   type t
+  // properties
+  @get external ignoreFocusOut: t => option<bool> = "ignoreFocusOut"
+  @get external password: t => option<bool> = "password"
+  @get external placeHolder: t => option<string> = "placeHolder"
+  @get external prompt: t => option<string> = "prompt"
+  @get external title: t => option<string> = "title"
+  @get external value: t => option<string> = "value"
+  @get external valueSelection: t => option<(int, int)> = "valueSelection"
+  // methods
+  @bs.send
+  external validateInput: (t, string) => option<StringOr.t<Js.Promise.t<option<string>>>> =
+    "validateInput"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#CancellationToken
