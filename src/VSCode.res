@@ -2366,20 +2366,23 @@ module TextDocumentContentProvider = {
   type t
   // events
   @module("vscode") @scope("workspace")
-  external onDidChange: option<Event.t<Uri.t>> =
-    "onDidChange"
+  external onDidChange: option<Event.t<Uri.t>> = "onDidChange"
   // methods
   @bs.send
-  external provideTextDocumentContent: (
-    t,
-    Uri.t,
-    CancellationToken.t,
-  ) => ProviderResult.t<string> = "provideTextDocumentContent"
+  external provideTextDocumentContent: (t, Uri.t, CancellationToken.t) => ProviderResult.t<string> =
+    "provideTextDocumentContent"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#TaskProvider
+// 1.59.0
 module TaskProvider = {
-  type t
+  type t<'a>
+  // methods
+  @bs.send
+  external provideTasks: (t<'a>, CancellationToken.t) => ProviderResult.t<array<'a>> =
+    "provideTasks"
+  @bs.send
+  external resolveTask: (t<'a>, 'a, CancellationToken.t) => ProviderResult.t<'a> = "resolveTask"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#FileSystemProvider
@@ -2485,7 +2488,8 @@ module Workspace = {
     option<{"isCaseSensitive": bool, "isReadonly": bool}>,
   ) => Disposable.t = "registerFileSystemProvider"
   @module("vscode") @scope("workspace")
-  external registerTaskProvider: (string, TaskProvider.t) => Disposable.t = "registerTaskProvider"
+  external registerTaskProvider: (string, TaskProvider.t<'a>) => Disposable.t =
+    "registerTaskProvider"
   @module("vscode") @scope("workspace")
   external registerTextDocumentContentProvider: (
     string,
