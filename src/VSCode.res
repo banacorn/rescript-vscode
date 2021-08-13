@@ -2361,8 +2361,20 @@ module WorkspaceConfiguration = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#TextDocumentContentProvider
+// 1.59.0
 module TextDocumentContentProvider = {
   type t
+  // events
+  @module("vscode") @scope("workspace")
+  external onDidChange: option<Event.t<Uri.t>> =
+    "onDidChange"
+  // methods
+  @bs.send
+  external provideTextDocumentContent: (
+    t,
+    Uri.t,
+    CancellationToken.t,
+  ) => ProviderResult.t<string> = "provideTextDocumentContent"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#TaskProvider
