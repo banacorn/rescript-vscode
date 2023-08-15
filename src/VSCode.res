@@ -299,6 +299,8 @@ module Commands = {
     | @as("setContext") #setContext(string, bool)
   ] => Promise.t<'a> = "executeCommand"
   @module("vscode") @scope("commands")
+  external getEditorLayout: (@as("vscode.getEditorLayout") _, unit) => Promise.t<Layout.t> = "executeCommand"
+  @module("vscode") @scope("commands")
   external executeCommand0: string => Promise.t<'a> = "executeCommand"
   @module("vscode") @scope("commands")
   external executeCommand1: (string, 'arg0) => Promise.t<'a> = "executeCommand"
