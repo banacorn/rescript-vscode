@@ -1,10 +1,11 @@
 {
   "name": "rescript-vscode",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "description": "VS Code bindings for BuckleScript",
   "main": "index.js",
   "scripts": {
-    "start": "bsb -make-world -w"
+    "build": "npx rescript build -with-deps",
+    "dev": "npx rescript build -w"
   },
   "repository": {
     "type": "git",
@@ -24,7 +25,7 @@
   },
   "homepage": "https://github.com/banacorn/rescript-vscode#readme",
   "dependencies": {
-    "bs-platform": ">=8.2.0",
+		"rescript": "^10.1.4",
     "reason-promise": ">=1.1.0"
   }
 }

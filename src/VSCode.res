@@ -2406,10 +2406,13 @@ module FileSystemProvider = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#workspace
+// 1.85.1 WIP
 module Workspace = {
   // variables
   @module("vscode") @scope("workspace")
   external fs: FileSystem.t = "fs"
+  @module("vscode") @scope("workspace")
+  external isTrusted: bool = "isTrusted"
   @module("vscode") @scope("workspace")
   external name: option<string> = "name"
   @module("vscode") @scope("workspace")
