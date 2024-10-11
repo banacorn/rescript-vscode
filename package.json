@@ -1,6 +1,6 @@
 {
   "name": "rescript-vscode",
-  "version": "0.0.19",
+  "version": "0.0.21",
   "description": "VS Code bindings for BuckleScript",
   "main": "index.js",
   "scripts": {
@@ -25,7 +25,6 @@
   },
   "homepage": "https://github.com/banacorn/rescript-vscode#readme",
   "dependencies": {
-		"rescript": "^10.1.4",
-    "reason-promise": ">=1.1.0"
+		"rescript": "^11.1.4"
   }
 }

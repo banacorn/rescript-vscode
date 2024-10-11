@@ -1,8 +1,8 @@
 // https://code.visualstudio.com/api/references/vscode-api#ProviderResult
 // 1.52.0
 module ProviderResult = {
-  type t<'a> = option<Promise.t<'a>>
-  let map = (x, f) => x->Belt.Option.map(result => result->Promise.map(f))
+  type t<'a> = option<promise<'a>>
+  // let map = (x, f) => x->Belt.Option.map(result => result->Promise.map(f))
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#ThemeColor
@@ -80,7 +80,7 @@ module Api = {
 
   @val external acquireVsCodeApi: unit => t = "acquireVsCodeApi"
 
-  @bs.send external postMessage: (t, 'a) => unit = "postMessage"
+  @send external postMessage: (t, 'a) => unit = "postMessage"
 
   let onMessage = (callback: 'a => unit): unit => {
     let onMessage = %raw(
@@ -99,21 +99,21 @@ module Disposable = {
   @module("vscode") @new
   external make: (unit => unit) => t = "Disposable"
   // methods
-  @bs.send external dispose: t => 'a = "dispose"
+  @send external dispose: t => 'a = "dispose"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#Event
 module Event = {
-  type t<'a> = (. 'a => unit) => Disposable.t
+  type t<'a> = ('a => unit) => Disposable.t
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#Memento
 module Memento = {
   type t
   // methods
-  @bs.send external get: (t, string) => option<'a> = "get"
-  @bs.send external getWithDefault: (t, string, 'a) => 'a = "get"
-  @bs.send external update: (t, string, 'a) => Promise.t<unit> = "update"
+  @send external get: (t, string) => option<'a> = "get"
+  @send external getWithDefault: (t, string, 'a) => 'a = "get"
+  @send external update: (t, string, 'a) => promise<unit> = "update"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#Uri
@@ -138,11 +138,11 @@ module Uri = {
   @get external prompt: t => string = "prompt"
   @get external scheme: t => string = "scheme"
 
-  @bs.send external toJSON: t => Js.Json.t = "toJSON"
-  @bs.send external toString: t => string = "toString"
-  @bs.send external toStringWithOptions: (t, bool) => string = "toString"
+  @send external toJSON: t => Js.Json.t = "toJSON"
+  @send external toString: t => string = "toString"
+  @send external toStringWithOptions: (t, bool) => string = "toString"
 
-  @bs.send
+  @send
   external with_: (
     t,
     {
@@ -212,17 +212,17 @@ module EnvironmentVariableCollection = {
   // properties
   @get external persistent: t => bool = "persistent"
   // methods
-  @bs.send external append: (t, string, string) => unit = "append"
-  @bs.send external clear: t => unit = "clear"
-  @bs.send external delete: (t, string) => unit = "delete"
-  @bs.send
+  @send external append: (t, string, string) => unit = "append"
+  @send external clear: t => unit = "clear"
+  @send external delete: (t, string) => unit = "delete"
+  @send
   external forEach: (t, (string, EnvironmentVariableMutator.t, t) => 'a) => unit = "forEach"
-  @bs.send
+  @send
   external forEachWithThisArg: (t, (string, EnvironmentVariableMutator.t, t) => 'a, 'b) => unit =
     "forEach"
-  @bs.send external get: (t, string) => option<EnvironmentVariableMutator.t> = "get"
-  @bs.send external prepend: (t, string, string) => unit = "prepend"
-  @bs.send external replace: (t, string, string) => unit = "replace"
+  @send external get: (t, string) => option<EnvironmentVariableMutator.t> = "get"
+  @send external prepend: (t, string, string) => unit = "prepend"
+  @send external replace: (t, string, string) => unit = "replace"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#ExtensionMode
@@ -269,7 +269,7 @@ module ExtensionContext = {
   external subscriptions: t => array<Disposable.t> = "subscriptions"
   @get external workspaceState: t => Memento.t = "workspaceState"
   // methods
-  @bs.send external asAbsolutePath: (t, string) => string = "asAbsolutePath"
+  @send external asAbsolutePath: (t, string) => string = "asAbsolutePath"
 }
 
 module Commands = {
@@ -297,18 +297,19 @@ module Commands = {
   [
     | @as("vscode.setEditorLayout") #setEditorLayout(Layout.t)
     | @as("setContext") #setContext(string, bool)
-  ] => Promise.t<'a> = "executeCommand"
+  ] => promise<'a> = "executeCommand"
   @module("vscode") @scope("commands")
-  external getEditorLayout: (@as("vscode.getEditorLayout") _, unit) => Promise.t<Layout.t> = "executeCommand"
+  external getEditorLayout: (@as("vscode.getEditorLayout") _, unit) => promise<Layout.t> =
+    "executeCommand"
   @module("vscode") @scope("commands")
-  external executeCommand0: string => Promise.t<'a> = "executeCommand"
+  external executeCommand0: string => promise<'a> = "executeCommand"
   @module("vscode") @scope("commands")
-  external executeCommand1: (string, 'arg0) => Promise.t<'a> = "executeCommand"
+  external executeCommand1: (string, 'arg0) => promise<'a> = "executeCommand"
   @module("vscode") @scope("commands")
-  external setContext: (@as("setContext") _, string, bool) => Promise.t<unit> = "executeCommand"
+  external setContext: (@as("setContext") _, string, bool) => promise<unit> = "executeCommand"
 
   @module("vscode") @scope("commands")
-  external getCommands: option<bool> => Promise.t<array<string>> = "getCommands"
+  external getCommands: option<bool> => promise<array<string>> = "getCommands"
   @module("vscode") @scope("commands")
   external registerCommand: (string, unit => 'a) => Disposable.t = "registerCommand"
 }
@@ -318,8 +319,8 @@ module Commands = {
 module DebugConsole = {
   type t
   // methods
-  @bs.send external append: (t, string) => unit = "append"
-  @bs.send external appendLine: (t, string) => unit = "appendLine"
+  @send external append: (t, string) => unit = "append"
+  @send external appendLine: (t, string) => unit = "appendLine"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#DebugConfiguration
@@ -375,13 +376,13 @@ module DebugSession = {
   @get external type_: t => string = "type"
   @get external workspaceFolder: t => option<WorkspaceFolder.t> = "workspaceFolder"
   // methods
-  @bs.send external customRequest: (t, string) => Promise.t<'a> = "customRequest"
-  @bs.send external customRequestWithArgs: (t, string, 'a) => Promise.t<'b> = "customRequest"
-  @bs.send
+  @send external customRequest: (t, string) => promise<'a> = "customRequest"
+  @send external customRequestWithArgs: (t, string, 'a) => promise<'b> = "customRequest"
+  @send
   external getDebugProtocolBreakpoint: (
     t,
     Breakpoint.t,
-  ) => Promise.t<option<DebugProtocolBreakpoint.t>> = "getDebugProtocolBreakpoint"
+  ) => promise<option<DebugProtocolBreakpoint.t>> = "getDebugProtocolBreakpoint"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#BreakpointsChangeEvent
@@ -437,7 +438,7 @@ module DebugAdapterExecutable = {
 module DebugAdapterDescriptorFactory = {
   type t
   // methods
-  @bs.send
+  @send
   external createDebugAdapterDescriptor: (
     t,
     DebugSession.t,
@@ -490,8 +491,8 @@ module Debug = {
 module Clipboard = {
   type t
   // methods
-  @bs.send external readText: (t, unit) => Promise.t<string> = "readText"
-  @bs.send external writeText: (t, string) => Promise.t<unit> = "writeText"
+  @send external readText: (t, unit) => promise<string> = "readText"
+  @send external writeText: (t, string) => promise<unit> = "writeText"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#UIKind;
@@ -537,9 +538,9 @@ module Env = {
 
   // functions
   @module("vscode") @scope("env")
-  external asExternalUri: Uri.t => Promise.t<Uri.t> = "asExternalUri"
+  external asExternalUri: Uri.t => promise<Uri.t> = "asExternalUri"
   @module("vscode") @scope("env")
-  external openExternal: Uri.t => Promise.t<bool> = "openExternal"
+  external openExternal: Uri.t => promise<bool> = "openExternal"
 }
 
 module ViewColumn = {
@@ -599,7 +600,7 @@ module WebviewOptions = {
 module Webview = {
   type t
   // events
-  @bs.send
+  @send
   external onDidReceiveMessage: (t, 'a => unit) => Disposable.t = "onDidReceiveMessage"
   // properties
   @get external cspSource: t => string = "cspSource"
@@ -607,8 +608,8 @@ module Webview = {
   @set external setHtml: (t, string) => unit = "html"
   @get external options: t => WebviewOptions.t = "options"
   // methods
-  @bs.send external asWebviewUri: (t, Uri.t) => Uri.t = "asWebviewUri"
-  @bs.send external postMessage: (t, 'a) => Promise.t<bool> = "postMessage"
+  @send external asWebviewUri: (t, Uri.t) => Uri.t = "asWebviewUri"
+  @send external postMessage: (t, 'a) => promise<bool> = "postMessage"
 }
 
 module WebviewPanel = {
@@ -633,10 +634,10 @@ module WebviewPanel = {
   }
 
   // events
-  @bs.send
+  @send
   external onDidChangeViewState: (t, OnDidChangeViewStateEvent.t => unit) => Disposable.t =
     "onDidChangeViewState"
-  @bs.send
+  @send
   external onDidDispose: (t, unit => unit) => Disposable.t = "onDidDispose"
 
   // properties
@@ -665,8 +666,8 @@ module WebviewPanel = {
   @get external visible: t => bool = "visible"
   @get external webview: t => Webview.t = "webview"
   // methods
-  @bs.send external dispose: t => unit = "dispose"
-  @bs.send
+  @send external dispose: t => unit = "dispose"
+  @send
   external reveal_raw: (t, ~viewColumn: int=?, ~preserveFocus: bool=?, unit) => unit = "reveal"
   let reveal = (self: t, ~viewColumn=?, ~preserveFocus=?, ()): unit => {
     let viewColumn = viewColumn->Belt.Option.map(ViewColumn.toEnum)
@@ -688,14 +689,14 @@ module Position = {
   @get external character: t => int = "character"
   @get external line: t => int = "line"
   // methods
-  @bs.send external compareTo: (t, t) => int = "compareTo"
-  @bs.send external isAfter: (t, t) => bool = "isAfter"
-  @bs.send external isAfterOrEqual: (t, t) => bool = "isAfterOrEqual"
-  @bs.send external isBefore: (t, t) => bool = "isBefore"
-  @bs.send external isBeforeOrEqual: (t, t) => bool = "isBeforeOrEqual"
-  @bs.send external isEqual: (t, t) => bool = "isEqual"
-  @bs.send external translate: (t, int, int) => t = "translate"
-  @bs.send external with_: (t, int, int) => t = "with"
+  @send external compareTo: (t, t) => int = "compareTo"
+  @send external isAfter: (t, t) => bool = "isAfter"
+  @send external isAfterOrEqual: (t, t) => bool = "isAfterOrEqual"
+  @send external isBefore: (t, t) => bool = "isBefore"
+  @send external isBeforeOrEqual: (t, t) => bool = "isBeforeOrEqual"
+  @send external isEqual: (t, t) => bool = "isEqual"
+  @send external translate: (t, int, int) => t = "translate"
+  @send external with_: (t, int, int) => t = "with"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#Range
@@ -712,12 +713,12 @@ module Range = {
   @get external isSingleLine: t => bool = "isSingleLine"
   @get external start: t => Position.t = "start"
   // methods
-  @bs.send external contains: (t, Position.t) => bool = "contains"
-  @bs.send external containsRange: (t, t) => bool = "contains"
-  @bs.send external intersection: (t, t) => option<t> = "intersection"
-  @bs.send external isEqual: (t, t) => bool = "isEqual"
-  @bs.send external union: (t, t) => t = "union"
-  @bs.send external with_: (t, Position.t, Position.t) => t = "with"
+  @send external contains: (t, Position.t) => bool = "contains"
+  @send external containsRange: (t, t) => bool = "contains"
+  @send external intersection: (t, t) => option<t> = "intersection"
+  @send external isEqual: (t, t) => bool = "isEqual"
+  @send external union: (t, t) => t = "union"
+  @send external with_: (t, Position.t, Position.t) => t = "with"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#TextLine
@@ -766,18 +767,18 @@ module TextDocument = {
   @get external uri: t => Uri.t = "uri"
   @get external version: t => int = "version"
   // methods
-  @bs.send external getText: (t, option<Range.t>) => string = "getText"
-  @bs.send
+  @send external getText: (t, option<Range.t>) => string = "getText"
+  @send
   external getWordRangeAtPosition: (t, Position.t, option<Js.Re.t>) => option<Range.t> =
     "getWordRangeAtPosition"
-  @bs.send external lineAt: (t, int) => TextLine.t = "lineAt"
-  @bs.send external lineAtPosition: (t, Position.t) => TextLine.t = "lineAt"
-  @bs.send external offsetAt: (t, Position.t) => int = "offsetAt"
-  @bs.send external positionAt: (t, int) => Position.t = "positionAt"
-  @bs.send external save: t => Promise.t<bool> = "save"
-  @bs.send
+  @send external lineAt: (t, int) => TextLine.t = "lineAt"
+  @send external lineAtPosition: (t, Position.t) => TextLine.t = "lineAt"
+  @send external offsetAt: (t, Position.t) => int = "offsetAt"
+  @send external positionAt: (t, int) => Position.t = "positionAt"
+  @send external save: t => promise<bool> = "save"
+  @send
   external validatePosition: (t, Position.t) => Position.t = "validatePosition"
-  @bs.send external validateRange: (t, Range.t) => Range.t = "validateRange"
+  @send external validateRange: (t, Range.t) => Range.t = "validateRange"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#TextEditorCursorStyle
@@ -861,27 +862,27 @@ module Selection = {
   @get external isSingleLine: t => bool = "isSingleLine"
   @get external start: t => Position.t = "start"
   // methods
-  @bs.send external contains: (t, Position.t) => bool = "contains"
-  @bs.send external containsRange: (t, Range.t) => bool = "contains"
-  @bs.send
+  @send external contains: (t, Position.t) => bool = "contains"
+  @send external containsRange: (t, Range.t) => bool = "contains"
+  @send
   external intersection: (t, Range.t) => option<Range.t> = "intersection"
-  @bs.send external isEqual: (t, Range.t) => bool = "isEqual"
-  @bs.send external union: (t, Range.t) => Range.t = "union"
-  @bs.send external with_: (t, Position.t, Position.t) => Range.t = "with"
+  @send external isEqual: (t, Range.t) => bool = "isEqual"
+  @send external union: (t, Range.t) => Range.t = "union"
+  @send external with_: (t, Position.t, Position.t) => Range.t = "with"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#TextEditorEdit
 module TextEditorEdit = {
   type t
   // methods
-  @bs.send external delete: (t, Range.t) => unit = "delete"
-  @bs.send external deleteAtSelection: (t, Selection.t) => unit = "delete"
-  @bs.send external insert: (t, Position.t, string) => unit = "insert"
-  @bs.send external replace: (t, Position.t, string) => unit = "replace"
-  @bs.send external replaceAtRange: (t, Range.t, string) => unit = "replace"
-  @bs.send
+  @send external delete: (t, Range.t) => unit = "delete"
+  @send external deleteAtSelection: (t, Selection.t) => unit = "delete"
+  @send external insert: (t, Position.t, string) => unit = "insert"
+  @send external replace: (t, Position.t, string) => unit = "replace"
+  @send external replaceAtRange: (t, Range.t, string) => unit = "replace"
+  @send
   external replaceAtSelection: (t, Selection.t, string) => unit = "replace"
-  @bs.send external setEndOfLine_raw: (t, int) => unit = "setEndOfLine"
+  @send external setEndOfLine_raw: (t, int) => unit = "setEndOfLine"
   let setEndOfLine = (self: t, eol: EndOfLine.t): unit =>
     setEndOfLine_raw(self, EndOfLine.toEnum(eol))
 }
@@ -922,7 +923,7 @@ module TextEditorDecorationType = {
   // properties
   @get external key: t => string = "key"
   // methods
-  @bs.send external dispose: t => unit = "dispose"
+  @send external dispose: t => unit = "dispose"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#MarkedString;
@@ -935,10 +936,10 @@ module MarkdownString = {
   @get external isTrusted: t => option<bool> = "isTrusted"
   @get external value: t => string = "value"
   // methods
-  @bs.send
+  @send
   external appendCodeblock: (t, string, option<string>) => t = "appendCodeblock"
-  @bs.send external appendMarkdown: (t, string) => t = "appendMarkdown"
-  @bs.send external appendText: (t, string) => t = "appendText"
+  @send external appendMarkdown: (t, string) => t = "appendMarkdown"
+  @send external appendText: (t, string) => t = "appendText"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#ThemableDecorationAttachmentRenderOptions
@@ -1024,55 +1025,55 @@ module TextEditor = {
     viewColumn_raw(self)->Belt.Option.map(ViewColumn.fromEnum)
   @get external visibleRanges: t => array<Range.t> = "visibleRanges"
   // methods
-  @bs.send
+  @send
   external edit: (
     t,
     TextEditorEdit.t => unit,
     option<{"undoStopAfter": bool, "undoStopBefore": bool}>,
-  ) => Promise.t<bool> = "edit"
-  @bs.send external hide: (t, unit) => unit = "hide"
-  @bs.send
+  ) => promise<bool> = "edit"
+  @send external hide: (t, unit) => unit = "hide"
+  @send
   external insertSnippet: (
     t,
     SnippetString.t,
     Position.t,
     option<{"undoStopAfter": bool, "undoStopBefore": bool}>,
-  ) => Promise.t<bool> = "insertSnippet"
-  @bs.send
+  ) => promise<bool> = "insertSnippet"
+  @send
   external insertSnippetAtRange: (
     t,
     SnippetString.t,
     Range.t,
     option<{"undoStopAfter": bool, "undoStopBefore": bool}>,
-  ) => Promise.t<bool> = "insertSnippet"
-  @bs.send
+  ) => promise<bool> = "insertSnippet"
+  @send
   external insertSnippetAtPositions: (
     t,
     SnippetString.t,
     array<Position.t>,
     option<{"undoStopAfter": bool, "undoStopBefore": bool}>,
-  ) => Promise.t<bool> = "insertSnippet"
-  @bs.send
+  ) => promise<bool> = "insertSnippet"
+  @send
   external insertSnippetAtRanges: (
     t,
     SnippetString.t,
     array<Range.t>,
     option<{"undoStopAfter": bool, "undoStopBefore": bool}>,
-  ) => Promise.t<bool> = "insertSnippet"
-  @bs.send
+  ) => promise<bool> = "insertSnippet"
+  @send
   external revealRange_raw: (t, Range.t, option<int>) => unit = "revealRange"
   let revealRange = (self: t, range: Range.t, option: option<TextEditorRevealType.t>): unit =>
     revealRange_raw(self, range, option->Belt.Option.map(TextEditorRevealType.toEnum))
-  @bs.send
+  @send
   external setDecorations: (t, TextEditorDecorationType.t, array<Range.t>) => unit =
     "setDecorations"
-  @bs.send
+  @send
   external setDecorationsWithOptions: (
     t,
     TextEditorDecorationType.t,
     array<DecorationOptions.t>,
   ) => unit = "setDecorations"
-  @bs.send external show_raw: (t, option<int>) => unit = "show"
+  @send external show_raw: (t, option<int>) => unit = "show"
   let show = (self: t, viewColumn: option<ViewColumn.t>): unit =>
     show_raw(self, viewColumn->Belt.Option.map(ViewColumn.toEnum))
 }
@@ -1142,13 +1143,13 @@ module Terminal = {
   @get external name: t => string = "name"
   @get external processId: t => option<int> = "processId"
   // methods
-  @bs.send external dispose: t => unit = "dispose"
-  @bs.send external hide: t => unit = "hide"
-  @bs.send external sendText: (t, string) => unit = "sendText"
-  @bs.send
+  @send external dispose: t => unit = "dispose"
+  @send external hide: t => unit = "hide"
+  @send external sendText: (t, string) => unit = "sendText"
+  @send
   external sendTextWithOptions: (t, string, bool) => unit = "sendText"
-  @bs.send external show: t => unit = "show"
-  @bs.send external showWithOptions: (t, bool) => unit = "show"
+  @send external show: t => unit = "show"
+  @send external showWithOptions: (t, bool) => unit = "show"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#WindowState
@@ -1297,9 +1298,9 @@ module StatusBarItem = {
   @set
   external setTooltip: (t, string) => unit = "tooltip"
   // methods
-  @bs.send external dispose: t => unit = "dispose"
-  @bs.send external hide: t => unit = "hide"
-  @bs.send external show: t => unit = "show"
+  @send external dispose: t => unit = "dispose"
+  @send external hide: t => unit = "hide"
+  @send external show: t => unit = "show"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#OverviewRulerLane;
@@ -1444,12 +1445,12 @@ module WebviewAndWebviewPanelOptions = {
     ~retainContextWhenHidden=?,
     (),
   ): t => {
-    enableCommandUris: enableCommandUris,
-    enableScripts: enableScripts,
-    localResourceRoots: localResourceRoots,
-    portMapping: portMapping,
-    enableFindWidget: enableFindWidget,
-    retainContextWhenHidden: retainContextWhenHidden,
+    enableCommandUris,
+    enableScripts,
+    localResourceRoots,
+    portMapping,
+    enableFindWidget,
+    retainContextWhenHidden,
   }
 }
 
@@ -1486,8 +1487,8 @@ module InputBoxOptions = {
   @get external value: t => option<string> = "value"
   @get external valueSelection: t => option<(int, int)> = "valueSelection"
   // methods
-  @bs.send
-  external validateInput: (t, string) => option<StringOr.t<Js.Promise.t<option<string>>>> =
+  @send
+  external validateInput: (t, string) => option<StringOr.t<promise<option<string>>>> =
     "validateInput"
 }
 
@@ -1498,7 +1499,7 @@ module CancellationToken = {
   @get
   external isCancellationRequested: t => bool = "isCancellationRequested"
   // methods
-  @bs.send
+  @send
   external onCancellationRequested: (t, 'a => unit) => Disposable.t = "onCancellationRequested"
 }
 
@@ -1508,8 +1509,8 @@ module CancellationTokenSource = {
   // properties
   @get external token: t => CancellationToken.t = "token"
   // methods
-  @bs.send external cancel: t => unit = "cancel"
-  @bs.send external dispose: t => unit = "dispose"
+  @send external cancel: t => unit = "cancel"
+  @send external dispose: t => unit = "dispose"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#OpenDialogOptions
@@ -1586,7 +1587,7 @@ module ProgressOptions = {
 module Progress = {
   type t<'a>
   // methods
-  @bs.send external report: (t<'a>, 'a) => unit = "report"
+  @send external report: (t<'a>, 'a) => unit = "report"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#TextDocumentShowOptions;
@@ -1599,10 +1600,10 @@ module TextDocumentShowOptions = {
   }
 
   let make = (~preserveFocus=?, ~preview=?, ~selection=?, ~viewColumn=?, ()): t => {
-    preserveFocus: preserveFocus,
-    preview: preview,
-    selection: selection,
-    viewColumn: viewColumn,
+    preserveFocus,
+    preview,
+    selection,
+    viewColumn,
   }
 }
 
@@ -1655,12 +1656,12 @@ module CustomDocumentOpenContext = {
 //   [@bs.send]
 //   external openCustomDocument:
 //     (t('a), Uri.t, CustomDocumentOpenContext.t, CancellationToken.t) =>
-//     option(Promise.t('a)) =
+//     option(promise('a)) =
 //     "openCustomDocument";
 //   [@bs.send]
 //   external resolveCustomEditor:
 //     (t('a), 'a, WebviewPanel.t, CancellationToken.t) =>
-//     option(Promise.t(unit)) =
+//     option(promise(unit)) =
 //     "resolveCustomEditor";
 // };
 
@@ -1668,33 +1669,33 @@ module CustomDocumentOpenContext = {
 module CustomReadonlyEditorProvider = {
   type t<'a>
   // methods
-  @bs.send
+  @send
   external openCustomDocument: (
     t<'a>,
     Uri.t,
     CustomDocumentOpenContext.t,
     CancellationToken.t,
-  ) => option<Promise.t<'a>> = "openCustomDocument"
-  @bs.send
+  ) => option<promise<'a>> = "openCustomDocument"
+  @send
   external resolveCustomEditor: (
     t<'a>,
     'a,
     WebviewPanel.t,
     CancellationToken.t,
-  ) => option<Promise.t<unit>> = "resolveCustomEditor"
+  ) => option<promise<unit>> = "resolveCustomEditor"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#CustomTextEditorProvider
 module CustomTextEditorProvider = {
   type t
   // methods
-  @bs.send
+  @send
   external resolveCustomTextEditor: (
     t,
     TextDocument.t,
     WebviewPanel.t,
     CancellationToken.t,
-  ) => option<Promise.t<unit>> = "resolveCustomTextEditor"
+  ) => option<promise<unit>> = "resolveCustomTextEditor"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#CustomEditorProvider
@@ -1712,9 +1713,9 @@ module TerminalLinkProvider = {
 module WebviewView = {
   type t
   // events
-  @bs.send
+  @send
   external onDidChangeVisibility: (t, unit => unit) => Disposable.t = "onDidChangeVisibility"
-  @bs.send
+  @send
   external onDidDispose: (t, unit => unit) => Disposable.t = "onDidDispose"
   // properties
   @get external description: t => option<string> = "description"
@@ -1723,8 +1724,8 @@ module WebviewView = {
   @get external visible: t => bool = "visible"
   @get external webview: t => Webview.t = "webview"
   // methods
-  @bs.send external show: t => unit = "show"
-  @bs.send external showWithOptions: (t, bool) => unit = "show"
+  @send external show: t => unit = "show"
+  @send external showWithOptions: (t, bool) => unit = "show"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#WebviewViewResolveContext
@@ -1740,13 +1741,13 @@ module WebviewViewResolveContext = {
 module WebviewViewProvider = {
   type t
   // methods
-  @bs.send
+  @send
   external resolveWebviewView: (
     t,
     WebviewView.t,
     WebviewViewResolveContext.t<'a>,
     CancellationToken.t,
-  ) => option<Promise.t<unit>> = "resolveWebviewView"
+  ) => option<promise<unit>> = "resolveWebviewView"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#UriHandler
@@ -1754,7 +1755,7 @@ module WebviewViewProvider = {
 module UriHandler = {
   type t
   // methods
-  @bs.send
+  @send
   external handleUri: (t, Uri.t) => ProviderResult.t<unit> = "handleUri"
 }
 
@@ -1777,11 +1778,11 @@ module FileDecoration = {
 module FileDecorationProvider = {
   type t
   // events
-  @bs.send
+  @send
   external onDidChangeFileDecorations: (t, option<ArrayOr.t<Uri.t>> => unit) => Disposable.t =
     "onDidChangeFileDecorations"
   // methods
-  @bs.send
+  @send
   external provideFileDecoration: (
     t,
     Uri.t,
@@ -1927,83 +1928,81 @@ module Window = {
   external setStatusBarMessageAndHideAfterTimeout: (string, int) => Disposable.t =
     "setStatusBarMessage"
   @module("vscode") @scope("window")
-  external setStatusBarMessageAndHideWhenDone: (string, Promise.t<'a>) => Disposable.t =
+  external setStatusBarMessageAndHideWhenDone: (string, promise<'a>) => Disposable.t =
     "setStatusBarMessage"
   @module("vscode") @scope("window")
   external setStatusBarMessage: string => Disposable.t = "setStatusBarMessage"
   @module("vscode") @scope("window") @variadic
-  external showErrorMessage: (string, array<string>) => Promise.t<option<string>> =
-    "showErrorMessage"
+  external showErrorMessage: (string, array<string>) => promise<option<string>> = "showErrorMessage"
   @module("vscode") @scope("window") @variadic
   external showErrorMessageWithOptions: (
     string,
     MessageOptions.t,
     array<string>,
-  ) => Promise.t<option<string>> = "showErrorMessage"
+  ) => promise<option<string>> = "showErrorMessage"
   @module("vscode") @scope("window") @variadic
-  external showInformationMessage: (string, array<string>) => Promise.t<option<string>> =
+  external showInformationMessage: (string, array<string>) => promise<option<string>> =
     "showInformationMessage"
   @module("vscode") @scope("window") @variadic
   external showInformationMessageWithOptions: (
     string,
     MessageOptions.t,
     array<string>,
-  ) => Promise.t<option<string>> = "showInformationMessage"
+  ) => promise<option<string>> = "showInformationMessage"
   @module("vscode") @scope("window")
   external showInputBox: (
     ~option: InputBoxOptions.t=?,
     ~token: CancellationToken.t=?,
     unit,
-  ) => Promise.t<option<string>> = "showInputBox"
+  ) => promise<option<string>> = "showInputBox"
   @module("vscode") @scope("window")
-  external showOpenDialog: OpenDialogOptions.t => Promise.t<option<Uri.t>> = "shoeOpenDialog"
+  external showOpenDialog: OpenDialogOptions.t => promise<option<Uri.t>> = "shoeOpenDialog"
   @module("vscode") @scope("window")
   external showQuickPick: (
-    Promise.t<array<string>>,
+    promise<array<string>>,
     QuickPickOptions.t,
     option<CancellationToken.t>,
-  ) => Promise.t<option<array<string>>> = "showQuickPick"
+  ) => promise<option<array<string>>> = "showQuickPick"
   @module("vscode") @scope("window")
-  external showSaveDialog: SaveDialogOptions.t => Promise.t<option<Uri.t>> = "showSaveDialog"
+  external showSaveDialog: SaveDialogOptions.t => promise<option<Uri.t>> = "showSaveDialog"
   @module("vscode") @scope("window")
   external showTextDocument: (
     TextDocument.t,
     ~column: ViewColumn.t=?,
     ~preserveFocus: bool=?,
     unit,
-  ) => Promise.t<TextEditor.t> = "showTextDocument"
+  ) => promise<TextEditor.t> = "showTextDocument"
   @module("vscode") @scope("window")
   external showTextDocumentWithShowOptions: (
     TextDocument.t,
     option<TextDocumentShowOptions.t>,
-  ) => Promise.t<TextEditor.t> = "showTextDocument"
+  ) => promise<TextEditor.t> = "showTextDocument"
   @module("vscode") @scope("window")
   external showTextDocumentWithUri: (
     Uri.t,
     option<TextDocumentShowOptions.t>,
-  ) => Promise.t<TextEditor.t> = "showTextDocument"
+  ) => promise<TextEditor.t> = "showTextDocument"
   @module("vscode") @scope("window") @variadic
-  external showWarningMessage: (string, array<string>) => Promise.t<option<string>> =
+  external showWarningMessage: (string, array<string>) => promise<option<string>> =
     "showWarningMessage"
   @module("vscode") @scope("window") @variadic
   external showWarningMessageWithOptions: (
     string,
     MessageOptions.t,
     array<string>,
-  ) => Promise.t<option<string>> = "showWarningMessage"
+  ) => promise<option<string>> = "showWarningMessage"
   @module("vscode") @scope("window")
-  external showWorkspaceFolderPick: option<WorkspaceFolderPickOptions.t> => Promise.t<
+  external showWorkspaceFolderPick: option<WorkspaceFolderPickOptions.t> => promise<
     option<WorkspaceFolder.t>,
   > = "showWorkspaceFolderPick"
   @module("vscode") @scope("window")
   external withProgress: (
     ProgressOptions.t,
-    (Progress.t<{"increment": int, "message": string}>, CancellationToken.t) => Promise.t<'a>,
-  ) => Promise.t<'a> = "withProgress"
+    (Progress.t<{"increment": int, "message": string}>, CancellationToken.t) => promise<'a>,
+  ) => promise<'a> = "withProgress"
   @module("vscode") @scope("window")
-  external withScmProgress: ((Progress.t<int>, CancellationToken.t) => Promise.t<'a>) => Promise.t<
-    'a,
-  > = "withScmProgress"
+  external withScmProgress: ((Progress.t<int>, CancellationToken.t) => promise<'a>) => promise<'a> =
+    "withScmProgress"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#FileType
@@ -2046,38 +2045,37 @@ module FileStat = {
 module FileSystem = {
   type t
   // methods
-  @bs.send external copy: (t, Uri.t, Uri.t) => Promise.t<unit> = "copy"
-  @bs.send
-  external copyWithOptions: (t, Uri.t, Uri.t, {"overwrite": bool}) => Promise.t<unit> = "copy"
-  @bs.send
-  external createDirectory: (t, Uri.t) => Promise.t<unit> = "createDirectory"
-  @bs.send external delete: (t, Uri.t) => Promise.t<unit> = "delete"
-  @bs.send
-  external deleteWithOptions: (t, Uri.t, {"recursive": bool, "useTrash": bool}) => Promise.t<unit> =
+  @send external copy: (t, Uri.t, Uri.t) => promise<unit> = "copy"
+  @send
+  external copyWithOptions: (t, Uri.t, Uri.t, {"overwrite": bool}) => promise<unit> = "copy"
+  @send
+  external createDirectory: (t, Uri.t) => promise<unit> = "createDirectory"
+  @send external delete: (t, Uri.t) => promise<unit> = "delete"
+  @send
+  external deleteWithOptions: (t, Uri.t, {"recursive": bool, "useTrash": bool}) => promise<unit> =
     "delete"
-  @bs.send
-  external readDirectory_raw: (t, Uri.t) => Promise.t<array<StringOr.t<FileType.raw>>> =
+  @send
+  external readDirectory_raw: (t, Uri.t) => promise<array<StringOr.t<FileType.raw>>> =
     "readDirectory"
-  let readDirectory = (self: t, uri: Uri.t): Promise.t<array<StringOr.t<FileType.t>>> =>
-    readDirectory_raw(self, uri)->Promise.map(xs =>
-      xs->Belt.Array.map(StringOr.map(FileType.fromEnum))
-    )
+  let readDirectory: (t, Uri.t) => promise<array<StringOr.t<FileType.t>>> = async (self, uri) => {
+    (await readDirectory_raw(self, uri))->Belt.Array.map(StringOr.map(FileType.fromEnum, ...))
+  }
 
-  @bs.send
-  external readFile: (t, Uri.t) => Promise.t<Js.TypedArray2.Int8Array.t> = "readFile"
-  @bs.send external rename: (t, Uri.t, Uri.t) => Promise.t<unit> = "rename"
-  @bs.send
-  external renameWithOptions: (t, Uri.t, Uri.t, {"overwrite": bool}) => Promise.t<unit> = "rename"
-  @bs.send external stat: (t, Uri.t) => Promise.t<FileStat.t> = "stat"
-  @bs.send
-  external stwriteFileat: (t, Uri.t, Js.TypedArray2.Uint8Array.t) => Promise.t<unit> = "writeFile"
+  @send
+  external readFile: (t, Uri.t) => promise<Js.TypedArray2.Int8Array.t> = "readFile"
+  @send external rename: (t, Uri.t, Uri.t) => promise<unit> = "rename"
+  @send
+  external renameWithOptions: (t, Uri.t, Uri.t, {"overwrite": bool}) => promise<unit> = "rename"
+  @send external stat: (t, Uri.t) => promise<FileStat.t> = "stat"
+  @send
+  external stwriteFileat: (t, Uri.t, Js.TypedArray2.Uint8Array.t) => promise<unit> = "writeFile"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#ConfigurationChangeEvent
 module ConfigurationChangeEvent = {
   type t
 
-  @bs.send
+  @send
   external affectsConfiguration: (
     t,
     string,
@@ -2185,7 +2183,7 @@ module WorkspaceEdit = {
   // properties
   @get external size: t => int = "size"
   // methods
-  @bs.send
+  @send
   external createFile: (
     t,
     Uri.t,
@@ -2193,9 +2191,9 @@ module WorkspaceEdit = {
     option<WorkspaceEditEntryMetadata.t>,
     unit,
   ) => unit = "createFile"
-  @bs.send
+  @send
   external delete: (t, Uri.t, Range.t, option<WorkspaceEditEntryMetadata.t>) => unit = "delete"
-  @bs.send
+  @send
   external deleteFile: (
     t,
     Uri.t,
@@ -2203,18 +2201,18 @@ module WorkspaceEdit = {
     option<{"ignoreIfNotExists": bool, "recursive": bool}>,
     option<WorkspaceEditEntryMetadata.t>,
   ) => unit = "deleteFile"
-  @bs.send external entries_raw: t => array<'shit> = "entries"
+  @send external entries_raw: t => array<'shit> = "entries"
   let entries = (self: t): array<(Uri.t, array<TextEdit.t>)> => Array.map(shit => {
       let toUri = %raw("function (shit) { return shit[0] }")
       let toTextEdits = %raw("function (shit) { return shit[1] }")
       (toUri(shit), toTextEdits(shit))
     }, entries_raw(self))
-  @bs.send external get: (t, Uri.t) => array<TextEdit.t> = "get"
-  @bs.send external has: (t, Uri.t) => bool = "has"
-  @bs.send
+  @send external get: (t, Uri.t) => array<TextEdit.t> = "get"
+  @send external has: (t, Uri.t) => bool = "has"
+  @send
   external insert: (t, Uri.t, Position.t, string, option<WorkspaceEditEntryMetadata.t>) => unit =
     "insert"
-  @bs.send
+  @send
   external renameFile: (
     t,
     Uri.t,
@@ -2222,10 +2220,10 @@ module WorkspaceEdit = {
     option<{"ignoreIfExists": bool, "overwrite": bool}>,
     option<WorkspaceEditEntryMetadata.t>,
   ) => unit = "renameFile"
-  @bs.send
+  @send
   external replace: (t, Uri.t, Range.t, string, option<WorkspaceEditEntryMetadata.t>) => unit =
     "replace"
-  @bs.send external set: (t, Uri.t, array<TextEdit.t>) => unit = "set"
+  @send external set: (t, Uri.t, array<TextEdit.t>) => unit = "set"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#FileWillCreateEvent
@@ -2234,9 +2232,9 @@ module FileWillCreateEvent = {
   // properties
   @get external files: t => array<Uri.t> = "files"
   // methods
-  @bs.send
-  external waitUntilWithWorkspaceEdit: (t, Promise.t<WorkspaceEdit.t>) => unit = "waitUntil"
-  @bs.send external waitUntil: (t, Promise.t<'a>) => unit = "waitUntil"
+  @send
+  external waitUntilWithWorkspaceEdit: (t, promise<WorkspaceEdit.t>) => unit = "waitUntil"
+  @send external waitUntil: (t, promise<'a>) => unit = "waitUntil"
 }
 // https://code.visualstudio.com/api/references/vscode-api#FileWillDeleteEvent
 module FileWillDeleteEvent = {
@@ -2244,9 +2242,9 @@ module FileWillDeleteEvent = {
   // properties
   @get external files: t => array<Uri.t> = "files"
   // methods
-  @bs.send
-  external waitUntilWithWorkspaceEdit: (t, Promise.t<WorkspaceEdit.t>) => unit = "waitUntil"
-  @bs.send external waitUntil: (t, Promise.t<'a>) => unit = "waitUntil"
+  @send
+  external waitUntilWithWorkspaceEdit: (t, promise<WorkspaceEdit.t>) => unit = "waitUntil"
+  @send external waitUntil: (t, promise<'a>) => unit = "waitUntil"
 }
 // https://code.visualstudio.com/api/references/vscode-api#FileWillRenameEvent
 module FileWillRenameEvent = {
@@ -2255,9 +2253,9 @@ module FileWillRenameEvent = {
   @get
   external files: t => array<{"newUri": Uri.t, "oldUri": Uri.t}> = "files"
   // methods
-  @bs.send
-  external waitUntilWithWorkspaceEdit: (t, Promise.t<WorkspaceEdit.t>) => unit = "waitUntil"
-  @bs.send external waitUntil: (t, Promise.t<'a>) => unit = "waitUntil"
+  @send
+  external waitUntilWithWorkspaceEdit: (t, promise<WorkspaceEdit.t>) => unit = "waitUntil"
+  @send external waitUntil: (t, promise<'a>) => unit = "waitUntil"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#TextDocumentSaveReason
@@ -2289,9 +2287,9 @@ module TextDocumentWillSaveEvent = {
   @get external reason_raw: t => int = "reason"
   let reason = self => TextDocumentSaveReason.fromEnum(self->reason_raw)
   // methods
-  @bs.send
-  external waitUntilWithTextEdit: (t, Promise.t<TextEdit.t>) => unit = "waitUntil"
-  @bs.send external waitUntil: (t, Promise.t<'a>) => unit = "waitUntil"
+  @send
+  external waitUntilWithTextEdit: (t, promise<TextEdit.t>) => unit = "waitUntil"
+  @send external waitUntil: (t, promise<'a>) => unit = "waitUntil"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#RelativePattern
@@ -2316,11 +2314,11 @@ module GlobPattern = {
 module FileSystemWatcher = {
   type t
   // events
-  @bs.send
+  @send
   external onDidChange: (t, Uri.t => unit) => Disposable.t = "onDidChange"
-  @bs.send
+  @send
   external onDidCreate: (t, Uri.t => unit) => Disposable.t = "onDidCreate"
-  @bs.send
+  @send
   external onDidDelete: (t, Uri.t => unit) => Disposable.t = "onDidDelete"
   // static
   @module("vscode") @scope("FileSystemWatcher")
@@ -2333,17 +2331,17 @@ module FileSystemWatcher = {
   @get external ignoreCreateEvents: t => bool = "ignoreCreateEvents"
   @get external ignoreDeleteEvents: t => bool = "ignoreDeleteEvents"
   // methods
-  @bs.send external dispose: t => 'a = "dispose"
+  @send external dispose: t => 'a = "dispose"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#WorkspaceConfiguration
 module WorkspaceConfiguration = {
   type t
   // methods
-  @bs.send external get: (t, string) => option<'a> = "get"
-  @bs.send external getWithDefault: (t, string, 'a) => 'a = "get"
-  @bs.send external has: (t, string) => bool = "has"
-  @bs.send
+  @send external get: (t, string) => option<'a> = "get"
+  @send external getWithDefault: (t, string, 'a) => 'a = "get"
+  @send external has: (t, string) => bool = "has"
+  @send
   external inspect: (
     t,
     string,
@@ -2359,20 +2357,14 @@ module WorkspaceConfiguration = {
     "workspaceLanguageValue": 'a,
     "workspaceValue": 'a,
   }> = "inspect"
-  @bs.send
-  external updateGlobalSettings: (t, string, 'a, @as(1) _, option<bool>) => Promise.t<unit> =
+  @send
+  external updateGlobalSettings: (t, string, 'a, @as(1) _, option<bool>) => promise<unit> = "update"
+  @send
+  external updateWorkspaceSettings: (t, string, 'a, @as(2) _, option<bool>) => promise<unit> =
     "update"
-  @bs.send
-  external updateWorkspaceSettings: (t, string, 'a, @as(2) _, option<bool>) => Promise.t<unit> =
+  @send
+  external updateWorkspaceFolderSettings: (t, string, 'a, @as(3) _, option<bool>) => promise<unit> =
     "update"
-  @bs.send
-  external updateWorkspaceFolderSettings: (
-    t,
-    string,
-    'a,
-    @as(3) _,
-    option<bool>,
-  ) => Promise.t<unit> = "update"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#TextDocumentContentProvider
@@ -2383,7 +2375,7 @@ module TextDocumentContentProvider = {
   @module("vscode") @scope("workspace")
   external onDidChange: option<Event.t<Uri.t>> = "onDidChange"
   // methods
-  @bs.send
+  @send
   external provideTextDocumentContent: (t, Uri.t, CancellationToken.t) => ProviderResult.t<string> =
     "provideTextDocumentContent"
 }
@@ -2393,10 +2385,10 @@ module TextDocumentContentProvider = {
 module TaskProvider = {
   type t<'a>
   // methods
-  @bs.send
+  @send
   external provideTasks: (t<'a>, CancellationToken.t) => ProviderResult.t<array<'a>> =
     "provideTasks"
-  @bs.send
+  @send
   external resolveTask: (t<'a>, 'a, CancellationToken.t) => ProviderResult.t<'a> = "resolveTask"
 }
 
@@ -2455,7 +2447,7 @@ module Workspace = {
   external onWillSaveTextDocument: Event.t<TextDocumentWillSaveEvent.t> = "onWillSaveTextDocument"
   // functions
   @module("vscode") @scope("workspace")
-  external applyEdit: WorkspaceEdit.t => Promise.t<bool> = "applyEdit"
+  external applyEdit: WorkspaceEdit.t => promise<bool> = "applyEdit"
   @module("vscode") @scope("workspace")
   external asRelativePath: (string, option<bool>) => string = "asRelativePath"
   @module("vscode") @scope("workspace")
@@ -2472,7 +2464,7 @@ module Workspace = {
     GlobPattern.t,
     ~exclude: Js.nullable<GlobPattern.t>=?,
     ~token: CancellationToken.t=?,
-  ) => Promise.t<array<Uri.t>> = "findFiles"
+  ) => promise<array<Uri.t>> = "findFiles"
   @module("vscode") @scope("workspace")
   external getConfiguration: (option<string>, option<Uri.t>) => WorkspaceConfiguration.t =
     "getConfiguration"
@@ -2491,14 +2483,14 @@ module Workspace = {
   @module("vscode") @scope("workspace")
   external getWorkspaceFolder: Uri.t => option<WorkspaceFolder.t> = "getWorkspaceFolder"
   @module("vscode") @scope("workspace")
-  external openTextDocument: Uri.t => Promise.t<TextDocument.t> = "openTextDocument"
+  external openTextDocument: Uri.t => promise<TextDocument.t> = "openTextDocument"
   @module("vscode") @scope("workspace")
-  external openTextDocumentWithFileName: string => Promise.t<TextDocument.t> = "openTextDocument"
+  external openTextDocumentWithFileName: string => promise<TextDocument.t> = "openTextDocument"
   @module("vscode") @scope("workspace")
   external openTextDocumentWithOptions: option<{
     "content": string,
     "language": string,
-  }> => Promise.t<TextDocument.t> = "openTextDocument"
+  }> => promise<TextDocument.t> = "openTextDocument"
   @module("vscode") @scope("workspace")
   external registerFileSystemProvider: (
     string,
@@ -2514,13 +2506,13 @@ module Workspace = {
     TextDocumentContentProvider.t,
   ) => Disposable.t = "registerTextDocumentContentProvider"
   @module("vscode") @scope("workspace")
-  external saveAll: option<bool> => Promise.t<bool> = "saveAll"
+  external saveAll: option<bool> => promise<bool> = "saveAll"
   @module("vscode") @scope("workspace") @variadic
   external updateWorkspaceFolders: (
     int,
     option<int>,
     array<{"name": string, "uri": Uri.t}>,
-  ) => Promise.t<bool> = "updateWorkspaceFolders"
+  ) => promise<bool> = "updateWorkspaceFolders"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#ExtensionKind
@@ -2557,7 +2549,7 @@ module Extension = {
   @get external packageJSON: t<'a> => 'json = "packageJSON"
 
   // methods
-  @bs.send external activate: t<'a> => Promise.t<'a> = "activate"
+  @send external activate: t<'a> => promise<'a> = "activate"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#extensions
@@ -2700,17 +2692,17 @@ module DiagnosticCollection = {
   // properties
   @get external name: t => string = "name"
   // methods
-  @bs.send external clear: t => unit = "clear"
-  @bs.send external delete: (t, Uri.t) => unit = "delete"
-  @bs.send external dispose: t => unit = "dispose"
-  @bs.send
+  @send external clear: t => unit = "clear"
+  @send external delete: (t, Uri.t) => unit = "delete"
+  @send external dispose: t => unit = "dispose"
+  @send
   external forEach: (t, (Uri.t, array<Diagnostic.t>, t) => 'a) => unit = "forEach"
-  @bs.send external get: (t, Uri.t) => option<array<Diagnostic.t>> = "get"
-  @bs.send external has: (t, Uri.t) => bool = "has"
-  @bs.send external set: (t, Uri.t) => unit = "set"
-  @bs.send
+  @send external get: (t, Uri.t) => option<array<Diagnostic.t>> = "get"
+  @send external has: (t, Uri.t) => bool = "has"
+  @send external set: (t, Uri.t) => unit = "set"
+  @send
   external setDiagnostics: (t, Uri.t, array<Diagnostic.t>) => unit = "set"
-  @bs.send
+  @send
   external setDiagnosticEntries: (t, array<(Uri.t, option<array<Diagnostic.t>>)>) => unit = "set"
 }
 
@@ -2733,20 +2725,20 @@ module CallHierarchyIncomingCall = {
 module CallHierarchyProvider = {
   type t
   // methods
-  @bs.send
+  @send
   external prepareCallHierarchy: (
     t,
     TextDocument.t,
     Position.t,
     CancellationToken.t,
   ) => ProviderResult.t<array<CallHierarchyItem.t>> = "prepareCallHierarchy"
-  @bs.send
+  @send
   external provideCallHierarchyIncomingCalls: (
     t,
     CallHierarchyItem.t,
     CancellationToken.t,
   ) => ProviderResult.t<array<CallHierarchyIncomingCall.t>> = "provideCallHierarchyIncomingCalls"
-  @bs.send
+  @send
   external provideCallHierarchyOutgoingCalls: (
     t,
     CallHierarchyItem.t,
@@ -2893,11 +2885,11 @@ module SemanticTokensBuilder = {
   @module("vscode") @new
   external makeWithLegend: SemanticTokensLegend.t => t = "SemanticTokensBuilder"
   // methods
-  @bs.send external build: unit => SemanticsTokens.t = "build"
-  @bs.send external buildWithResultId: string => SemanticsTokens.t = "build"
-  @bs.send
+  @send external build: unit => SemanticsTokens.t = "build"
+  @send external buildWithResultId: string => SemanticsTokens.t = "build"
+  @send
   external push: (int, int, int, int, option<int>) => unit = "push"
-  @bs.send
+  @send
   external pushLegend: (Range.t, string, option<array<string>>) => unit = "push"
 }
 
@@ -2928,7 +2920,7 @@ module Languages = {
   @module("vscode") @scope("languages")
   external getDiagnosticEntries: Uri.t => array<(Uri.t, array<Diagnostic.t>)> = "getDiagnostics"
   @module("vscode") @scope("languages")
-  external getLanguages: unit => Promise.t<array<string>> = "getLanguages"
+  external getLanguages: unit => promise<array<string>> = "getLanguages"
   @module("vscode") @scope("languages")
   external match_: (DocumentSelector.t, TextDocument.t) => int = "match"
   @module("vscode") @scope("languages")

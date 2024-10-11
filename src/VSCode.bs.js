@@ -2,23 +2,13 @@
 'use strict';
 
 var $$Array = require("rescript/lib/js/array.js");
-var Curry = require("rescript/lib/js/curry.js");
 var Vscode = require("vscode");
 var Js_dict = require("rescript/lib/js/js_dict.js");
-var $$Promise = require("reason-promise/src/js/promise.bs.js");
 var Js_array = require("rescript/lib/js/js_array.js");
 var Belt_Array = require("rescript/lib/js/belt_Array.js");
 var Belt_Option = require("rescript/lib/js/belt_Option.js");
 
-function map(x, f) {
-  return Belt_Option.map(x, (function (result) {
-                return $$Promise.map(result, f);
-              }));
-}
-
-var ProviderResult = {
-  map: map
-};
+var ProviderResult = {};
 
 var ThemeColor = {};
 
@@ -33,25 +23,25 @@ function others(v) {
 function classify(v) {
   if (typeof v === "string") {
     return {
-            TAG: 0,
+            TAG: "String",
             _0: v,
             [Symbol.for("name")]: "String"
           };
   } else {
     return {
-            TAG: 1,
+            TAG: "Others",
             _0: v,
             [Symbol.for("name")]: "Others"
           };
   }
 }
 
-function map$1(f, xs) {
+function map(f, xs) {
   var s = classify(xs);
-  if (s.TAG === /* String */0) {
+  if (s.TAG === "String") {
     return s._0;
   } else {
-    return Curry._1(f, s._0);
+    return f(s._0);
   }
 }
 
@@ -59,7 +49,7 @@ var StringOr = {
   string: string,
   others: others,
   classify: classify,
-  map: map$1
+  map: map
 };
 
 function array(v) {
@@ -73,25 +63,25 @@ function single(v) {
 function classify$1(v) {
   if (Array.isArray(v)) {
     return {
-            TAG: 0,
+            TAG: "Array",
             _0: v,
             [Symbol.for("name")]: "Array"
           };
   } else {
     return {
-            TAG: 1,
+            TAG: "Single",
             _0: v,
             [Symbol.for("name")]: "Single"
           };
   }
 }
 
-function map$2(f, xs) {
+function map$1(f, xs) {
   var s = classify$1(xs);
-  if (s.TAG === /* Array */0) {
+  if (s.TAG === "Array") {
     return Js_array.map(f, s._0);
   } else {
-    return Curry._1(f, s._0);
+    return f(s._0);
   }
 }
 
@@ -99,7 +89,7 @@ var ArrayOr = {
   array: array,
   single: single,
   classify: classify$1,
-  map: map$2
+  map: map$1
 };
 
 function onMessage(callback) {
@@ -120,18 +110,26 @@ var Memento = {};
 var Uri = {};
 
 function toEnum(x) {
-  return x + 1 | 0;
+  switch (x) {
+    case "Replace" :
+        return 1;
+    case "Append" :
+        return 2;
+    case "Prepend" :
+        return 3;
+    
+  }
 }
 
 function fromEnum(x) {
   if (x !== 1) {
     if (x !== 2) {
-      return /* Prepend */2;
+      return "Prepend";
     } else {
-      return /* Append */1;
+      return "Append";
     }
   } else {
-    return /* Replace */0;
+    return "Replace";
   }
 }
 
@@ -153,18 +151,26 @@ var EnvironmentVariableMutator = {
 var EnvironmentVariableCollection = {};
 
 function toEnum$1(x) {
-  return x + 1 | 0;
+  switch (x) {
+    case "Production" :
+        return 1;
+    case "Development" :
+        return 2;
+    case "Test" :
+        return 3;
+    
+  }
 }
 
 function fromEnum$1(x) {
   if (x !== 1) {
     if (x !== 2) {
-      return /* Test */2;
+      return "Test";
     } else {
-      return /* Development */1;
+      return "Development";
     }
   } else {
-    return /* Production */0;
+    return "Production";
   }
 }
 
@@ -225,18 +231,18 @@ var Debug = {};
 var Clipboard = {};
 
 function toEnum$2(x) {
-  if (x) {
-    return 2;
-  } else {
+  if (x === "Desktop") {
     return 1;
+  } else {
+    return 2;
   }
 }
 
 function fromEnum$2(x) {
   if (x !== 1) {
-    return /* Web */1;
+    return "Web";
   } else {
-    return /* Desktop */0;
+    return "Desktop";
   }
 }
 
@@ -245,7 +251,7 @@ var UIKind = {
   fromEnum: fromEnum$2
 };
 
-function uiKind(param) {
+function uiKind() {
   return fromEnum$2(Vscode.env.uiKind);
 }
 
@@ -255,27 +261,27 @@ var Env = {
 
 function toEnum$3(x) {
   switch (x) {
-    case /* Active */0 :
+    case "Active" :
         return -1;
-    case /* Beside */1 :
+    case "Beside" :
         return -2;
-    case /* Eight */2 :
+    case "Eight" :
         return 8;
-    case /* Five */3 :
+    case "Five" :
         return 5;
-    case /* Four */4 :
+    case "Four" :
         return 4;
-    case /* Nine */5 :
+    case "Nine" :
         return 9;
-    case /* One */6 :
+    case "One" :
         return 1;
-    case /* Seven */7 :
+    case "Seven" :
         return 7;
-    case /* Six */8 :
+    case "Six" :
         return 6;
-    case /* Three */9 :
+    case "Three" :
         return 3;
-    case /* Two */10 :
+    case "Two" :
         return 2;
     
   }
@@ -284,30 +290,27 @@ function toEnum$3(x) {
 function fromEnum$3(x) {
   switch (x) {
     case -2 :
-        return /* Beside */1;
+        return "Beside";
     case -1 :
-        return /* Active */0;
+        return "Active";
     case 1 :
-        return /* One */6;
-    case 0 :
-    case 2 :
-        return /* Two */10;
+        return "One";
     case 3 :
-        return /* Three */9;
+        return "Three";
     case 4 :
-        return /* Four */4;
+        return "Four";
     case 5 :
-        return /* Five */3;
+        return "Five";
     case 6 :
-        return /* Six */8;
+        return "Six";
     case 7 :
-        return /* Seven */7;
+        return "Seven";
     case 8 :
-        return /* Eight */2;
+        return "Eight";
     case 9 :
-        return /* Nine */5;
+        return "Nine";
     default:
-      return /* Two */10;
+      return "Two";
   }
 }
 
@@ -328,13 +331,13 @@ function iconPath(self) {
   return Belt_Option.map(self.iconPath, (function ($$case) {
                 if (Belt_Option.isSome(Js_dict.get($$case, "dark"))) {
                   return {
-                          TAG: 1,
+                          TAG: "LightAndDark",
                           _0: $$case,
                           [Symbol.for("name")]: "LightAndDark"
                         };
                 } else {
                   return {
-                          TAG: 0,
+                          TAG: "Uri",
                           _0: $$case,
                           [Symbol.for("name")]: "Uri"
                         };
@@ -376,18 +379,18 @@ var $$Range = {};
 var TextLine = {};
 
 function toEnum$4(x) {
-  if (x) {
-    return 1;
-  } else {
+  if (x === "CRLF") {
     return 2;
+  } else {
+    return 1;
   }
 }
 
 function fromEnum$4(x) {
   if (x !== 2) {
-    return /* LF */1;
+    return "LF";
   } else {
-    return /* CRLF */0;
+    return "CRLF";
   }
 }
 
@@ -406,17 +409,17 @@ var TextDocument = {
 
 function toEnum$5(x) {
   switch (x) {
-    case /* Block */0 :
+    case "Block" :
         return 2;
-    case /* BlockOutline */1 :
+    case "BlockOutline" :
         return 5;
-    case /* Line */2 :
+    case "Line" :
         return 1;
-    case /* LineThing */3 :
+    case "LineThing" :
         return 4;
-    case /* Underline */4 :
+    case "Underline" :
         return 3;
-    case /* UnderlineThin */5 :
+    case "UnderlineThin" :
         return 6;
     
   }
@@ -425,17 +428,17 @@ function toEnum$5(x) {
 function fromEnum$5(x) {
   switch (x) {
     case 1 :
-        return /* Line */2;
+        return "Line";
     case 2 :
-        return /* Block */0;
+        return "Block";
     case 3 :
-        return /* Underline */4;
+        return "Underline";
     case 4 :
-        return /* LineThing */3;
+        return "LineThing";
     case 5 :
-        return /* BlockOutline */1;
+        return "BlockOutline";
     default:
-      return /* UnderlineThin */5;
+      return "UnderlineThin";
   }
 }
 
@@ -445,18 +448,26 @@ var TextEditorCursorStyle = {
 };
 
 function toEnum$6(x) {
-  return x;
+  switch (x) {
+    case "Off" :
+        return 0;
+    case "On" :
+        return 1;
+    case "Relative" :
+        return 2;
+    
+  }
 }
 
 function fromEnum$6(x) {
   if (x !== 0) {
     if (x !== 1) {
-      return /* Relative */2;
+      return "Relative";
     } else {
-      return /* On */1;
+      return "On";
     }
   } else {
-    return /* Off */0;
+    return "Off";
   }
 }
 
@@ -481,7 +492,7 @@ var TextEditorOptions = {
 var $$Selection = {};
 
 function setEndOfLine(self, eol) {
-  self.setEndOfLine(eol ? 1 : 2);
+  self.setEndOfLine(toEnum$4(eol));
 }
 
 var TextEditorEdit = {
@@ -492,13 +503,13 @@ var SnippetString = {};
 
 function toEnum$7(x) {
   switch (x) {
-    case /* AtTop */0 :
+    case "AtTop" :
         return 3;
-    case /* Default */1 :
+    case "Default" :
         return 0;
-    case /* InCenter */2 :
+    case "InCenter" :
         return 1;
-    case /* InCenterIfOutsideViewport */3 :
+    case "InCenterIfOutsideViewport" :
         return 2;
     
   }
@@ -507,13 +518,13 @@ function toEnum$7(x) {
 function fromEnum$7(x) {
   switch (x) {
     case 1 :
-        return /* InCenter */2;
+        return "InCenter";
     case 2 :
-        return /* InCenterIfOutsideViewport */3;
+        return "InCenterIfOutsideViewport";
     case 3 :
-        return /* AtTop */0;
+        return "AtTop";
     default:
-      return /* Default */1;
+      return "Default";
   }
 }
 
@@ -569,13 +580,13 @@ function extensionTerminalOptions(v) {
 function classify$2(v) {
   if ((v.hasOwnProperty('pty'))) {
     return {
-            TAG: 1,
+            TAG: "ExtensionTerminalOptions",
             _0: v,
             [Symbol.for("name")]: "ExtensionTerminalOptions"
           };
   } else {
     return {
-            TAG: 0,
+            TAG: "TerminalOptions",
             _0: v,
             [Symbol.for("name")]: "TerminalOptions"
           };
@@ -595,18 +606,26 @@ var WindowState = {};
 var TextEditorOptionsChangeEvent = {};
 
 function toEnum$8(x) {
-  return x + 1 | 0;
+  switch (x) {
+    case "Keyboard" :
+        return 1;
+    case "Mouse" :
+        return 2;
+    case "Command" :
+        return 3;
+    
+  }
 }
 
 function fromEnum$8(x) {
   if (x !== 1) {
     if (x !== 2) {
-      return /* Command */2;
+      return "Command";
     } else {
-      return /* Mouse */1;
+      return "Mouse";
     }
   } else {
-    return /* Keyboard */0;
+    return "Keyboard";
   }
 }
 
@@ -642,18 +661,18 @@ var QuickPick = {};
 var AccessibilityInformation = {};
 
 function toEnum$9(x) {
-  if (x) {
-    return 2;
-  } else {
+  if (x === "Left") {
     return 1;
+  } else {
+    return 2;
   }
 }
 
 function fromEnum$9(x) {
   if (x !== 1) {
-    return /* Right */1;
+    return "Right";
   } else {
-    return /* Left */0;
+    return "Left";
   }
 }
 
@@ -667,7 +686,7 @@ function alignment(self) {
 }
 
 function setAlignment(self, alignment) {
-  self.alignment = alignment ? 2 : 1;
+  self.alignment = toEnum$9(alignment);
 }
 
 var StatusBarItem = {
@@ -677,13 +696,13 @@ var StatusBarItem = {
 
 function toEnum$10(x) {
   switch (x) {
-    case /* Left */0 :
+    case "Left" :
         return 1;
-    case /* Center */1 :
+    case "Center" :
         return 2;
-    case /* Right */2 :
+    case "Right" :
         return 4;
-    case /* Full */3 :
+    case "Full" :
         return 7;
     
   }
@@ -692,15 +711,13 @@ function toEnum$10(x) {
 function fromEnum$10(x) {
   switch (x) {
     case 1 :
-        return /* Left */0;
+        return "Left";
     case 2 :
-        return /* Center */1;
-    case 3 :
-        return /* Full */3;
+        return "Center";
     case 4 :
-        return /* Right */2;
+        return "Right";
     default:
-      return /* Full */3;
+      return "Full";
   }
 }
 
@@ -710,14 +727,29 @@ var OverviewRulerLane = {
 };
 
 function toEnum$11(x) {
-  return x;
+  switch (x) {
+    case "OpenOpen" :
+        return 0;
+    case "ClosedClosed" :
+        return 1;
+    case "OpenClosed" :
+        return 2;
+    case "ClosedOpen" :
+        return 3;
+    
+  }
 }
 
 function fromEnum$11(x) {
-  if (x > 3 || x < 0) {
-    return /* OpenOpen */0;
-  } else {
-    return x;
+  switch (x) {
+    case 1 :
+        return "ClosedClosed";
+    case 2 :
+        return "OpenClosed";
+    case 3 :
+        return "ClosedOpen";
+    default:
+      return "OpenOpen";
   }
 }
 
@@ -770,17 +802,17 @@ var SaveDialogOptions = {};
 var WorkspaceFolderPickOptions = {};
 
 function encode(x) {
-  if (typeof x !== "number") {
+  if (typeof x === "object") {
     return {
             viewId: x._0
           };
   }
   switch (x) {
-    case /* Notification */0 :
+    case "Notification" :
         return 15;
-    case /* SourceControl */1 :
+    case "SourceControl" :
         return 1;
-    case /* Window */2 :
+    case "Window" :
         return 10;
     
   }
@@ -790,15 +822,16 @@ function classify$3(v) {
   if (typeof v === "int") {
     if (v !== 1) {
       if (v !== 15) {
-        return /* Window */2;
+        return "Window";
       } else {
-        return /* Notification */0;
+        return "Notification";
       }
     } else {
-      return /* SourceControl */1;
+      return "SourceControl";
     }
   } else {
     return {
+            TAG: "ViewId",
             _0: v,
             [Symbol.for("name")]: "ViewId"
           };
@@ -830,18 +863,26 @@ var TextDocumentShowOptions = {
 };
 
 function toEnum$12(x) {
-  return x + 1 | 0;
+  switch (x) {
+    case "Light" :
+        return 1;
+    case "Dark" :
+        return 2;
+    case "HighContrast" :
+        return 3;
+    
+  }
 }
 
 function fromEnum$12(x) {
   if (x !== 1) {
     if (x !== 2) {
-      return /* HighContrast */2;
+      return "HighContrast";
     } else {
-      return /* Dark */1;
+      return "Dark";
     }
   } else {
-    return /* Light */0;
+    return "Light";
   }
 }
 
@@ -884,13 +925,13 @@ var $$Window = {};
 
 function toEnum$13(x) {
   switch (x) {
-    case /* Unknown */0 :
+    case "Unknown" :
         return 0;
-    case /* File */1 :
+    case "File" :
         return 1;
-    case /* Directory */2 :
+    case "Directory" :
         return 2;
-    case /* SymbolicLink */3 :
+    case "SymbolicLink" :
         return 64;
     
   }
@@ -899,14 +940,22 @@ function toEnum$13(x) {
 function fromEnum$13(x) {
   if (x >= 3) {
     if (x !== 64) {
-      return /* Unknown */0;
+      return "Unknown";
     } else {
-      return /* SymbolicLink */3;
+      return "SymbolicLink";
     }
-  } else if (x >= 0) {
-    return x;
-  } else {
-    return /* Unknown */0;
+  }
+  if (x < 0) {
+    return "Unknown";
+  }
+  switch (x) {
+    case 0 :
+        return "Unknown";
+    case 1 :
+        return "File";
+    case 2 :
+        return "Directory";
+    
   }
 }
 
@@ -923,11 +972,9 @@ var FileStat = {
   type_: type_$1
 };
 
-function readDirectory(self, uri) {
-  return $$Promise.map(self.readDirectory(uri), (function (xs) {
-                return Belt_Array.map(xs, (function (param) {
-                              return map$1(fromEnum$13, param);
-                            }));
+async function readDirectory(self, uri) {
+  return Belt_Array.map(await self.readDirectory(uri), (function (extra) {
+                return map(fromEnum$13, extra);
               }));
 }
 
@@ -952,7 +999,7 @@ var FileRenameEvent = {};
 var WorkspaceEditEntryMetadata = {};
 
 function setEndOfLine$1(eol) {
-  return Vscode.TextEdit.setEndOfLine(eol ? 1 : 2);
+  return Vscode.TextEdit.setEndOfLine(toEnum$4(eol));
 }
 
 var TextEdit = {
@@ -982,11 +1029,11 @@ var FileWillRenameEvent = {};
 
 function toEnum$14(x) {
   switch (x) {
-    case /* AfterDelay */0 :
+    case "AfterDelay" :
         return 2;
-    case /* FocusOut */1 :
+    case "FocusOut" :
         return 3;
-    case /* Manual */2 :
+    case "Manual" :
         return 1;
     
   }
@@ -995,12 +1042,12 @@ function toEnum$14(x) {
 function fromEnum$14(x) {
   if (x !== 2) {
     if (x !== 3) {
-      return /* Manual */2;
+      return "Manual";
     } else {
-      return /* FocusOut */1;
+      return "FocusOut";
     }
   } else {
-    return /* AfterDelay */0;
+    return "AfterDelay";
   }
 }
 
@@ -1034,18 +1081,18 @@ var FileSystemProvider = {};
 var Workspace = {};
 
 function toEnum$15(x) {
-  if (x) {
-    return 2;
-  } else {
+  if (x === "UI") {
     return 1;
+  } else {
+    return 2;
   }
 }
 
 function fromEnum$15(x) {
   if (x !== 1) {
-    return /* Workspace */1;
+    return "Workspace";
   } else {
-    return /* UI */0;
+    return "UI";
   }
 }
 
@@ -1073,14 +1120,29 @@ var LocationLink = {};
 var DiagnosticRelatedInformation = {};
 
 function toEnum$16(x) {
-  return x;
+  switch (x) {
+    case "Error" :
+        return 0;
+    case "Warning" :
+        return 1;
+    case "Information" :
+        return 2;
+    case "Hint" :
+        return 3;
+    
+  }
 }
 
 function fromEnum$16(x) {
-  if (x > 2 || x < 0) {
-    return /* Hint */3;
-  } else {
-    return x;
+  switch (x) {
+    case 0 :
+        return "Error";
+    case 1 :
+        return "Warning";
+    case 2 :
+        return "Information";
+    default:
+      return "Hint";
   }
 }
 
@@ -1090,18 +1152,18 @@ var DiagnosticSeverity = {
 };
 
 function toEnum$17(x) {
-  if (x) {
-    return 2;
-  } else {
+  if (x === "Unnecessary") {
     return 1;
+  } else {
+    return 2;
   }
 }
 
 function fromEnum$17(x) {
   if (x !== 1) {
-    return /* Deprecated */1;
+    return "Deprecated";
   } else {
-    return /* Unnecessary */0;
+    return "Unnecessary";
   }
 }
 
@@ -1155,13 +1217,13 @@ function locationLinks(v) {
 function classify$4(v) {
   if ((function (a) { return a.targetRange === undefined})(v)) {
     return {
-            TAG: 0,
+            TAG: "Location",
             _0: v,
             [Symbol.for("name")]: "Location"
           };
   } else {
     return {
-            TAG: 1,
+            TAG: "LocationLink",
             _0: v,
             [Symbol.for("name")]: "LocationLink"
           };

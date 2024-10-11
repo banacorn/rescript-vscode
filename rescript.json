@@ -15,7 +15,5 @@
   "bsc-flags": [
     "-bs-g"
   ],
-  "bs-dependencies": [
-    "reason-promise"
-  ]
+  "bs-dependencies": []
 }
