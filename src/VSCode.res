@@ -2,7 +2,11 @@
 // 1.52.0
 module ProviderResult = {
   type t<'a> = option<promise<'a>>
-  // let map = (x, f) => x->Belt.Option.map(result => result->Promise.map(f))
+  let map = (x, f) =>
+    x->Belt.Option.map(async result => {
+      let result' = await result
+      f(result')
+    })
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#ThemeColor
