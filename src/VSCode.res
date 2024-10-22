@@ -107,9 +107,12 @@ module Disposable = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#Event
-module Event = {
-  type t<'a> = ('a => unit) => Disposable.t
-}
+//
+//  UPDATE: deprecated at the moment, because somehow `('a => unit) => Disposable.t` causes function to be curried while the expaneded `('a => unit) => Disposable.t` does not
+//
+// module Event = {
+//   type t<'a> = ('a => unit) => Disposable.t
+// }
 
 // https://code.visualstudio.com/api/references/vscode-api#Memento
 module Memento = {
@@ -463,17 +466,17 @@ module Debug = {
 
   // events
   @module("vscode") @scope("debug")
-  external onDidChangeActiveDebugSession: Event.t<option<DebugSession.t>> =
+  external onDidChangeActiveDebugSession: (option<DebugSession.t> => unit) => Disposable.t =
     "onDidChangeActiveDebugSession"
   @module("vscode") @scope("debug")
-  external onDidChangeBreakpoints: Event.t<BreakpointsChangeEvent.t> = "onDidChangeBreakpoints"
+  external onDidChangeBreakpoints: (BreakpointsChangeEvent.t => unit) => Disposable.t = "onDidChangeBreakpoints"
   @module("vscode") @scope("debug")
-  external onDidReceiveDebugSessionCustomEvent: Event.t<DebugSessionCustomEvent.t> =
+  external onDidReceiveDebugSessionCustomEvent: (DebugSessionCustomEvent.t => unit) => Disposable.t =
     "onDidReceiveDebugSessionCustomEvent"
   @module("vscode") @scope("debug")
-  external onDidStartDebugSession: Event.t<DebugSession.t> = "onDidStartDebugSession"
+  external onDidStartDebugSession: (DebugSession.t => unit) => Disposable.t = "onDidStartDebugSession"
   @module("vscode") @scope("debug")
-  external onDidTerminateDebugSession: Event.t<DebugSession.t> = "onDidTerminateDebugSession"
+  external onDidTerminateDebugSession: (DebugSession.t => unit) => Disposable.t = "onDidTerminateDebugSession"
 
   // functions
   @module("vscode") @scope("debug")
@@ -1812,33 +1815,33 @@ module Window = {
   external visibleTextEditors: array<TextEditor.t> = "visibleTextEditors"
   // events
   @module("vscode") @scope("window")
-  external onDidChangeActiveColorTheme: Event.t<ColorTheme.t> = "onDidChangeActiveColorTheme"
+  external onDidChangeActiveColorTheme: (ColorTheme.t => unit) => Disposable.t = "onDidChangeActiveColorTheme"
   @module("vscode") @scope("window")
-  external onDidChangeActiveTerminal: Event.t<option<Terminal.t>> = "onDidChangeActiveTerminal"
+  external onDidChangeActiveTerminal: (option<Terminal.t> => unit) => Disposable.t = "onDidChangeActiveTerminal"
   @module("vscode") @scope("window")
-  external onDidChangeActiveTextEditor: Event.t<option<TextEditor.t>> =
+  external onDidChangeActiveTextEditor: (option<TextEditor.t> => unit) => Disposable.t =
     "onDidChangeActiveTextEditor"
   @module("vscode") @scope("window")
-  external onDidChangeTextEditorOptions: Event.t<TextEditorOptionsChangeEvent.t> =
+  external onDidChangeTextEditorOptions: (TextEditorOptionsChangeEvent.t => unit) => Disposable.t =
     "onDidChangeTextEditorOptions"
   @module("vscode") @scope("window")
-  external onDidChangeTextEditorSelection: Event.t<TextEditorSelectionChangeEvent.t> =
+  external onDidChangeTextEditorSelection: (TextEditorSelectionChangeEvent.t => unit) => Disposable.t =
     "onDidChangeTextEditorSelection"
   @module("vscode") @scope("window")
-  external onDidChangeTextEditorViewColumn: Event.t<TextEditorViewColumnChangeEvent.t> =
+  external onDidChangeTextEditorViewColumn: (TextEditorViewColumnChangeEvent.t => unit) => Disposable.t =
     "onDidChangeTextEditorViewColumn"
   @module("vscode") @scope("window")
-  external onDidChangeTextEditorVisibleRanges: Event.t<TextEditorVisibleRangesChangeEvent.t> =
+  external onDidChangeTextEditorVisibleRanges: (TextEditorVisibleRangesChangeEvent.t => unit) => Disposable.t =
     "onDidChangeTextEditorVisibleRanges"
   @module("vscode") @scope("window")
-  external onDidChangeVisibleTextEditors: Event.t<array<TextEditor.t>> =
+  external onDidChangeVisibleTextEditors: (array<TextEditor.t> => unit) => Disposable.t =
     "onDidChangeVisibleTextEditors"
   @module("vscode") @scope("window")
-  external onDidChangeWindowState: Event.t<WindowState.t> = "onDidChangeWindowState"
+  external onDidChangeWindowState: (WindowState.t => unit) => Disposable.t = "onDidChangeWindowState"
   @module("vscode") @scope("window")
-  external onDidCloseTerminal: Event.t<Terminal.t> = "onDidCloseTerminal"
+  external onDidCloseTerminal: (Terminal.t => unit) => Disposable.t = "onDidCloseTerminal"
   @module("vscode") @scope("window")
-  external onDidOpenTerminal: Event.t<Terminal.t> = "onDidOpenTerminal"
+  external onDidOpenTerminal: (Terminal.t => unit) => Disposable.t = "onDidOpenTerminal"
 
   // functions
   @module("vscode") @scope("window")
@@ -2377,7 +2380,7 @@ module TextDocumentContentProvider = {
   type t
   // events
   @module("vscode") @scope("workspace")
-  external onDidChange: option<Event.t<Uri.t>> = "onDidChange"
+  external onDidChange: option<(Uri.t => unit) => Disposable.t> = "onDidChange"
   // methods
   @send
   external provideTextDocumentContent: (t, Uri.t, CancellationToken.t) => ProviderResult.t<string> =
@@ -2422,33 +2425,35 @@ module Workspace = {
 
   // events
   @module("vscode") @scope("workspace")
-  external onDidChangeConfiguration: Event.t<ConfigurationChangeEvent.t> =
+  external onDidChangeConfiguration: (ConfigurationChangeEvent.t => unit) => Disposable.t =
     "onDidChangeConfiguration"
   @module("vscode") @scope("workspace")
-  external onDidChangeTextDocument: Event.t<TextDocumentChangeEvent.t> = "onDidChangeTextDocument"
+  external onDidChangeTextDocument: (TextDocumentChangeEvent.t => unit) => Disposable.t =
+    "onDidChangeTextDocument"
+
   @module("vscode") @scope("workspace")
-  external onDidChangeWorkspaceFolders: Event.t<WorkspaceFoldersChangeEvent.t> =
+  external onDidChangeWorkspaceFolders: (WorkspaceFoldersChangeEvent.t => unit) => Disposable.t =
     "onDidChangeWorkspaceFolders"
   @module("vscode") @scope("workspace")
-  external onDidCloseTextDocument: Event.t<TextDocument.t> = "onDidCloseTextDocument"
+  external onDidCloseTextDocument: (TextDocument.t => unit) => Disposable.t = "onDidCloseTextDocument"
   @module("vscode") @scope("workspace")
-  external onDidCreateFiles: Event.t<FileCreateEvent.t> = "onDidCreateFiles"
+  external onDidCreateFiles: (FileCreateEvent.t => unit) => Disposable.t = "onDidCreateFiles"
   @module("vscode") @scope("workspace")
-  external onDidDeleteFiles: Event.t<FileDeleteEvent.t> = "onDidDeleteFiles"
+  external onDidDeleteFiles: (FileDeleteEvent.t => unit) => Disposable.t = "onDidDeleteFiles"
   @module("vscode") @scope("workspace")
-  external onDidOpenTextDocument: Event.t<TextDocument.t> = "onDidOpenTextDocument"
+  external onDidOpenTextDocument: (TextDocument.t => unit) => Disposable.t = "onDidOpenTextDocument"
   @module("vscode") @scope("workspace")
-  external onDidRenameFiles: Event.t<FileRenameEvent.t> = "onDidRenameFiles"
+  external onDidRenameFiles: (FileRenameEvent.t => unit) => Disposable.t = "onDidRenameFiles"
   @module("vscode") @scope("workspace")
-  external onDidSaveTextDocument: Event.t<TextDocument.t> = "onDidSaveTextDocument"
+  external onDidSaveTextDocument: (TextDocument.t => unit) => Disposable.t = "onDidSaveTextDocument"
   @module("vscode") @scope("workspace")
-  external onWillCreateFiles: Event.t<FileWillCreateEvent.t> = "onWillCreateFiles"
+  external onWillCreateFiles: (FileWillCreateEvent.t => unit) => Disposable.t = "onWillCreateFiles"
   @module("vscode") @scope("workspace")
-  external onWillDeleteFiles: Event.t<FileWillDeleteEvent.t> = "onWillDeleteFiles"
+  external onWillDeleteFiles: (FileWillDeleteEvent.t => unit) => Disposable.t = "onWillDeleteFiles"
   @module("vscode") @scope("workspace")
-  external onWillRenameFiles: Event.t<FileWillRenameEvent.t> = "onWillRenameFiles"
+  external onWillRenameFiles: (FileWillRenameEvent.t => unit) => Disposable.t = "onWillRenameFiles"
   @module("vscode") @scope("workspace")
-  external onWillSaveTextDocument: Event.t<TextDocumentWillSaveEvent.t> = "onWillSaveTextDocument"
+  external onWillSaveTextDocument: (TextDocumentWillSaveEvent.t => unit) => Disposable.t = "onWillSaveTextDocument"
   // functions
   @module("vscode") @scope("workspace")
   external applyEdit: WorkspaceEdit.t => promise<bool> = "applyEdit"
@@ -2564,7 +2569,7 @@ module Extensions = {
   external all: array<Extension.t<'a>> = "all"
   // events
   @module("vscode") @scope("extensions")
-  external onDidChange: Event.t<unit> = "onDidChange"
+  external onDidChange: (unit => unit) => Disposable.t = "onDidChange"
   // functions
   @module("vscode") @scope("extensions")
   external getExtension: string => option<Extension.t<'a>> = "getExtension"
@@ -2776,7 +2781,7 @@ module CodeLens = {
 // https://code.visualstudio.com/api/references/vscode-api#CodeLensProvider
 module CodeLensProvider = {
   type t<'a> = {
-    onDidChangeCodeLenses: option<Event.t<unit>>,
+    onDidChangeCodeLenses: option<(unit => unit) => Disposable.t>,
     resolveCodeLens: ('a, CancellationToken.t) => ProviderResult.t<'a>,
     provideCodeLenses: (TextDocument.t, CancellationToken.t) => ProviderResult.t<array<'a>>,
   }
@@ -2913,7 +2918,7 @@ module DocumentSemanticTokensProvider = {
 module Languages = {
   // events
   @module("vscode") @scope("languages")
-  external onDidChangeDiagnostics: Event.t<DiagnosticChangeEvent.t> = "onDidChangeDiagnostics"
+  external onDidChangeDiagnostics: (DiagnosticChangeEvent.t => unit) => Disposable.t = "onDidChangeDiagnostics"
 
   // functions
   @module("vscode") @scope("languages")
