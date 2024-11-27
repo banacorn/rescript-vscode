@@ -1038,7 +1038,6 @@ module TextEditorOptionsChangeEvent = {
 // https://code.visualstudio.com/api/references/vscode-api#TextEditorSelectionChangeKind
 // 1.95
 module TextEditorSelectionChangeKind = {
-  type raw = int
   type t =
     | @as(1) Keyboard
     | @as(2) Mouse
@@ -1142,7 +1141,6 @@ module StatusBarItem = {
 // https://code.visualstudio.com/api/references/vscode-api#OverviewRulerLane;
 // 1.95
 module OverviewRulerLane = {
-  type raw = int
   type t =
     | @as(1) Left
     | @as(2) Center
@@ -1153,7 +1151,6 @@ module OverviewRulerLane = {
 // https://code.visualstudio.com/api/references/vscode-api#DecorationRangeBehavior;
 // 1.95
 module DecorationRangeBehavior = {
-  type raw = int
   type t =
     | @as(0) OpenOpen
     | @as(1) ClosedClosed
@@ -1216,9 +1213,9 @@ module DecorationRenderOptions = {
     @optional
     overviewRulerColor: StringOr.t<ThemeColor.t>,
     @optional
-    overviewRulerLane: OverviewRulerLane.raw,
+    overviewRulerLane: OverviewRulerLane.t,
     @optional
-    rangeBehavior: DecorationRangeBehavior.raw,
+    rangeBehavior: DecorationRangeBehavior.t,
     @optional
     textDecoration: string,
   }
@@ -1810,7 +1807,6 @@ module Window = {
 // https://code.visualstudio.com/api/references/vscode-api#FileType
 // 1.95
 module FileType = {
-  type raw = int
   type t =
     | @as(0) Unknown
     | @as(1) File
