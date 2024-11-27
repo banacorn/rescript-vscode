@@ -469,14 +469,18 @@ module Debug = {
   external onDidChangeActiveDebugSession: (option<DebugSession.t> => unit) => Disposable.t =
     "onDidChangeActiveDebugSession"
   @module("vscode") @scope("debug")
-  external onDidChangeBreakpoints: (BreakpointsChangeEvent.t => unit) => Disposable.t = "onDidChangeBreakpoints"
+  external onDidChangeBreakpoints: (BreakpointsChangeEvent.t => unit) => Disposable.t =
+    "onDidChangeBreakpoints"
   @module("vscode") @scope("debug")
-  external onDidReceiveDebugSessionCustomEvent: (DebugSessionCustomEvent.t => unit) => Disposable.t =
-    "onDidReceiveDebugSessionCustomEvent"
+  external onDidReceiveDebugSessionCustomEvent: (
+    DebugSessionCustomEvent.t => unit
+  ) => Disposable.t = "onDidReceiveDebugSessionCustomEvent"
   @module("vscode") @scope("debug")
-  external onDidStartDebugSession: (DebugSession.t => unit) => Disposable.t = "onDidStartDebugSession"
+  external onDidStartDebugSession: (DebugSession.t => unit) => Disposable.t =
+    "onDidStartDebugSession"
   @module("vscode") @scope("debug")
-  external onDidTerminateDebugSession: (DebugSession.t => unit) => Disposable.t = "onDidTerminateDebugSession"
+  external onDidTerminateDebugSession: (DebugSession.t => unit) => Disposable.t =
+    "onDidTerminateDebugSession"
 
   // functions
   @module("vscode") @scope("debug")
@@ -550,48 +554,21 @@ module Env = {
   external openExternal: Uri.t => promise<bool> = "openExternal"
 }
 
+// https://code.visualstudio.com/api/references/vscode-api#ViewColumn
+// 1.95
 module ViewColumn = {
   type t =
-    | Active
-    | Beside
-    | Eight
-    | Five
-    | Four
-    | Nine
-    | One
-    | Seven
-    | Six
-    | Three
-    | Two
-
-  let toEnum = x =>
-    switch x {
-    | Active => -1
-    | Beside => -2
-    | Eight => 8
-    | Five => 5
-    | Four => 4
-    | Nine => 9
-    | One => 1
-    | Seven => 7
-    | Six => 6
-    | Three => 3
-    | Two => 2
-    }
-  let fromEnum = x =>
-    switch x {
-    | -1 => Active
-    | -2 => Beside
-    | 8 => Eight
-    | 5 => Five
-    | 4 => Four
-    | 9 => Nine
-    | 1 => One
-    | 7 => Seven
-    | 6 => Six
-    | 3 => Three
-    | _ => Two
-    }
+    | @as(-2) Beside
+    | @as(-1) Active
+    | @as(1) One
+    | @as(2) Two
+    | @as(3) Three
+    | @as(4) Four
+    | @as(5) Five
+    | @as(6) Six
+    | @as(7) Seven
+    | @as(8) Eight
+    | @as(9) Nine
 }
 module WebviewOptions = {
   type portMapping
@@ -665,26 +642,14 @@ module WebviewPanel = {
     )
   @get external options: t => Options.t = "options"
   @get external title: t => string = "title"
-  @get external viewColumn_raw: t => option<int> = "viewColumn"
-  let viewColumn = (self: t): option<ViewColumn.t> =>
-    viewColumn_raw(self)->Belt.Option.map(ViewColumn.fromEnum)
-
+  @get external viewColumn: t => option<ViewColumn.t> = "viewColumn"
   @get external viewType: t => string = "viewType"
   @get external visible: t => bool = "visible"
   @get external webview: t => Webview.t = "webview"
   // methods
   @send external dispose: t => unit = "dispose"
   @send
-  external reveal_raw: (t, ~viewColumn: int=?, ~preserveFocus: bool=?, unit) => unit = "reveal"
-  let reveal = (self: t, ~viewColumn=?, ~preserveFocus=?, ()): unit => {
-    let viewColumn = viewColumn->Belt.Option.map(ViewColumn.toEnum)
-    switch (viewColumn, preserveFocus) {
-    | (None, None) => reveal_raw(self, ())
-    | (None, Some(preserveFocus)) => reveal_raw(self, ~preserveFocus, ())
-    | (Some(viewColumn), None) => reveal_raw(self, ~viewColumn, ())
-    | (Some(viewColumn), Some(preserveFocus)) => reveal_raw(self, ~viewColumn, ~preserveFocus, ())
-    }
-  }
+  external reveal: (t, ~viewColumn: ViewColumn.t=?, ~preserveFocus: bool=?) => unit = "reveal"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#Position
@@ -1027,9 +992,7 @@ module TextEditor = {
   @get external selections: t => array<Selection.t> = "selections"
   @set
   external setSelections: (t, array<Selection.t>) => unit = "selections"
-  @get external viewColumn_raw: t => option<int> = "viewColumn"
-  let viewColumn = (self: t): option<ViewColumn.t> =>
-    viewColumn_raw(self)->Belt.Option.map(ViewColumn.fromEnum)
+  @get external viewColumn: t => option<ViewColumn.t> = "viewColumn"
   @get external visibleRanges: t => array<Range.t> = "visibleRanges"
   // methods
   @send
@@ -1080,9 +1043,7 @@ module TextEditor = {
     TextEditorDecorationType.t,
     array<DecorationOptions.t>,
   ) => unit = "setDecorations"
-  @send external show_raw: (t, option<int>) => unit = "show"
-  let show = (self: t, viewColumn: option<ViewColumn.t>): unit =>
-    show_raw(self, viewColumn->Belt.Option.map(ViewColumn.toEnum))
+  @send external show: (t, option<ViewColumn.t>) => unit = "show"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#TerminalOptions
@@ -1815,9 +1776,11 @@ module Window = {
   external visibleTextEditors: array<TextEditor.t> = "visibleTextEditors"
   // events
   @module("vscode") @scope("window")
-  external onDidChangeActiveColorTheme: (ColorTheme.t => unit) => Disposable.t = "onDidChangeActiveColorTheme"
+  external onDidChangeActiveColorTheme: (ColorTheme.t => unit) => Disposable.t =
+    "onDidChangeActiveColorTheme"
   @module("vscode") @scope("window")
-  external onDidChangeActiveTerminal: (option<Terminal.t> => unit) => Disposable.t = "onDidChangeActiveTerminal"
+  external onDidChangeActiveTerminal: (option<Terminal.t> => unit) => Disposable.t =
+    "onDidChangeActiveTerminal"
   @module("vscode") @scope("window")
   external onDidChangeActiveTextEditor: (option<TextEditor.t> => unit) => Disposable.t =
     "onDidChangeActiveTextEditor"
@@ -1825,19 +1788,23 @@ module Window = {
   external onDidChangeTextEditorOptions: (TextEditorOptionsChangeEvent.t => unit) => Disposable.t =
     "onDidChangeTextEditorOptions"
   @module("vscode") @scope("window")
-  external onDidChangeTextEditorSelection: (TextEditorSelectionChangeEvent.t => unit) => Disposable.t =
-    "onDidChangeTextEditorSelection"
+  external onDidChangeTextEditorSelection: (
+    TextEditorSelectionChangeEvent.t => unit
+  ) => Disposable.t = "onDidChangeTextEditorSelection"
   @module("vscode") @scope("window")
-  external onDidChangeTextEditorViewColumn: (TextEditorViewColumnChangeEvent.t => unit) => Disposable.t =
-    "onDidChangeTextEditorViewColumn"
+  external onDidChangeTextEditorViewColumn: (
+    TextEditorViewColumnChangeEvent.t => unit
+  ) => Disposable.t = "onDidChangeTextEditorViewColumn"
   @module("vscode") @scope("window")
-  external onDidChangeTextEditorVisibleRanges: (TextEditorVisibleRangesChangeEvent.t => unit) => Disposable.t =
-    "onDidChangeTextEditorVisibleRanges"
+  external onDidChangeTextEditorVisibleRanges: (
+    TextEditorVisibleRangesChangeEvent.t => unit
+  ) => Disposable.t = "onDidChangeTextEditorVisibleRanges"
   @module("vscode") @scope("window")
   external onDidChangeVisibleTextEditors: (array<TextEditor.t> => unit) => Disposable.t =
     "onDidChangeVisibleTextEditors"
   @module("vscode") @scope("window")
-  external onDidChangeWindowState: (WindowState.t => unit) => Disposable.t = "onDidChangeWindowState"
+  external onDidChangeWindowState: (WindowState.t => unit) => Disposable.t =
+    "onDidChangeWindowState"
   @module("vscode") @scope("window")
   external onDidCloseTerminal: (Terminal.t => unit) => Disposable.t = "onDidCloseTerminal"
   @module("vscode") @scope("window")
@@ -2435,7 +2402,8 @@ module Workspace = {
   external onDidChangeWorkspaceFolders: (WorkspaceFoldersChangeEvent.t => unit) => Disposable.t =
     "onDidChangeWorkspaceFolders"
   @module("vscode") @scope("workspace")
-  external onDidCloseTextDocument: (TextDocument.t => unit) => Disposable.t = "onDidCloseTextDocument"
+  external onDidCloseTextDocument: (TextDocument.t => unit) => Disposable.t =
+    "onDidCloseTextDocument"
   @module("vscode") @scope("workspace")
   external onDidCreateFiles: (FileCreateEvent.t => unit) => Disposable.t = "onDidCreateFiles"
   @module("vscode") @scope("workspace")
@@ -2453,7 +2421,8 @@ module Workspace = {
   @module("vscode") @scope("workspace")
   external onWillRenameFiles: (FileWillRenameEvent.t => unit) => Disposable.t = "onWillRenameFiles"
   @module("vscode") @scope("workspace")
-  external onWillSaveTextDocument: (TextDocumentWillSaveEvent.t => unit) => Disposable.t = "onWillSaveTextDocument"
+  external onWillSaveTextDocument: (TextDocumentWillSaveEvent.t => unit) => Disposable.t =
+    "onWillSaveTextDocument"
   // functions
   @module("vscode") @scope("workspace")
   external applyEdit: WorkspaceEdit.t => promise<bool> = "applyEdit"
@@ -2918,7 +2887,8 @@ module DocumentSemanticTokensProvider = {
 module Languages = {
   // events
   @module("vscode") @scope("languages")
-  external onDidChangeDiagnostics: (DiagnosticChangeEvent.t => unit) => Disposable.t = "onDidChangeDiagnostics"
+  external onDidChangeDiagnostics: (DiagnosticChangeEvent.t => unit) => Disposable.t =
+    "onDidChangeDiagnostics"
 
   // functions
   @module("vscode") @scope("languages")
