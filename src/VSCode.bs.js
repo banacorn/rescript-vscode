@@ -2,10 +2,8 @@
 'use strict';
 
 var $$Array = require("rescript/lib/js/array.js");
-var Vscode = require("vscode");
 var Js_dict = require("rescript/lib/js/js_dict.js");
 var Js_array = require("rescript/lib/js/js_array.js");
-var Belt_Array = require("rescript/lib/js/belt_Array.js");
 var Belt_Option = require("rescript/lib/js/belt_Option.js");
 
 function map(x, f) {
@@ -116,83 +114,17 @@ var Memento = {};
 
 var Uri = {};
 
-function toEnum(x) {
-  switch (x) {
-    case "Replace" :
-        return 1;
-    case "Append" :
-        return 2;
-    case "Prepend" :
-        return 3;
-    
-  }
-}
-
-function fromEnum(x) {
-  if (x !== 1) {
-    if (x !== 2) {
-      return "Prepend";
-    } else {
-      return "Append";
-    }
-  } else {
-    return "Replace";
-  }
-}
-
-var EnvironmentVariableMutatorType = {
-  toEnum: toEnum,
-  fromEnum: fromEnum
-};
+var EnvironmentVariableMutatorType = {};
 
 var Command = {};
 
-function type_(self) {
-  return fromEnum(self.type);
-}
-
-var EnvironmentVariableMutator = {
-  type_: type_
-};
+var EnvironmentVariableMutator = {};
 
 var EnvironmentVariableCollection = {};
 
-function toEnum$1(x) {
-  switch (x) {
-    case "Production" :
-        return 1;
-    case "Development" :
-        return 2;
-    case "Test" :
-        return 3;
-    
-  }
-}
+var ExtensionMode = {};
 
-function fromEnum$1(x) {
-  if (x !== 1) {
-    if (x !== 2) {
-      return "Test";
-    } else {
-      return "Development";
-    }
-  } else {
-    return "Production";
-  }
-}
-
-var ExtensionMode = {
-  toEnum: toEnum$1,
-  fromEnum: fromEnum$1
-};
-
-function extensionMode(self) {
-  return fromEnum$1(self.extensionMode);
-}
-
-var ExtensionContext = {
-  extensionMode: extensionMode
-};
+var ExtensionContext = {};
 
 var simple = {};
 
@@ -237,34 +169,9 @@ var Debug = {};
 
 var Clipboard = {};
 
-function toEnum$2(x) {
-  if (x === "Desktop") {
-    return 1;
-  } else {
-    return 2;
-  }
-}
+var UIKind = {};
 
-function fromEnum$2(x) {
-  if (x !== 1) {
-    return "Web";
-  } else {
-    return "Desktop";
-  }
-}
-
-var UIKind = {
-  toEnum: toEnum$2,
-  fromEnum: fromEnum$2
-};
-
-function uiKind() {
-  return fromEnum$2(Vscode.env.uiKind);
-}
-
-var Env = {
-  uiKind: uiKind
-};
+var Env = {};
 
 var ViewColumn = {};
 
@@ -306,160 +213,23 @@ var $$Range = {};
 
 var TextLine = {};
 
-function toEnum$3(x) {
-  if (x === "CRLF") {
-    return 2;
-  } else {
-    return 1;
-  }
-}
+var EndOfLine = {};
 
-function fromEnum$3(x) {
-  if (x !== 2) {
-    return "LF";
-  } else {
-    return "CRLF";
-  }
-}
+var TextDocument = {};
 
-var EndOfLine = {
-  toEnum: toEnum$3,
-  fromEnum: fromEnum$3
-};
+var TextEditorCursorStyle = {};
 
-function eol(self) {
-  return fromEnum$3(self.eol);
-}
+var TextEditorLineNumbersStyle = {};
 
-var TextDocument = {
-  eol: eol
-};
-
-function toEnum$4(x) {
-  switch (x) {
-    case "Block" :
-        return 2;
-    case "BlockOutline" :
-        return 5;
-    case "Line" :
-        return 1;
-    case "LineThing" :
-        return 4;
-    case "Underline" :
-        return 3;
-    case "UnderlineThin" :
-        return 6;
-    
-  }
-}
-
-function fromEnum$4(x) {
-  switch (x) {
-    case 1 :
-        return "Line";
-    case 2 :
-        return "Block";
-    case 3 :
-        return "Underline";
-    case 4 :
-        return "LineThing";
-    case 5 :
-        return "BlockOutline";
-    default:
-      return "UnderlineThin";
-  }
-}
-
-var TextEditorCursorStyle = {
-  toEnum: toEnum$4,
-  fromEnum: fromEnum$4
-};
-
-function toEnum$5(x) {
-  switch (x) {
-    case "Off" :
-        return 0;
-    case "On" :
-        return 1;
-    case "Relative" :
-        return 2;
-    
-  }
-}
-
-function fromEnum$5(x) {
-  if (x !== 0) {
-    if (x !== 1) {
-      return "Relative";
-    } else {
-      return "On";
-    }
-  } else {
-    return "Off";
-  }
-}
-
-var TextEditorLineNumbersStyle = {
-  toEnum: toEnum$5,
-  fromEnum: fromEnum$5
-};
-
-function cursorStyle(self) {
-  return Belt_Option.map(self.cursorStyle, fromEnum$4);
-}
-
-function lineNumbers(self) {
-  return Belt_Option.map(self.lineNumbers, fromEnum$5);
-}
-
-var TextEditorOptions = {
-  cursorStyle: cursorStyle,
-  lineNumbers: lineNumbers
-};
+var TextEditorOptions = {};
 
 var $$Selection = {};
 
-function setEndOfLine(self, eol) {
-  self.setEndOfLine(toEnum$3(eol));
-}
-
-var TextEditorEdit = {
-  setEndOfLine: setEndOfLine
-};
+var TextEditorEdit = {};
 
 var SnippetString = {};
 
-function toEnum$6(x) {
-  switch (x) {
-    case "AtTop" :
-        return 3;
-    case "Default" :
-        return 0;
-    case "InCenter" :
-        return 1;
-    case "InCenterIfOutsideViewport" :
-        return 2;
-    
-  }
-}
-
-function fromEnum$6(x) {
-  switch (x) {
-    case 1 :
-        return "InCenter";
-    case 2 :
-        return "InCenterIfOutsideViewport";
-    case 3 :
-        return "AtTop";
-    default:
-      return "Default";
-  }
-}
-
-var TextEditorRevealType = {
-  toEnum: toEnum$6,
-  fromEnum: fromEnum$6
-};
+var TextEditorRevealType = {};
 
 var TextEditorDecorationType = {};
 
@@ -473,13 +243,7 @@ var DecorationInstanceRenderOptions = {};
 
 var DecorationOptions = {};
 
-function revealRange(self, range, option) {
-  self.revealRange(range, Belt_Option.map(option, toEnum$6));
-}
-
-var TextEditor = {
-  revealRange: revealRange
-};
+var TextEditor = {};
 
 var TerminalOptions = {};
 
@@ -523,46 +287,9 @@ var WindowState = {};
 
 var TextEditorOptionsChangeEvent = {};
 
-function toEnum$7(x) {
-  switch (x) {
-    case "Keyboard" :
-        return 1;
-    case "Mouse" :
-        return 2;
-    case "Command" :
-        return 3;
-    
-  }
-}
+var TextEditorSelectionChangeKind = {};
 
-function fromEnum$7(x) {
-  if (x !== 1) {
-    if (x !== 2) {
-      return "Command";
-    } else {
-      return "Mouse";
-    }
-  } else {
-    return "Keyboard";
-  }
-}
-
-var TextEditorSelectionChangeKind = {
-  toEnum: toEnum$7,
-  fromEnum: fromEnum$7
-};
-
-function kind(self) {
-  var n = self.kind;
-  if (n !== undefined) {
-    return fromEnum$7(n);
-  }
-  
-}
-
-var TextEditorSelectionChangeEvent = {
-  kind: kind
-};
+var TextEditorSelectionChangeEvent = {};
 
 var TextEditorViewColumnChangeEvent = {};
 
@@ -578,103 +305,13 @@ var QuickPick = {};
 
 var AccessibilityInformation = {};
 
-function toEnum$8(x) {
-  if (x === "Left") {
-    return 1;
-  } else {
-    return 2;
-  }
-}
+var StatusBarAlignment = {};
 
-function fromEnum$8(x) {
-  if (x !== 1) {
-    return "Right";
-  } else {
-    return "Left";
-  }
-}
+var StatusBarItem = {};
 
-var StatusBarAlignment = {
-  toEnum: toEnum$8,
-  fromEnum: fromEnum$8
-};
+var OverviewRulerLane = {};
 
-function alignment(self) {
-  return fromEnum$8(self.alignment);
-}
-
-function setAlignment(self, alignment) {
-  self.alignment = toEnum$8(alignment);
-}
-
-var StatusBarItem = {
-  alignment: alignment,
-  setAlignment: setAlignment
-};
-
-function toEnum$9(x) {
-  switch (x) {
-    case "Left" :
-        return 1;
-    case "Center" :
-        return 2;
-    case "Right" :
-        return 4;
-    case "Full" :
-        return 7;
-    
-  }
-}
-
-function fromEnum$9(x) {
-  switch (x) {
-    case 1 :
-        return "Left";
-    case 2 :
-        return "Center";
-    case 4 :
-        return "Right";
-    default:
-      return "Full";
-  }
-}
-
-var OverviewRulerLane = {
-  toEnum: toEnum$9,
-  fromEnum: fromEnum$9
-};
-
-function toEnum$10(x) {
-  switch (x) {
-    case "OpenOpen" :
-        return 0;
-    case "ClosedClosed" :
-        return 1;
-    case "OpenClosed" :
-        return 2;
-    case "ClosedOpen" :
-        return 3;
-    
-  }
-}
-
-function fromEnum$10(x) {
-  switch (x) {
-    case 1 :
-        return "ClosedClosed";
-    case 2 :
-        return "OpenClosed";
-    case 3 :
-        return "ClosedOpen";
-    default:
-      return "OpenOpen";
-  }
-}
-
-var DecorationRangeBehavior = {
-  toEnum: toEnum$10,
-  fromEnum: fromEnum$10
-};
+var DecorationRangeBehavior = {};
 
 var DecorationRenderOptions = {};
 
@@ -780,42 +417,9 @@ var TextDocumentShowOptions = {
   make: make$1
 };
 
-function toEnum$11(x) {
-  switch (x) {
-    case "Light" :
-        return 1;
-    case "Dark" :
-        return 2;
-    case "HighContrast" :
-        return 3;
-    
-  }
-}
+var ColorThemeKind = {};
 
-function fromEnum$11(x) {
-  if (x !== 1) {
-    if (x !== 2) {
-      return "HighContrast";
-    } else {
-      return "Dark";
-    }
-  } else {
-    return "Light";
-  }
-}
-
-var ColorThemeKind = {
-  toEnum: toEnum$11,
-  fromEnum: fromEnum$11
-};
-
-function kind$1(self) {
-  return fromEnum$11(self.kind);
-}
-
-var ColorTheme = {
-  kind: kind$1
-};
+var ColorTheme = {};
 
 var CustomDocumentOpenContext = {};
 
@@ -841,64 +445,11 @@ var FileDecorationProvider = {};
 
 var $$Window = {};
 
-function toEnum$12(x) {
-  switch (x) {
-    case "Unknown" :
-        return 0;
-    case "File" :
-        return 1;
-    case "Directory" :
-        return 2;
-    case "SymbolicLink" :
-        return 64;
-    
-  }
-}
+var FileType = {};
 
-function fromEnum$12(x) {
-  if (x >= 3) {
-    if (x !== 64) {
-      return "Unknown";
-    } else {
-      return "SymbolicLink";
-    }
-  }
-  if (x < 0) {
-    return "Unknown";
-  }
-  switch (x) {
-    case 0 :
-        return "Unknown";
-    case 1 :
-        return "File";
-    case 2 :
-        return "Directory";
-    
-  }
-}
+var FileStat = {};
 
-var FileType = {
-  toEnum: toEnum$12,
-  fromEnum: fromEnum$12
-};
-
-function type_$1(self) {
-  return fromEnum$12(self.type);
-}
-
-var FileStat = {
-  type_: type_$1
-};
-
-async function readDirectory(self, uri) {
-  return Belt_Array.map(await self.readDirectory(uri), (function (extra) {
-                return map$1(fromEnum$12, extra);
-              }));
-}
-
-var FileSystem = {
-  readDirectory: readDirectory
-};
+var FileSystem = {};
 
 var ConfigurationChangeEvent = {};
 
@@ -916,13 +467,7 @@ var FileRenameEvent = {};
 
 var WorkspaceEditEntryMetadata = {};
 
-function setEndOfLine$1(eol) {
-  return Vscode.TextEdit.setEndOfLine(toEnum$3(eol));
-}
-
-var TextEdit = {
-  setEndOfLine: setEndOfLine$1
-};
+var TextEdit = {};
 
 function entries(self) {
   return $$Array.map((function (shit) {
@@ -945,42 +490,9 @@ var FileWillDeleteEvent = {};
 
 var FileWillRenameEvent = {};
 
-function toEnum$13(x) {
-  switch (x) {
-    case "AfterDelay" :
-        return 2;
-    case "FocusOut" :
-        return 3;
-    case "Manual" :
-        return 1;
-    
-  }
-}
+var TextDocumentSaveReason = {};
 
-function fromEnum$13(x) {
-  if (x !== 2) {
-    if (x !== 3) {
-      return "Manual";
-    } else {
-      return "FocusOut";
-    }
-  } else {
-    return "AfterDelay";
-  }
-}
-
-var TextDocumentSaveReason = {
-  toEnum: toEnum$13,
-  fromEnum: fromEnum$13
-};
-
-function reason(self) {
-  return fromEnum$13(self.reason);
-}
-
-var TextDocumentWillSaveEvent = {
-  reason: reason
-};
+var TextDocumentWillSaveEvent = {};
 
 var RelativePattern = {};
 
@@ -998,34 +510,9 @@ var FileSystemProvider = {};
 
 var Workspace = {};
 
-function toEnum$14(x) {
-  if (x === "UI") {
-    return 1;
-  } else {
-    return 2;
-  }
-}
+var ExtensionKind = {};
 
-function fromEnum$14(x) {
-  if (x !== 1) {
-    return "Workspace";
-  } else {
-    return "UI";
-  }
-}
-
-var ExtensionKind = {
-  toEnum: toEnum$14,
-  fromEnum: fromEnum$14
-};
-
-function extensionKind(self) {
-  return fromEnum$14(self.extensionKind);
-}
-
-var Extension = {
-  extensionKind: extensionKind
-};
+var Extension = {};
 
 var Extensions = {};
 
@@ -1037,58 +524,9 @@ var LocationLink = {};
 
 var DiagnosticRelatedInformation = {};
 
-function toEnum$15(x) {
-  switch (x) {
-    case "Error" :
-        return 0;
-    case "Warning" :
-        return 1;
-    case "Information" :
-        return 2;
-    case "Hint" :
-        return 3;
-    
-  }
-}
+var DiagnosticSeverity = {};
 
-function fromEnum$15(x) {
-  switch (x) {
-    case 0 :
-        return "Error";
-    case 1 :
-        return "Warning";
-    case 2 :
-        return "Information";
-    default:
-      return "Hint";
-  }
-}
-
-var DiagnosticSeverity = {
-  toEnum: toEnum$15,
-  fromEnum: fromEnum$15
-};
-
-function toEnum$16(x) {
-  if (x === "Unnecessary") {
-    return 1;
-  } else {
-    return 2;
-  }
-}
-
-function fromEnum$16(x) {
-  if (x !== 1) {
-    return "Deprecated";
-  } else {
-    return "Unnecessary";
-  }
-}
-
-var DiagnosticTag = {
-  toEnum: toEnum$16,
-  fromEnum: fromEnum$16
-};
+var DiagnosticTag = {};
 
 var Diagnostic = {};
 
@@ -1331,4 +769,4 @@ exports.SemanticTokensLegend = SemanticTokensLegend;
 exports.SemanticTokensBuilder = SemanticTokensBuilder;
 exports.DocumentSemanticTokensProvider = DocumentSemanticTokensProvider;
 exports.Languages = Languages;
-/* vscode Not a pure module */
+/* No side effect */

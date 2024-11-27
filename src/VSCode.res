@@ -163,24 +163,12 @@ module Uri = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#EnvironmentVariableMutatorType
-// 1.52.0
+// 1.95.0
 module EnvironmentVariableMutatorType = {
   type t =
-    | Replace
-    | Append
-    | Prepend
-  let toEnum = x =>
-    switch x {
-    | Replace => 1
-    | Append => 2
-    | Prepend => 3
-    }
-  let fromEnum = x =>
-    switch x {
-    | 1 => Replace
-    | 2 => Append
-    | _ => Prepend
-    }
+    | @as(1) Replace
+    | @as(2) Append
+    | @as(3) Prepend
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#Command
@@ -207,8 +195,7 @@ module Command = {
 module EnvironmentVariableMutator = {
   type t
   // properties
-  @get external type_raw: t => int = "type"
-  let type_ = self => EnvironmentVariableMutatorType.fromEnum(type_raw(self))
+  @get external type_: EnvironmentVariableMutatorType.t => int = "type"
   @get external value: t => bool = "value"
 }
 
@@ -233,24 +220,12 @@ module EnvironmentVariableCollection = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#ExtensionMode
-// 1.52.0
+// 1.95.0
 module ExtensionMode = {
   type t =
-    | Production
-    | Development
-    | Test
-  let toEnum = x =>
-    switch x {
-    | Production => 1
-    | Development => 2
-    | Test => 3
-    }
-  let fromEnum = x =>
-    switch x {
-    | 1 => Production
-    | 2 => Development
-    | _ => Test
-    }
+    | @as(1) Production
+    | @as(2) Development
+    | @as(3) Test
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#ExtensionContext
@@ -261,9 +236,7 @@ module ExtensionContext = {
   @get
   external environmentVariableCollection: t => EnvironmentVariableCollection.t =
     "environmentVariableCollection"
-  @get external extensionMode_raw: t => int = "extensionMode"
-  let extensionMode = self => ExtensionMode.fromEnum(extensionMode_raw(self))
-  @get external extensionMode_raw: t => ExtensionMode.t = "extensionMode"
+  @get external extensionMode: t => ExtensionMode.t = "extensionMode"
   @get external extensionPath: t => string = "extensionPath"
   @get external extensionUri: t => Uri.t = "extensionUri"
   @get external globalState: t => Memento.t = "globalState"
@@ -507,20 +480,11 @@ module Clipboard = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#UIKind;
+// 1.95
 module UIKind = {
   type t =
-    | Desktop
-    | Web
-  let toEnum = x =>
-    switch x {
-    | Desktop => 1
-    | Web => 2
-    }
-  let fromEnum = x =>
-    switch x {
-    | 1 => Desktop
-    | _ => Web
-    }
+    | @as(1) Desktop
+    | @as(2) Web
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#env
@@ -542,8 +506,7 @@ module Env = {
   @module("vscode") @scope("env")
   external sessionId: string = "sessionId"
   @module("vscode") @scope("env") external shell: string = "shell"
-  @module("vscode") @scope("env") external uiKind_raw: int = "uiKind"
-  let uiKind: unit => UIKind.t = () => UIKind.fromEnum(uiKind_raw)
+  @module("vscode") @scope("env") external uiKind: UIKind.t = "uiKind"
   @module("vscode") @scope("env")
   external uriScheme: string = "uriScheme"
 
@@ -708,28 +671,17 @@ module TextLine = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#EndOfLine
+// 1.95
 module EndOfLine = {
   type t =
-    | CRLF
-    | LF
-
-  let toEnum = x =>
-    switch x {
-    | CRLF => 2
-    | LF => 1
-    }
-  let fromEnum = x =>
-    switch x {
-    | 2 => CRLF
-    | _ => LF
-    }
+    | @as(1) LF
+    | @as(2) CRLF
 }
 
 module TextDocument = {
   type t
   // properties
-  @get external eol_raw: t => int = "eol"
-  let eol = (self: t): EndOfLine.t => EndOfLine.fromEnum(eol_raw(self))
+  @get external eol: t => EndOfLine.t = "eol"
   @get external fileName: t => string = "fileName"
   @get external isClosed: t => bool = "isClosed"
   @get external isDirty: t => bool = "isDirty"
@@ -754,66 +706,35 @@ module TextDocument = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#TextEditorCursorStyle
+// 1.95
 module TextEditorCursorStyle = {
   type t =
-    | Block
-    | BlockOutline
-    | Line
-    | LineThing
-    | Underline
-    | UnderlineThin
-  let toEnum = x =>
-    switch x {
-    | Block => 2
-    | BlockOutline => 5
-    | Line => 1
-    | LineThing => 4
-    | Underline => 3
-    | UnderlineThin => 6
-    }
-  let fromEnum = x =>
-    switch x {
-    | 2 => Block
-    | 5 => BlockOutline
-    | 1 => Line
-    | 4 => LineThing
-    | 3 => Underline
-    | _ => UnderlineThin
-    }
+    | @as(1) Line
+    | @as(2) Block
+    | @as(3) Underline
+    | @as(4) LineThin
+    | @as(5) BlockOutline
+    | @as(6) UnderlineThin
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#TextEditorLineNumbersStyle
+// 1.95
 module TextEditorLineNumbersStyle = {
   type t =
-    | Off
-    | On
-    | Relative
-  let toEnum = x =>
-    switch x {
-    | Off => 0
-    | On => 1
-    | Relative => 2
-    }
-  let fromEnum = x =>
-    switch x {
-    | 0 => Off
-    | 1 => On
-    | _ => Relative
-    }
+    | @as(0) Off
+    | @as(1) On
+    | @as(2) Relative
+    | @as(3) Interval
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#TextEditorOptions
 module TextEditorOptions = {
   type t
   // properties
-  @get external cursorStyle_raw: t => option<int> = "cursorStyle"
-  let cursorStyle = (self: t): option<TextEditorCursorStyle.t> =>
-    cursorStyle_raw(self)->Belt.Option.map(TextEditorCursorStyle.fromEnum)
+  @get external cursorStyle: t => option<TextEditorCursorStyle.t> = "cursorStyle"
   @get
   external insertSpaces: t => option<StringOr.t<bool>> = "insertSpaces"
-  @get external lineNumbers_raw: t => option<int> = "lineNumbers"
-  let lineNumbers = (self: t): option<TextEditorLineNumbersStyle.t> =>
-    lineNumbers_raw(self)->Belt.Option.map(TextEditorLineNumbersStyle.fromEnum)
+  @get external lineNumbers: t => option<TextEditorLineNumbersStyle.t> = "lineNumbers"
   @get external tabSize: t => option<StringOr.t<int>> = "tabSize"
 }
 
@@ -854,9 +775,7 @@ module TextEditorEdit = {
   @send external replaceAtRange: (t, Range.t, string) => unit = "replace"
   @send
   external replaceAtSelection: (t, Selection.t, string) => unit = "replace"
-  @send external setEndOfLine_raw: (t, int) => unit = "setEndOfLine"
-  let setEndOfLine = (self: t, eol: EndOfLine.t): unit =>
-    setEndOfLine_raw(self, EndOfLine.toEnum(eol))
+  @send external setEndOfLine: (t, EndOfLine.t) => unit = "setEndOfLine"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#SnippetString
@@ -865,28 +784,13 @@ module SnippetString = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#TextEditorRevealType
+// 1.95
 module TextEditorRevealType = {
-  type raw = int
   type t =
-    | AtTop
-    | Default
-    | InCenter
-    | InCenterIfOutsideViewport
-
-  let toEnum = x =>
-    switch x {
-    | AtTop => 3
-    | Default => 0
-    | InCenter => 1
-    | InCenterIfOutsideViewport => 2
-    }
-  let fromEnum = x =>
-    switch x {
-    | 1 => InCenter
-    | 2 => InCenterIfOutsideViewport
-    | 3 => AtTop
-    | _ => Default
-    }
+    | @as(0) Default
+    | @as(1) InCenter
+    | @as(2) InCenterIfOutsideViewport
+    | @as(3) AtTop
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#TextEditorDecorationType
@@ -1031,9 +935,7 @@ module TextEditor = {
     option<{"undoStopAfter": bool, "undoStopBefore": bool}>,
   ) => promise<bool> = "insertSnippet"
   @send
-  external revealRange_raw: (t, Range.t, option<int>) => unit = "revealRange"
-  let revealRange = (self: t, range: Range.t, option: option<TextEditorRevealType.t>): unit =>
-    revealRange_raw(self, range, option->Belt.Option.map(TextEditorRevealType.toEnum))
+  external revealRange: (t, Range.t, option<TextEditorRevealType.t>) => unit = "revealRange"
   @send
   external setDecorations: (t, TextEditorDecorationType.t, array<Range.t>) => unit =
     "setDecorations"
@@ -1134,37 +1036,20 @@ module TextEditorOptionsChangeEvent = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#TextEditorSelectionChangeKind
+// 1.95
 module TextEditorSelectionChangeKind = {
   type raw = int
   type t =
-    | Keyboard
-    | Mouse
-    | Command
-
-  let toEnum = x =>
-    switch x {
-    | Keyboard => 1
-    | Mouse => 2
-    | Command => 3
-    }
-  let fromEnum = x =>
-    switch x {
-    | 1 => Keyboard
-    | 2 => Mouse
-    | _ => Command
-    }
+    | @as(1) Keyboard
+    | @as(2) Mouse
+    | @as(3) Command
 }
 // https://code.visualstudio.com/api/references/vscode-api#TextEditorSelectionChangeEvent
 module TextEditorSelectionChangeEvent = {
   type t
   // properties
   @get
-  external kind_raw: t => option<TextEditorSelectionChangeKind.raw> = "kind"
-  let kind: t => option<TextEditorSelectionChangeKind.t> = self =>
-    switch kind_raw(self) {
-    | None => None
-    | Some(n) => Some(TextEditorSelectionChangeKind.fromEnum(n))
-    }
+  external kind: t => option<TextEditorSelectionChangeKind.t> = "kind"
   @get external selections: t => array<Selection.t> = "selections"
   @get external textEditor: t => TextEditor.t = "textEditor"
 }
@@ -1206,24 +1091,11 @@ module AccessibilityInformation = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#StatusBarAlignment
-// 1.55.0
+// 1.95.0
 module StatusBarAlignment = {
-  type raw = int
   type t =
-    | Left
-    | Right
-
-  let toEnum = x =>
-    switch x {
-    | Left => 1
-    | Right => 2
-    }
-  let fromEnum = x =>
-    switch x {
-    | 1 => Left
-    | 2 => Right
-    | _ => Right
-    }
+    | @as(1) Left
+    | @as(2) Right
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#StatusBarItem
@@ -1236,13 +1108,9 @@ module StatusBarItem = {
   @set
   external setAccessibilityInformation: (t, AccessibilityInformation.t) => unit =
     "accessibilityInformation"
-  @get external alignment_raw: t => int = "alignment"
-  let alignment: t => StatusBarAlignment.t = self =>
-    StatusBarAlignment.fromEnum(self->alignment_raw)
+  @get external alignment: t => StatusBarAlignment.t = "alignment"
   @set
-  external setAlignment_raw: (t, int) => unit = "alignment"
-  let setAlignment: (t, StatusBarAlignment.t) => unit = (self, alignment) =>
-    setAlignment_raw(self, StatusBarAlignment.toEnum(alignment))
+  external setAlignment: (t, StatusBarAlignment.t) => unit = "alignment"
   @get external backgroundColor: t => option<ThemeColor.t> = "backgroundColor"
   @set
   external setBackgroundColor: (t, ThemeColor.t) => unit = "backgroundColor"
@@ -1272,52 +1140,25 @@ module StatusBarItem = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#OverviewRulerLane;
+// 1.95
 module OverviewRulerLane = {
   type raw = int
   type t =
-    | Left
-    | Center
-    | Right
-    | Full
-  let toEnum = x =>
-    switch x {
-    | Left => 1
-    | Center => 2
-    | Right => 4
-    | Full => 7
-    }
-  let fromEnum = x =>
-    switch x {
-    | 1 => Left
-    | 2 => Center
-    | 4 => Right
-    | _ => Full
-    }
+    | @as(1) Left
+    | @as(2) Center
+    | @as(4) Right
+    | @as(7) Full
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#DecorationRangeBehavior;
+// 1.95
 module DecorationRangeBehavior = {
   type raw = int
   type t =
-    | OpenOpen
-    | ClosedClosed
-    | OpenClosed
-    | ClosedOpen
-  let toEnum = x =>
-    switch x {
-    | OpenOpen => 0
-    | ClosedClosed => 1
-    | OpenClosed => 2
-    | ClosedOpen => 3
-    }
-  let fromEnum = x =>
-    switch x {
-    | 0 => OpenOpen
-    | 1 => ClosedClosed
-    | 2 => OpenClosed
-    | 3 => ClosedOpen
-    | _ => OpenOpen
-    }
+    | @as(0) OpenOpen
+    | @as(1) ClosedClosed
+    | @as(2) OpenClosed
+    | @as(3) ClosedOpen
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#DecorationRenderOptions
@@ -1576,34 +1417,21 @@ module TextDocumentShowOptions = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#ColorThemeKind;
+// 1.95
 module ColorThemeKind = {
-  type raw = int
   type t =
-    | Light
-    | Dark
-    | HighContrast
-
-  let toEnum = x =>
-    switch x {
-    | Light => 1
-    | Dark => 2
-    | HighContrast => 3
-    }
-  let fromEnum = x =>
-    switch x {
-    | 1 => Light
-    | 2 => Dark
-    | _ => HighContrast
-    }
+    | @as(1) Light
+    | @as(2) Dark
+    | @as(3) HighContrast
+    | @as(4) HighContrastLight
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#ColorTheme
-// 1.55.0
+// 1.95.0
 module ColorTheme = {
   type t
   // properties
-  @get external kind_raw: t => int = "kind"
-  let kind: t => ColorThemeKind.t = self => ColorThemeKind.fromEnum(self->kind_raw)
+  @get external kind: t => ColorThemeKind.t = "kind"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#CustomDocumentOpenContext
@@ -1980,29 +1808,14 @@ module Window = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#FileType
+// 1.95
 module FileType = {
   type raw = int
   type t =
-    | Unknown
-    | File
-    | Directory
-    | SymbolicLink
-
-  let toEnum = x =>
-    switch x {
-    | Unknown => 0
-    | File => 1
-    | Directory => 2
-    | SymbolicLink => 64
-    }
-  let fromEnum = x =>
-    switch x {
-    | 0 => Unknown
-    | 1 => File
-    | 2 => Directory
-    | 64 => SymbolicLink
-    | _ => Unknown
-    }
+    | @as(0) Unknown
+    | @as(1) File
+    | @as(2) Directory
+    | @as(64) SymbolicLink
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#FileStat
@@ -2011,8 +1824,7 @@ module FileStat = {
   @get external ctime: t => int = "ctime"
   @get external mtime: t => int = "mtime"
   @get external size: t => int = "size"
-  @get external type_raw: t => FileType.raw = "type"
-  let type_ = (self: t): FileType.t => type_raw(self)->FileType.fromEnum
+  @get external type_: t => FileType.t = "type"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#FileSystem
@@ -2029,12 +1841,7 @@ module FileSystem = {
   external deleteWithOptions: (t, Uri.t, {"recursive": bool, "useTrash": bool}) => promise<unit> =
     "delete"
   @send
-  external readDirectory_raw: (t, Uri.t) => promise<array<StringOr.t<FileType.raw>>> =
-    "readDirectory"
-  let readDirectory: (t, Uri.t) => promise<array<StringOr.t<FileType.t>>> = async (self, uri) => {
-    (await readDirectory_raw(self, uri))->Belt.Array.map(StringOr.map(FileType.fromEnum, ...))
-  }
-
+  external readDirectory: (t, Uri.t) => promise<array<StringOr.t<FileType.t>>> = "readDirectory"
   @send
   external readFile: (t, Uri.t) => promise<Js.TypedArray2.Int8Array.t> = "readFile"
   @send external rename: (t, Uri.t, Uri.t) => promise<unit> = "rename"
@@ -2134,8 +1941,7 @@ module TextEdit = {
   @module("vscode") @scope("TextEdit")
   external replace: (Range.t, string) => t = "replace"
   @module("vscode") @scope("TextEdit")
-  external setEndOfLine_raw: int => t = "setEndOfLine"
-  let setEndOfLine = (eol: EndOfLine.t): t => setEndOfLine_raw(EndOfLine.toEnum(eol))
+  external setEndOfLine: EndOfLine.t => t = "setEndOfLine"
 
   // constructors
   @module("vscode") @new
@@ -2233,36 +2039,24 @@ module FileWillRenameEvent = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#TextDocumentSaveReason
+// 1.95
 module TextDocumentSaveReason = {
   type t =
-    | AfterDelay
-    | FocusOut
-    | Manual
-
-  let toEnum = x =>
-    switch x {
-    | AfterDelay => 2
-    | FocusOut => 3
-    | Manual => 1
-    }
-  let fromEnum = x =>
-    switch x {
-    | 2 => AfterDelay
-    | 3 => FocusOut
-    | _ => Manual
-    }
+    | @as(1) Manual
+    | @as(2) AfterDelay
+    | @as(3) FocusOut
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#TextDocumentWillSaveEvent
+// 1.95
 module TextDocumentWillSaveEvent = {
   type t
   // properties
   @get external document: t => TextDocument.t = "document"
-  @get external reason_raw: t => int = "reason"
-  let reason = self => TextDocumentSaveReason.fromEnum(self->reason_raw)
+  @get external reason: t => TextDocumentSaveReason.t = "reason"
   // methods
   @send
-  external waitUntilWithTextEdit: (t, promise<TextEdit.t>) => unit = "waitUntil"
+  external waitUntilWithTextEdit: (t, promise<array<TextEdit.t>>) => unit = "waitUntil"
   @send external waitUntil: (t, promise<'a>) => unit = "waitUntil"
 }
 
@@ -2494,32 +2288,21 @@ module Workspace = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#ExtensionKind
-// 1.52.0
+// 1.95
 module ExtensionKind = {
   type t =
-    | UI
-    | Workspace
-  let toEnum = x =>
-    switch x {
-    | UI => 1
-    | Workspace => 2
-    }
-  let fromEnum = x =>
-    switch x {
-    | 1 => UI
-    | _ => Workspace
-    }
+    | @as(1) UI
+    | @as(2) Workspace
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#Extension
+// 1.95
 module Extension = {
   type t<'a>
 
   // properties
   @get external exports: t<'a> => 'a = "exports"
-  @get external extensionKind_raw: t<'a> => int = "extensionKind"
-  let extensionKind = (self: t<'a>): ExtensionKind.t =>
-    ExtensionKind.fromEnum(extensionKind_raw(self))
+  @get external extensionKind: t<'a> => ExtensionKind.t = "extensionKind"
   @get external extensionPath: t<'a> => string = "extensionPath"
   @get external extensionUri: t<'a> => Uri.t = "extensionUri"
   @get external id: t<'a> => string = "id"
@@ -2589,45 +2372,21 @@ module DiagnosticRelatedInformation = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#DiagnosticSeverity
+// 1.95
 module DiagnosticSeverity = {
   type t =
-    | Error
-    | Warning
-    | Information
-    | Hint
-
-  let toEnum = x =>
-    switch x {
-    | Error => 0
-    | Warning => 1
-    | Information => 2
-    | Hint => 3
-    }
-  let fromEnum = x =>
-    switch x {
-    | 0 => Error
-    | 1 => Warning
-    | 2 => Information
-    | _ => Hint
-    }
+    | @as(0) Error
+    | @as(1) Warning
+    | @as(2) Information
+    | @as(3) Hint
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#DiagnosticTag
+// 1.95
 module DiagnosticTag = {
   type t =
-    | Unnecessary
-    | Deprecated
-
-  let toEnum = x =>
-    switch x {
-    | Unnecessary => 1
-    | Deprecated => 2
-    }
-  let fromEnum = x =>
-    switch x {
-    | 1 => Unnecessary
-    | _ => Deprecated
-    }
+    | @as(1) Unnecessary
+    | @as(2) Deprecated
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#Diagnostic
