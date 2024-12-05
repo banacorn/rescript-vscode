@@ -19,6 +19,8 @@ var ProviderResult = {
 
 var ThemeColor = {};
 
+var ThemeIcon = {};
+
 function string(v) {
   return v;
 }
@@ -298,6 +300,12 @@ var TextEditorVisibleRangesChangeEvent = {};
 var InputBox = {};
 
 var OutputChannel = {};
+
+var QuickInputButtonWithUri = {};
+
+var QuickInputButtonWithThemeIcon = {};
+
+var QuickInputButtonWithDarkAndLightUri = {};
 
 var QuickPickItem = {};
 
@@ -606,6 +614,7 @@ var Languages = {};
 
 exports.ProviderResult = ProviderResult;
 exports.ThemeColor = ThemeColor;
+exports.ThemeIcon = ThemeIcon;
 exports.StringOr = StringOr;
 exports.ArrayOr = ArrayOr;
 exports.Api = Api;
@@ -671,6 +680,9 @@ exports.TextEditorViewColumnChangeEvent = TextEditorViewColumnChangeEvent;
 exports.TextEditorVisibleRangesChangeEvent = TextEditorVisibleRangesChangeEvent;
 exports.InputBox = InputBox;
 exports.OutputChannel = OutputChannel;
+exports.QuickInputButtonWithUri = QuickInputButtonWithUri;
+exports.QuickInputButtonWithThemeIcon = QuickInputButtonWithThemeIcon;
+exports.QuickInputButtonWithDarkAndLightUri = QuickInputButtonWithDarkAndLightUri;
 exports.QuickPickItem = QuickPickItem;
 exports.QuickPick = QuickPick;
 exports.AccessibilityInformation = AccessibilityInformation;

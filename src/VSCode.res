@@ -16,6 +16,27 @@ module ThemeColor = {
   @module("vscode") @new external make: string => t = "ThemeColor"
 }
 
+// https://code.visualstudio.com/api/references/vscode-api#ThemeIcon
+// 1.95
+module ThemeIcon = {
+  type t
+
+  // constructors
+  @module("vscode") @new
+  external make: (string, option<ThemeColor.t>) => t = "ThemeIcon"
+
+  // static properties
+  @module("vscode") @scope("ThemeIcon")
+  external file: t = "File"
+
+  @module("vscode") @scope("ThemeIcon")
+  external folder: t = "Folder"
+
+  // properties
+  @get external color: t => option<ThemeColor.t> = "color"
+  @get external id: t => string = "id"
+}
+
 // "string | xxx", for modeling the union type of String and something else
 module StringOr: {
   type t<'a>
@@ -1071,13 +1092,50 @@ module OutputChannel = {
   type t
 }
 
+// https://code.visualstudio.com/api/references/vscode-api#QuickInputButton
+// 1.95
+module QuickInputButtonWithUri = {
+  type t
+  // properties
+  @get external iconPath: t => Uri.t = "iconPath"
+  @get external tooltip: t => option<string> = "tooltip"
+}
+module QuickInputButtonWithThemeIcon = {
+  type t
+  // properties
+  @get external iconPath: t => ThemeIcon.t = "iconPath"
+  @get external tooltip: t => option<string> = "tooltip"
+}
+module QuickInputButtonWithDarkAndLightUri = {
+  type t
+  // properties
+  @get external iconPath: t => {"dark": Uri.t, "light": Uri.t} = "iconPath"
+  @get external tooltip: t => option<string> = "tooltip"
+}
+
 // https://code.visualstudio.com/api/references/vscode-api#QuickPickItem
 module QuickPickItem = {
-  type t
+  type t<'a>
 }
 // https://code.visualstudio.com/api/references/vscode-api#QuickPick
 module QuickPick = {
-  type t
+  type t<'a>
+  // // events
+  // @send external onDidChangeValue: (t<'a>, string => unit) => Disposable.t = "onDidChangeValue"
+  // @send external onDidAccept: (t<'a>, unit => unit) => Disposable.t = "onDidAccept"
+  // @send external onDidHide: (t<'a>, unit => unit) => Disposable.t = "onDidHide"
+  // @send
+  // external onDidTriggerButton: (t<'a>, QuickInputButton.t => unit) => Disposable.t =
+  //   "onDidTriggerButton"
+  // // @send
+  // // external onDidTriggerItemButton: (t<'a>, QuickPickItemButtonEvent.t => unit) => Disposable.t =
+  // //   "onDidTriggerItemButton"
+  // @send
+  // external onDidChangeActive: (t<'a>, array<QuickPickItem.t> => unit) => Disposable.t =
+  //   "onDidChangeActive"
+  // @send
+  // external onDidChangeSelection: (t<'a>, array<QuickPickItem.t> => unit) => Disposable.t =
+  //   "onDidChangeSelection"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#AccessibilityInformation
@@ -1641,7 +1699,7 @@ module Window = {
   @module("vscode") @scope("window")
   external createOutputChannel: string => OutputChannel.t = "createOutputChannel"
   @module("vscode") @scope("window")
-  external createQuickPick: QuickPickItem.t => QuickPick.t = "createQuickPick"
+  external createQuickPick: QuickPickItem.t<'a> => QuickPick.t<'a> = "createQuickPick"
   @module("vscode") @scope("window")
   external createStatusBarItem: (option<StatusBarAlignment.t>, option<int>) => StatusBarItem.t =
     "createStatusBarItem"
