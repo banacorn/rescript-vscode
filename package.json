@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/banacorn/rescript-vscode#readme",
   "dependencies": {
-		"rescript": "^11.1.4"
+		"rescript": "^11.1.4",
+    "@rescript/core": "^1.3.0"
   }
 }

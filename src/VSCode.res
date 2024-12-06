@@ -1092,31 +1092,58 @@ module OutputChannel = {
   type t
 }
 
+// https://github.com/microsoft/vscode/blob/ad42640a78864e43008b8d5b750d04e96dd05218/src/vscode-dts/vscode.d.ts#L953
+// 1.95
+module IconPath = {
+  type t = Uri(Uri.t) | ThemeIcon(ThemeIcon.t) | DarkAndLight({"dark": Uri.t, "light": Uri.t})
+
+  // for type casting
+  external convertToUri: 'a => Uri.t = "%identity"
+  external convertToDarkAndLight: 'a => {"dark": Uri.t, "light": Uri.t} = "%identity"
+  external convertToThemeIcon: 'a => ThemeIcon.t = "%identity"
+
+  let make = (raw: 'a): t =>
+    switch raw->Object.get("color") {
+    | Some(_) => Uri(convertToUri(raw))
+    | None =>
+      switch raw->Object.get("dark") {
+      | Some(_) => DarkAndLight(convertToDarkAndLight(raw))
+      | None => ThemeIcon(convertToThemeIcon(raw))
+      }
+    }
+}
+
 // https://code.visualstudio.com/api/references/vscode-api#QuickInputButton
 // 1.95
-module QuickInputButtonWithUri = {
+module QuickInputButton = {
   type t
   // properties
-  @get external iconPath: t => Uri.t = "iconPath"
+  @get external iconPath: t => IconPath.t = "iconPath"
   @get external tooltip: t => option<string> = "tooltip"
 }
-module QuickInputButtonWithThemeIcon = {
+
+// https://code.visualstudio.com/api/references/vscode-api#QuickInputButtons
+// 1.95
+module QuickInputButtons = {
   type t
-  // properties
-  @get external iconPath: t => ThemeIcon.t = "iconPath"
-  @get external tooltip: t => option<string> = "tooltip"
-}
-module QuickInputButtonWithDarkAndLightUri = {
-  type t
-  // properties
-  @get external iconPath: t => {"dark": Uri.t, "light": Uri.t} = "iconPath"
-  @get external tooltip: t => option<string> = "tooltip"
+  // static
+  @module("vscode") @scope("QuickInputButtons")
+  external back: t => QuickInputButton.t = "Back"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#QuickPickItem
 module QuickPickItem = {
   type t<'a>
 }
+
+module QuickPickItemButtonEvent = {
+  type t<'a>
+
+  // properties
+  @get external button: t<'a> => QuickInputButton.t = "button"
+  @get external item: t<'a> => 'a = "item"
+}
+
 // https://code.visualstudio.com/api/references/vscode-api#QuickPick
 module QuickPick = {
   type t<'a>
@@ -2036,11 +2063,12 @@ module WorkspaceEdit = {
     option<WorkspaceEditEntryMetadata.t>,
   ) => unit = "deleteFile"
   @send external entries_raw: t => array<'shit> = "entries"
-  let entries = (self: t): array<(Uri.t, array<TextEdit.t>)> => Array.map(shit => {
+  let entries = (self: t): array<(Uri.t, array<TextEdit.t>)> =>
+    entries_raw(self)->Array.map(shit => {
       let toUri = %raw("function (shit) { return shit[0] }")
       let toTextEdits = %raw("function (shit) { return shit[1] }")
       (toUri(shit), toTextEdits(shit))
-    }, entries_raw(self))
+    })
   @send external get: (t, Uri.t) => array<TextEdit.t> = "get"
   @send external has: (t, Uri.t) => bool = "has"
   @send
