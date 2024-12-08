@@ -20,14 +20,6 @@ var ThemeColor = {};
 
 var ThemeIcon = {};
 
-function string(v) {
-  return v;
-}
-
-function others(v) {
-  return v;
-}
-
 function classify(v) {
   if (typeof v === "string") {
     return {
@@ -54,8 +46,6 @@ function map$1(f, xs) {
 }
 
 var StringOr = {
-  string: string,
-  others: others,
   classify: classify,
   map: map$1
 };
@@ -300,7 +290,7 @@ var InputBox = {};
 
 var OutputChannel = {};
 
-function make(raw) {
+function $$case(raw) {
   var match = raw["color"];
   if (match !== undefined) {
     return {
@@ -326,16 +316,20 @@ function make(raw) {
 }
 
 var IconPath = {
-  make: make
+  $$case: $$case
 };
 
 var QuickInputButton = {};
 
 var QuickInputButtons = {};
 
+var QuickPickItemKind = {};
+
 var QuickPickItem = {};
 
 var QuickPickItemButtonEvent = {};
+
+var QuickPickOptions = {};
 
 var QuickPick = {};
 
@@ -355,7 +349,7 @@ var TreeViewOptions = {};
 
 var TreeView = {};
 
-function make$1(enableCommandUris, enableScripts, localResourceRoots, portMapping, enableFindWidget, retainContextWhenHidden, param) {
+function make(enableCommandUris, enableScripts, localResourceRoots, portMapping, enableFindWidget, retainContextWhenHidden, param) {
   return {
           enableCommandUris: enableCommandUris,
           enableScripts: enableScripts,
@@ -367,7 +361,7 @@ function make$1(enableCommandUris, enableScripts, localResourceRoots, portMappin
 }
 
 var WebviewAndWebviewPanelOptions = {
-  make: make$1
+  make: make
 };
 
 var TreeDataProvider = {};
@@ -385,8 +379,6 @@ var CancellationToken = {};
 var CancellationTokenSource = {};
 
 var OpenDialogOptions = {};
-
-var QuickPickOptions = {};
 
 var SaveDialogOptions = {};
 
@@ -440,7 +432,7 @@ var ProgressOptions = {
 
 var Progress = {};
 
-function make$2(preserveFocus, preview, selection, viewColumn, param) {
+function make$1(preserveFocus, preview, selection, viewColumn, param) {
   return {
           preserveFocus: preserveFocus,
           preview: preview,
@@ -450,7 +442,7 @@ function make$2(preserveFocus, preview, selection, viewColumn, param) {
 }
 
 var TextDocumentShowOptions = {
-  make: make$2
+  make: make$1
 };
 
 var ColorThemeKind = {};
@@ -711,8 +703,10 @@ exports.OutputChannel = OutputChannel;
 exports.IconPath = IconPath;
 exports.QuickInputButton = QuickInputButton;
 exports.QuickInputButtons = QuickInputButtons;
+exports.QuickPickItemKind = QuickPickItemKind;
 exports.QuickPickItem = QuickPickItem;
 exports.QuickPickItemButtonEvent = QuickPickItemButtonEvent;
+exports.QuickPickOptions = QuickPickOptions;
 exports.QuickPick = QuickPick;
 exports.AccessibilityInformation = AccessibilityInformation;
 exports.StatusBarAlignment = StatusBarAlignment;
@@ -731,7 +725,6 @@ exports.InputBoxOptions = InputBoxOptions;
 exports.CancellationToken = CancellationToken;
 exports.CancellationTokenSource = CancellationTokenSource;
 exports.OpenDialogOptions = OpenDialogOptions;
-exports.QuickPickOptions = QuickPickOptions;
 exports.SaveDialogOptions = SaveDialogOptions;
 exports.WorkspaceFolderPickOptions = WorkspaceFolderPickOptions;
 exports.ProgressOptions = ProgressOptions;

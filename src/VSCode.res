@@ -43,10 +43,7 @@ module StringOr: {
   type case<'a> =
     | String(string)
     | Others('a)
-  let string: string => t<'a>
-  let others: 'a => t<'a>
   let classify: t<'a> => case<'a>
-
   let map: ('a => 'b, t<'a>) => t<'b>
 } = {
   @unboxed
@@ -1095,20 +1092,24 @@ module OutputChannel = {
 // https://github.com/microsoft/vscode/blob/ad42640a78864e43008b8d5b750d04e96dd05218/src/vscode-dts/vscode.d.ts#L953
 // 1.95
 module IconPath = {
-  type t = Uri(Uri.t) | ThemeIcon(ThemeIcon.t) | DarkAndLight({"dark": Uri.t, "light": Uri.t})
+  type case = Uri(Uri.t) | ThemeIcon(ThemeIcon.t) | DarkAndLight({"dark": Uri.t, "light": Uri.t})
+  type t
 
-  // for type casting
-  external convertToUri: 'a => Uri.t = "%identity"
-  external convertToDarkAndLight: 'a => {"dark": Uri.t, "light": Uri.t} = "%identity"
-  external convertToThemeIcon: 'a => ThemeIcon.t = "%identity"
+  external fromUri: Uri.t => t = "%identity"
+  external fromDarkAndLight: {"dark": Uri.t, "light": Uri.t} => t = "%identity"
+  external fromThemeIcon: ThemeIcon.t => t = "%identity"
 
-  let make = (raw: 'a): t =>
+  external toUri: 'a => Uri.t = "%identity"
+  external toDarkAndLight: 'a => {"dark": Uri.t, "light": Uri.t} = "%identity"
+  external toThemeIcon: 'a => ThemeIcon.t = "%identity"
+
+  let case = (raw: 'a): case =>
     switch raw->Object.get("color") {
-    | Some(_) => Uri(convertToUri(raw))
+    | Some(_) => Uri(toUri(raw))
     | None =>
       switch raw->Object.get("dark") {
-      | Some(_) => DarkAndLight(convertToDarkAndLight(raw))
-      | None => ThemeIcon(convertToThemeIcon(raw))
+      | Some(_) => DarkAndLight(toDarkAndLight(raw))
+      | None => ThemeIcon(toThemeIcon(raw))
       }
     }
 }
@@ -1116,10 +1117,10 @@ module IconPath = {
 // https://code.visualstudio.com/api/references/vscode-api#QuickInputButton
 // 1.95
 module QuickInputButton = {
-  type t
-  // properties
-  @get external iconPath: t => IconPath.t = "iconPath"
-  @get external tooltip: t => option<string> = "tooltip"
+  type t = {
+    iconPath: IconPath.t,
+    tooltip: option<string>,
+  }
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#QuickInputButtons
@@ -1131,38 +1132,117 @@ module QuickInputButtons = {
   external back: t => QuickInputButton.t = "Back"
 }
 
-// https://code.visualstudio.com/api/references/vscode-api#QuickPickItem
-module QuickPickItem = {
-  type t<'a>
+// https://code.visualstudio.com/api/references/vscode-api#QuickPickItemKind
+// 1.95
+module QuickPickItemKind = {
+  type t =
+    | @as(-1) Separator
+    | @as(0) Default
 }
 
+// https://code.visualstudio.com/api/references/vscode-api#QuickPickItem
+// 1.95
+module QuickPickItem = {
+  type t = {
+    alwaysShow?: bool,
+    buttons?: array<QuickInputButton.t>,
+    description?: string,
+    detail?: string,
+    iconPath?: IconPath.t,
+    kind?: QuickPickItemKind.t,
+    label: string,
+    picked?: bool,
+  }
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#QuickPickItemButtonEvent
+// 1.95
 module QuickPickItemButtonEvent = {
   type t<'a>
-
   // properties
   @get external button: t<'a> => QuickInputButton.t = "button"
   @get external item: t<'a> => 'a = "item"
 }
 
+// https://code.visualstudio.com/api/references/vscode-api#QuickPickOptions
+// 1.95
+module QuickPickOptions = {
+  type t = {
+    onDidSelectItem?: StringOr.t<QuickPickItem.t> => unit,
+    canPickMany?: bool,
+    ignoreFocusOut?: bool,
+    matchOnDescription?: bool,
+    matchOnDetail?: bool,
+    placeHolder?: string,
+    title?: string,
+  }
+}
+
 // https://code.visualstudio.com/api/references/vscode-api#QuickPick
 module QuickPick = {
   type t<'a>
-  // // events
-  // @send external onDidChangeValue: (t<'a>, string => unit) => Disposable.t = "onDidChangeValue"
-  // @send external onDidAccept: (t<'a>, unit => unit) => Disposable.t = "onDidAccept"
-  // @send external onDidHide: (t<'a>, unit => unit) => Disposable.t = "onDidHide"
-  // @send
-  // external onDidTriggerButton: (t<'a>, QuickInputButton.t => unit) => Disposable.t =
-  //   "onDidTriggerButton"
-  // // @send
-  // // external onDidTriggerItemButton: (t<'a>, QuickPickItemButtonEvent.t => unit) => Disposable.t =
-  // //   "onDidTriggerItemButton"
-  // @send
-  // external onDidChangeActive: (t<'a>, array<QuickPickItem.t> => unit) => Disposable.t =
-  //   "onDidChangeActive"
-  // @send
-  // external onDidChangeSelection: (t<'a>, array<QuickPickItem.t> => unit) => Disposable.t =
-  //   "onDidChangeSelection"
+  // events
+  @send external onDidAccept: (t<'a>, unit => unit) => Disposable.t = "onDidAccept"
+  @send external onDidChangeActive: (t<'a>, array<'a> => unit) => Disposable.t = "onDidChangeActive"
+  @send
+  external onDidChangeSelection: (t<'a>, array<'a> => unit) => Disposable.t = "onDidChangeSelection"
+  @send external onDidChangeValue: (t<'a>, string => unit) => Disposable.t = "onDidChangeValue"
+  @send external onDidHide: (t<'a>, unit => unit) => Disposable.t = "onDidHide"
+  @send
+  external onDidTriggerButton: (t<'a>, QuickInputButton.t => unit) => Disposable.t =
+    "onDidTriggerButton"
+  @send
+  external onDidTriggerItemButton: (t<'a>, QuickPickItemButtonEvent.t<'a> => unit) => Disposable.t =
+    "onDidTriggerItemButton"
+  // properties
+  @get external activeItems: t<'a> => array<'a> = "activeItems"
+
+  @get external busy: t<'a> => bool = "busy"
+  @set external setBusy: (t<'a>, bool) => unit = "busy"
+
+  @get external buttons: t<'a> => array<QuickInputButton.t> = "buttons"
+
+  @get external canSelectMany: t<'a> => bool = "canSelectMany"
+  @set external setCanSelectMany: (t<'a>, bool) => unit = "canSelectMany"
+
+  @get external enabled: t<'a> => bool = "enabled"
+  @set external setEnabled: (t<'a>, bool) => unit = "enabled"
+
+  @get external ignoreFocusOut: t<'a> => bool = "ignoreFocusOut"
+  @set external setIgnoreFocusOut: (t<'a>, bool) => unit = "ignoreFocusOut"
+
+  @get external items: t<'a> => array<'a> = "items"
+
+  @get external keepScrollPosition: t<'a> => option<bool> = "keepScrollPosition"
+  @set external setKeepScrollPosition: (t<'a>, option<bool>) => unit = "keepScrollPosition"
+
+  @get external matchOnDescription: t<'a> => bool = "matchOnDescription"
+  @set external setMatchOnDescription: (t<'a>, bool) => unit = "matchOnDescription"
+
+  @get external matchOnDetail: t<'a> => bool = "matchOnDetail"
+  @set external setMatchOnDetail: (t<'a>, bool) => unit = "matchOnDetail"
+
+  @get external placeholder: t<'a> => option<string> = "placeholder"
+  @set external setPlaceholder: (t<'a>, string) => unit = "placeholder"
+
+  @get external selectedItems: t<'a> => array<'a> = "selectedItems"
+
+  @get external step: t<'a> => int = "step"
+  @set external setStep: (t<'a>, int) => unit = "step"
+
+  @get external title: t<'a> => string = "title"
+  @set external setTitle: (t<'a>, string) => unit = "title"
+
+  @get external totalSteps: t<'a> => int = "totalSteps"
+  @set external setTotalSteps: (t<'a>, int) => unit = "totalSteps"
+
+  @get external value: t<'a> => string = "value"
+  @set external setValue: (t<'a>, string) => unit = "value"
+
+  // methods
+  @send external dispose: t<'a> => unit = "dispose"
+  @send external hide: t<'a> => unit = "hide"
+  @send external show: t<'a> => unit = "show"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#AccessibilityInformation
@@ -1406,11 +1486,6 @@ module CancellationTokenSource = {
 
 // https://code.visualstudio.com/api/references/vscode-api#OpenDialogOptions
 module OpenDialogOptions = {
-  type t
-}
-
-// https://code.visualstudio.com/api/references/vscode-api#QuickPickOptions
-module QuickPickOptions = {
   type t
 }
 
@@ -1726,7 +1801,7 @@ module Window = {
   @module("vscode") @scope("window")
   external createOutputChannel: string => OutputChannel.t = "createOutputChannel"
   @module("vscode") @scope("window")
-  external createQuickPick: QuickPickItem.t<'a> => QuickPick.t<'a> = "createQuickPick"
+  external createQuickPick: QuickPickItem.t => QuickPick.t<'a> = "createQuickPick"
   @module("vscode") @scope("window")
   external createStatusBarItem: (option<StatusBarAlignment.t>, option<int>) => StatusBarItem.t =
     "createStatusBarItem"
