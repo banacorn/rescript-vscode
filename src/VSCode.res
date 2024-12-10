@@ -240,7 +240,7 @@ module EnvironmentVariableCollection = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#ExtensionMode
-// 1.95.0
+// 1.95
 module ExtensionMode = {
   type t =
     | @as(1) Production
@@ -248,8 +248,32 @@ module ExtensionMode = {
     | @as(3) Test
 }
 
+
+// https://code.visualstudio.com/api/references/vscode-api#ExtensionKind
+// 1.95
+module ExtensionKind = {
+  type t =
+    | @as(1) UI
+    | @as(2) Workspace
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#Extension
+// 1.95
+module Extension = {
+  type t<'a>
+  // properties
+  @get external exports: t<'a> => 'a = "exports"
+  @get external extensionKind: t<'a> => ExtensionKind.t = "extensionKind"
+  @get external extensionPath: t<'a> => string = "extensionPath"
+  @get external extensionUri: t<'a> => Uri.t = "extensionUri"
+  @get external id: t<'a> => string = "id"
+  @get external isActive: t<'a> => bool = "isActive"
+  @get external packageJSON: t<'a> => Js.Json.t = "packageJSON"
+  // methods
+  @send external activate: t<'a> => promise<'a> = "activate"
+}
+
 // https://code.visualstudio.com/api/references/vscode-api#ExtensionContext
-// 1.52.0
 module ExtensionContext = {
   type t
   // properties
