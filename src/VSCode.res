@@ -43,6 +43,8 @@ module StringOr: {
   type case<'a> =
     | String(string)
     | Others('a)
+  let string: string => t<'a>
+  let others: 'a => t<'a>
   let classify: t<'a> => case<'a>
   let map: ('a => 'b, t<'a>) => t<'b>
 } = {
@@ -1114,6 +1116,39 @@ module IconPath = {
     }
 }
 
+// https://code.visualstudio.com/api/references/vscode-api#QuickInput
+// 1.95 
+module QuickInput = {
+  type t 
+
+  // events
+  @send external onDidHide: (t, unit => unit) => Disposable.t = "onDidHide"
+
+  // properties
+  @get external busy: t => bool = "busy"
+  @set external setBusy: (t, bool) => unit = "busy"
+
+  @get external enabled: t => bool = "enabled"
+  @set external setEnabled: (t, bool) => unit = "enabled"
+
+  @get external ignoreFocusOut: t => bool = "ignoreFocusOut"
+  @set external setIgnoreFocusOut: (t, bool) => unit = "ignoreFocusOut"
+
+  @get external step: t => int = "step"
+  @set external setStep: (t, int) => unit = "step"
+
+  @get external title: t => string = "title"
+  @set external setTitle: (t, string) => unit = "title"
+
+  @get external totalSteps: t => int = "totalSteps"
+  @set external setTotalSteps: (t, int) => unit = "totalSteps"
+
+  // methods
+  @send external dispose: t => unit = "dispose"
+  @send external hide: t => unit = "hide"
+  @send external show: t => unit = "show"
+}
+
 // https://code.visualstudio.com/api/references/vscode-api#QuickInputButton
 // 1.95
 module QuickInputButton = {
@@ -1179,6 +1214,7 @@ module QuickPickOptions = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#QuickPick
+// 1.95
 module QuickPick = {
   type t<'a>
   // events
@@ -1212,6 +1248,7 @@ module QuickPick = {
   @set external setIgnoreFocusOut: (t<'a>, bool) => unit = "ignoreFocusOut"
 
   @get external items: t<'a> => array<'a> = "items"
+  @set external setItems: (t<'a>, array<'a>) => unit = "items"
 
   @get external keepScrollPosition: t<'a> => option<bool> = "keepScrollPosition"
   @set external setKeepScrollPosition: (t<'a>, option<bool>) => unit = "keepScrollPosition"
@@ -1801,7 +1838,7 @@ module Window = {
   @module("vscode") @scope("window")
   external createOutputChannel: string => OutputChannel.t = "createOutputChannel"
   @module("vscode") @scope("window")
-  external createQuickPick: QuickPickItem.t => QuickPick.t<'a> = "createQuickPick"
+  external createQuickPick: unit => QuickPick.t<'a> = "createQuickPick"
   @module("vscode") @scope("window")
   external createStatusBarItem: (option<StatusBarAlignment.t>, option<int>) => StatusBarItem.t =
     "createStatusBarItem"
