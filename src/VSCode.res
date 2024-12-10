@@ -239,6 +239,37 @@ module EnvironmentVariableCollection = {
   @send external replace: (t, string, string) => unit = "replace"
 }
 
+// https://code.visualstudio.com/api/references/vscode-api#LanguageModelAccessInformation
+// 1.95 
+module LanguageModelAccessInformation = {
+  type t
+  // events
+  @send external onDidChange: (t, unit => unit) => Disposable.t = "onDidChange"
+  // methods
+  // @send external canSendRequests: (t, %todo) => bool = "canSendRequests"
+}
+
+
+// https://code.visualstudio.com/api/references/vscode-api#SecretStorageChangeEvent
+// 1.95
+module SecretStorageChangeEvent = {
+  type t
+  // properties
+  @get external key: t => string = "key"
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#SecretStorage
+// 1.95
+module SecretStorage = {
+  type t
+  // events
+  @send external onDidChange: (t, SecretStorageChangeEvent.t => unit) => Disposable.t = "onDidChange"
+  // methods
+  @send external delete: (t, string) => promise<unit> = "delete"
+  @send external get: (t, string) => promise<string> = "get"
+  @send external store: (t, string, string) => promise<unit> = "store"
+}
+
 // https://code.visualstudio.com/api/references/vscode-api#ExtensionMode
 // 1.95
 module ExtensionMode = {
@@ -257,10 +288,12 @@ module ExtensionKind = {
     | @as(2) Workspace
 }
 
+
 // https://code.visualstudio.com/api/references/vscode-api#Extension
 // 1.95
 module Extension = {
   type t<'a>
+
   // properties
   @get external exports: t<'a> => 'a = "exports"
   @get external extensionKind: t<'a> => ExtensionKind.t = "extensionKind"
@@ -268,7 +301,8 @@ module Extension = {
   @get external extensionUri: t<'a> => Uri.t = "extensionUri"
   @get external id: t<'a> => string = "id"
   @get external isActive: t<'a> => bool = "isActive"
-  @get external packageJSON: t<'a> => Js.Json.t = "packageJSON"
+  @get external packageJSON: t<'a> => 'json = "packageJSON"
+
   // methods
   @send external activate: t<'a> => promise<'a> = "activate"
 }
@@ -280,14 +314,15 @@ module ExtensionContext = {
   @get
   external environmentVariableCollection: t => EnvironmentVariableCollection.t =
     "environmentVariableCollection"
+  @get external extension: t => Extension.t<'a> = "extension"
   @get external extensionMode: t => ExtensionMode.t = "extensionMode"
   @get external extensionPath: t => string = "extensionPath"
   @get external extensionUri: t => Uri.t = "extensionUri"
   @get external globalState: t => Memento.t = "globalState"
-  @get external globalStoragePath: t => string = "globalStoragePath"
-  @get external logPath: t => string = "logPath"
+  @get external globalStorageUri: t => Uri.t = "globalStorageUri"
+  @get external languageModelAccessInformation: t => LanguageModelAccessInformation.t = "languageModelAccessInformation"
   @get external logUri: t => Uri.t = "logUri"
-  @get external storagePath: t => option<string> = "storagePath"
+  @get external secrets: t => SecretStorage.t = "secrets"
   @get external storageUri: t => option<Uri.t> = "storageUri"
   @get
   external subscriptions: t => array<Disposable.t> = "subscriptions"
@@ -2503,32 +2538,6 @@ module Workspace = {
     option<int>,
     array<{"name": string, "uri": Uri.t}>,
   ) => promise<bool> = "updateWorkspaceFolders"
-}
-
-// https://code.visualstudio.com/api/references/vscode-api#ExtensionKind
-// 1.95
-module ExtensionKind = {
-  type t =
-    | @as(1) UI
-    | @as(2) Workspace
-}
-
-// https://code.visualstudio.com/api/references/vscode-api#Extension
-// 1.95
-module Extension = {
-  type t<'a>
-
-  // properties
-  @get external exports: t<'a> => 'a = "exports"
-  @get external extensionKind: t<'a> => ExtensionKind.t = "extensionKind"
-  @get external extensionPath: t<'a> => string = "extensionPath"
-  @get external extensionUri: t<'a> => Uri.t = "extensionUri"
-  @get external id: t<'a> => string = "id"
-  @get external isActive: t<'a> => bool = "isActive"
-  @get external packageJSON: t<'a> => 'json = "packageJSON"
-
-  // methods
-  @send external activate: t<'a> => promise<'a> = "activate"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#extensions

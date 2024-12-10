@@ -123,7 +123,17 @@ var EnvironmentVariableMutator = {};
 
 var EnvironmentVariableCollection = {};
 
+var LanguageModelAccessInformation = {};
+
+var SecretStorageChangeEvent = {};
+
+var SecretStorage = {};
+
 var ExtensionMode = {};
+
+var ExtensionKind = {};
+
+var Extension = {};
 
 var ExtensionContext = {};
 
@@ -550,10 +560,6 @@ var FileSystemProvider = {};
 
 var Workspace = {};
 
-var ExtensionKind = {};
-
-var Extension = {};
-
 var Extensions = {};
 
 var DiagnosticChangeEvent = {};
@@ -657,7 +663,12 @@ exports.EnvironmentVariableMutatorType = EnvironmentVariableMutatorType;
 exports.Command = Command;
 exports.EnvironmentVariableMutator = EnvironmentVariableMutator;
 exports.EnvironmentVariableCollection = EnvironmentVariableCollection;
+exports.LanguageModelAccessInformation = LanguageModelAccessInformation;
+exports.SecretStorageChangeEvent = SecretStorageChangeEvent;
+exports.SecretStorage = SecretStorage;
 exports.ExtensionMode = ExtensionMode;
+exports.ExtensionKind = ExtensionKind;
+exports.Extension = Extension;
 exports.ExtensionContext = ExtensionContext;
 exports.Commands = Commands;
 exports.DebugConsole = DebugConsole;
@@ -783,8 +794,6 @@ exports.TextDocumentContentProvider = TextDocumentContentProvider;
 exports.TaskProvider = TaskProvider;
 exports.FileSystemProvider = FileSystemProvider;
 exports.Workspace = Workspace;
-exports.ExtensionKind = ExtensionKind;
-exports.Extension = Extension;
 exports.Extensions = Extensions;
 exports.DiagnosticChangeEvent = DiagnosticChangeEvent;
 exports.$$Location = $$Location;
