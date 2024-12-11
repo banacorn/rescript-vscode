@@ -43,28 +43,55 @@ module StringOr: {
   type case<'a> =
     | String(string)
     | Others('a)
-  let string: string => t<'a>
-  let others: 'a => t<'a>
+  let make: case<'a> => t<'a>
   let classify: t<'a> => case<'a>
-  let map: ('a => 'b, t<'a>) => t<'b>
+  let map: (t<'a>, 'a => 'b) => t<'b>
 } = {
-  @unboxed
-  type rec t<'a> = Any('x): t<'a>
+  @unboxed type rec t<'a> = Any('x): t<'a>
   type case<'a> =
     | String(string)
     | Others('a)
-  let string = (v: string) => Any(v)
-  let others = (v: 'a) => Any(v)
+  let make = (value: case<'a>): t<'a> =>
+    switch value {
+    | String(string) => Any(string)
+    | Others(others) => Any(others)
+    }
   let classify = (Any(v): t<'a>): case<'a> =>
     if Js.typeof(v) == "string" {
       String((Obj.magic(v): string))
     } else {
       Others((Obj.magic(v): 'a))
     }
-  let map = (f: 'a => 'b, xs: t<'a>): t<'b> =>
+  let map = (xs: t<'a>, f: 'a => 'b): t<'b> =>
     switch classify(xs) {
-    | String(s) => string(s)
-    | Others(x) => others(f(x))
+    | String(s) => make(String(s))
+    | Others(x) => make(Others(f(x)))
+    }
+}
+
+// "A | promise<A>", for modeling the union type of something and promise of that thing
+module PromiseOr: {
+  type t<'a>
+  type case<'a> =
+    | Others('a)
+    | Promise(promise<'a>)
+  let make: case<'a> => t<'a>
+  let classify: t<'a> => case<'a>
+} = {
+  @unboxed type rec t<'a> = Any('x): t<'a>
+  type case<'a> =
+    | Others('a)
+    | Promise(promise<'a>)
+  let make = (value: case<'a>): t<'a> =>
+    switch value {
+    | Others(value) => Any(value)
+    | Promise(promise) => Any(promise)
+    }
+  let classify = (Any(v): t<'a>): case<'a> =>
+    if Obj.magic(v)["then"] && Js.typeof(Obj.magic(v)["then"]) == "function" {
+      Promise((Obj.magic(v): promise<'a>))
+    } else {
+      Others((Obj.magic(v): 'a))
     }
 }
 
@@ -240,7 +267,7 @@ module EnvironmentVariableCollection = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#LanguageModelAccessInformation
-// 1.95 
+// 1.95
 module LanguageModelAccessInformation = {
   type t
   // events
@@ -248,7 +275,6 @@ module LanguageModelAccessInformation = {
   // methods
   // @send external canSendRequests: (t, %todo) => bool = "canSendRequests"
 }
-
 
 // https://code.visualstudio.com/api/references/vscode-api#SecretStorageChangeEvent
 // 1.95
@@ -263,7 +289,8 @@ module SecretStorageChangeEvent = {
 module SecretStorage = {
   type t
   // events
-  @send external onDidChange: (t, SecretStorageChangeEvent.t => unit) => Disposable.t = "onDidChange"
+  @send
+  external onDidChange: (t, SecretStorageChangeEvent.t => unit) => Disposable.t = "onDidChange"
   // methods
   @send external delete: (t, string) => promise<unit> = "delete"
   @send external get: (t, string) => promise<string> = "get"
@@ -279,7 +306,6 @@ module ExtensionMode = {
     | @as(3) Test
 }
 
-
 // https://code.visualstudio.com/api/references/vscode-api#ExtensionKind
 // 1.95
 module ExtensionKind = {
@@ -287,7 +313,6 @@ module ExtensionKind = {
     | @as(1) UI
     | @as(2) Workspace
 }
-
 
 // https://code.visualstudio.com/api/references/vscode-api#Extension
 // 1.95
@@ -320,7 +345,9 @@ module ExtensionContext = {
   @get external extensionUri: t => Uri.t = "extensionUri"
   @get external globalState: t => Memento.t = "globalState"
   @get external globalStorageUri: t => Uri.t = "globalStorageUri"
-  @get external languageModelAccessInformation: t => LanguageModelAccessInformation.t = "languageModelAccessInformation"
+  @get
+  external languageModelAccessInformation: t => LanguageModelAccessInformation.t =
+    "languageModelAccessInformation"
   @get external logUri: t => Uri.t = "logUri"
   @get external secrets: t => SecretStorage.t = "secrets"
   @get external storageUri: t => option<Uri.t> = "storageUri"
@@ -1176,9 +1203,9 @@ module IconPath = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#QuickInput
-// 1.95 
+// 1.95
 module QuickInput = {
-  type t 
+  type t
 
   // events
   @send external onDidHide: (t, unit => unit) => Disposable.t = "onDidHide"
@@ -1536,27 +1563,37 @@ module MessageOptions = {
   type t
 }
 
-// https://code.visualstudio.com/api/references/vscode-api#MessageItem
-module MessageItem = {
-  type t
+// https://code.visualstudio.com/api/references/vscode-api#InputBoxValidationSeverity
+// 1.95
+
+module InputBoxValidationSeverity = {
+  type t =
+    | @as(1) Info
+    | @as(2) Warning
+    | @as(3) Error
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#InputBoxValidationMessage
+// 1.95
+module InputBoxValidationMessage = {
+  type t = {
+    message: string,
+    severity: InputBoxValidationSeverity.t,
+  }
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#InputBoxOptions
-// 1.59.0
 module InputBoxOptions = {
-  type t
-  // properties
-  @get external ignoreFocusOut: t => option<bool> = "ignoreFocusOut"
-  @get external password: t => option<bool> = "password"
-  @get external placeHolder: t => option<string> = "placeHolder"
-  @get external prompt: t => option<string> = "prompt"
-  @get external title: t => option<string> = "title"
-  @get external value: t => option<string> = "value"
-  @get external valueSelection: t => option<(int, int)> = "valueSelection"
-  // methods
-  @send
-  external validateInput: (t, string) => option<StringOr.t<promise<option<string>>>> =
-    "validateInput"
+  type t = {
+    ignoreFocusOut?: bool,
+    password?: bool,
+    placeHolder?: string,
+    prompt?: string,
+    title?: string,
+    value?: string,
+    valueSelection?: (int, int),
+    validateInput: string => PromiseOr.t<StringOr.t<InputBoxValidationMessage.t>>,
+  }
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#CancellationToken
