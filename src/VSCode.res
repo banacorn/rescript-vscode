@@ -1592,7 +1592,7 @@ module InputBoxOptions = {
     title?: string,
     value?: string,
     valueSelection?: (int, int),
-    validateInput: string => PromiseOr.t<StringOr.t<InputBoxValidationMessage.t>>,
+    validateInput?: string => PromiseOr.t<option<StringOr.t<InputBoxValidationMessage.t>>>,
   }
 }
 
@@ -2044,8 +2044,7 @@ module Window = {
   @module("vscode") @scope("window")
   external showInputBox: (
     ~option: InputBoxOptions.t=?,
-    ~token: CancellationToken.t=?,
-    unit,
+    ~token: CancellationToken.t=?
   ) => promise<option<string>> = "showInputBox"
   @module("vscode") @scope("window")
   external showOpenDialog: OpenDialogOptions.t => promise<option<Uri.t>> = "shoeOpenDialog"
