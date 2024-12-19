@@ -1563,9 +1563,22 @@ module WebviewPanelSerializer = {
   type t
 }
 
+// https://code.visualstudio.com/api/references/vscode-api#MessageItem
+// 1.96
+module MessageItem = {
+  type t = {
+    title: string,
+    isCloseAffordance?: bool,
+  }
+}
+
 // https://code.visualstudio.com/api/references/vscode-api#MessageOptions
+// 1.96
 module MessageOptions = {
-  type t
+  type t = {
+    modal?: bool,
+    detail?: string
+  }
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#InputBoxValidationSeverity
@@ -1602,17 +1615,18 @@ module InputBoxOptions = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#CancellationToken
+// 1.96
 module CancellationToken = {
-  type t
-  // properties
-  @get
-  external isCancellationRequested: t => bool = "isCancellationRequested"
-  // methods
-  @send
-  external onCancellationRequested: (t, 'a => unit) => Disposable.t = "onCancellationRequested"
+  @unboxed
+  type rec any = Any('x): any
+  type t = {
+    isCancellationRequested: bool,
+    onCancellationRequested: (any => unit) => Disposable.t,
+  }
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#CancellationTokenSource
+// 1.96
 module CancellationTokenSource = {
   type t
   // properties
@@ -1623,13 +1637,28 @@ module CancellationTokenSource = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#OpenDialogOptions
+// 1.96
 module OpenDialogOptions = {
-  type t
+  type t = {
+    defaultUri?: Uri.t,
+    openLabel?: string,
+    canSelectFiles?: bool,
+    canSelectFolders?: bool,
+    canSelectMany?: bool,
+    filters?: Dict.t<array<string>>,
+    title?: string,
+  }
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#SaveDialogOptions
+// 1.96
 module SaveDialogOptions = {
-  type t
+  type t = {
+    defaultUri?: Uri.t,
+    saveLabel?: string,
+    filters?: Dict.t<array<string>>,
+    title?: string,
+  }
 }
 // https://code.visualstudio.com/api/references/vscode-api#WorkspaceFolderPickOptions
 module WorkspaceFolderPickOptions = {

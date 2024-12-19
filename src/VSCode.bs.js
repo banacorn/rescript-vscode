@@ -414,6 +414,8 @@ var TreeDataProvider = {};
 
 var WebviewPanelSerializer = {};
 
+var MessageItem = {};
+
 var MessageOptions = {};
 
 var InputBoxValidationSeverity = {};
@@ -770,6 +772,7 @@ exports.TreeView = TreeView;
 exports.WebviewAndWebviewPanelOptions = WebviewAndWebviewPanelOptions;
 exports.TreeDataProvider = TreeDataProvider;
 exports.WebviewPanelSerializer = WebviewPanelSerializer;
+exports.MessageItem = MessageItem;
 exports.MessageOptions = MessageOptions;
 exports.InputBoxValidationSeverity = InputBoxValidationSeverity;
 exports.InputBoxValidationMessage = InputBoxValidationMessage;
