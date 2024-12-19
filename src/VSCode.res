@@ -171,42 +171,47 @@ module Memento = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#Uri
-// 1.51.0
+// 1.96
 module Uri = {
   type t
+  type components = {
+    scheme: string,
+    authority?: string,
+    path?: string,
+    query?: string,
+    fragment?: string,
+  }
 
   // static
   @module("vscode") @scope("Uri") external file: string => t = "file"
+  @module("vscode") @scope("Uri") external from: components => t = "from"
   @module("vscode") @scope("Uri") @variadic
   external joinPath: (t, array<string>) => t = "joinPath"
   @module("vscode") @scope("Uri")
-  external parse: (string, option<bool>) => t = "file"
+  external parse: (string, ~strict: bool=?) => t = "parse"
 
+  // constructors
   @new
-  external make: (string, string, string, string, string) => t = "Uri"
+  external make: (
+    ~scheme: string,
+    ~authority: string,
+    ~path: string,
+    ~query: string,
+    ~fragment: string,
+  ) => t = "Uri"
 
+  // properties
   @get external authority: t => string = "authority"
   @get external fragment: t => string = "fragment"
   @get external fsPath: t => string = "fsPath"
   @get external path: t => string = "path"
-  @get external prompt: t => string = "prompt"
+  @get external query: t => string = "query"
   @get external scheme: t => string = "scheme"
 
+  // methods
   @send external toJSON: t => Js.Json.t = "toJSON"
-  @send external toString: t => string = "toString"
-  @send external toStringWithOptions: (t, bool) => string = "toString"
-
-  @send
-  external with_: (
-    t,
-    {
-      "authority": option<string>,
-      "fragment": option<string>,
-      "path": option<string>,
-      "prompt": option<string>,
-      "scheme": option<string>,
-    },
-  ) => t = "with"
+  @send external toString: (t, ~skipEncoding: bool=?) => string = "toString"
+  @send external with_: (t, components) => t = "with"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#EnvironmentVariableMutatorType
@@ -2044,7 +2049,7 @@ module Window = {
   @module("vscode") @scope("window")
   external showInputBox: (
     ~option: InputBoxOptions.t=?,
-    ~token: CancellationToken.t=?
+    ~token: CancellationToken.t=?,
   ) => promise<option<string>> = "showInputBox"
   @module("vscode") @scope("window")
   external showOpenDialog: OpenDialogOptions.t => promise<option<Uri.t>> = "shoeOpenDialog"
