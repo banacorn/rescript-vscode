@@ -2067,6 +2067,15 @@ module Window = {
     array<string>,
   ) => promise<option<string>> = "showErrorMessage"
   @module("vscode") @scope("window") @variadic
+  external showErrorMessageWithMessageItem: (string, array<MessageItem.t>) => promise<option<MessageItem.t>> =
+    "showErrorMessage"
+  @module("vscode") @scope("window") @variadic
+  external showErrorMessageWithOptionsAndMessageItem: (
+    string,
+    MessageOptions.t,
+    array<MessageItem.t>,
+  ) => promise<option<MessageItem.t>> = "showErrorMessage"
+  @module("vscode") @scope("window") @variadic
   external showInformationMessage: (string, array<string>) => promise<option<string>> =
     "showInformationMessage"
   @module("vscode") @scope("window") @variadic
@@ -2075,6 +2084,15 @@ module Window = {
     MessageOptions.t,
     array<string>,
   ) => promise<option<string>> = "showInformationMessage"
+  @module("vscode") @scope("window") @variadic
+  external showInformationMessageWithMessageItem: (string, array<MessageItem.t>) => promise<option<MessageItem.t>> =
+    "showInformationMessage"
+  @module("vscode") @scope("window") @variadic
+  external showInformationMessageWithOptionsAndMessageItem: (
+    string,
+    MessageOptions.t,
+    array<MessageItem.t>,
+  ) => promise<option<MessageItem.t>> = "showInformationMessage"
   @module("vscode") @scope("window")
   external showInputBox: (
     ~option: InputBoxOptions.t=?,
@@ -2116,6 +2134,15 @@ module Window = {
     MessageOptions.t,
     array<string>,
   ) => promise<option<string>> = "showWarningMessage"
+  @module("vscode") @scope("window") @variadic
+  external showWarningMessageWithMessageItem: (string, array<MessageItem.t>) => promise<option<MessageItem.t>> =
+    "showWarningMessage"
+  @module("vscode") @scope("window") @variadic
+  external showWarningMessageWithOptionsAndMessageItem: (
+    string,
+    MessageOptions.t,
+    array<MessageItem.t>,
+  ) => promise<option<MessageItem.t>> = "showWarningMessage"
   @module("vscode") @scope("window")
   external showWorkspaceFolderPick: option<WorkspaceFolderPickOptions.t> => promise<
     option<WorkspaceFolder.t>,
