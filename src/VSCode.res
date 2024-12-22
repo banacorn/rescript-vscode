@@ -162,11 +162,13 @@ module Disposable = {
 // }
 
 // https://code.visualstudio.com/api/references/vscode-api#Memento
+// 1.96
 module Memento = {
   type t
   // methods
   @send external get: (t, string) => option<'a> = "get"
   @send external getWithDefault: (t, string, 'a) => 'a = "get"
+  @send external keys: (t) => array<string> = "keys"
   @send external update: (t, string, 'a) => promise<unit> = "update"
 }
 
