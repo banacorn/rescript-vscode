@@ -1,6 +1,6 @@
 {
   "name": "rescript-vscode",
-  "version": "0.0.32",
+  "version": "0.0.33",
   "description": "VS Code bindings for BuckleScript",
   "main": "index.js",
   "scripts": {

@@ -1356,6 +1356,7 @@ module QuickPick = {
   @set external setPlaceholder: (t<'a>, string) => unit = "placeholder"
 
   @get external selectedItems: t<'a> => array<'a> = "selectedItems"
+  @set external setSelectedItems: (t<'a>, array<'a>) => unit = "selectedItems"
 
   @get external step: t<'a> => int = "step"
   @set external setStep: (t<'a>, int) => unit = "step"
