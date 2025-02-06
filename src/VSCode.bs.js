@@ -434,53 +434,13 @@ var SaveDialogOptions = {};
 
 var WorkspaceFolderPickOptions = {};
 
-function encode(x) {
-  if (typeof x === "object") {
-    return {
-            viewId: x._0
-          };
-  }
-  switch (x) {
-    case "Notification" :
-        return 15;
-    case "SourceControl" :
-        return 1;
-    case "Window" :
-        return 10;
-    
-  }
-}
-
-function classify$4(v) {
-  if (typeof v === "int") {
-    if (v !== 1) {
-      if (v !== 15) {
-        return "Window";
-      } else {
-        return "Notification";
-      }
-    } else {
-      return "SourceControl";
-    }
-  } else {
-    return {
-            TAG: "ViewId",
-            _0: v,
-            [Symbol.for("name")]: "ViewId"
-          };
-  }
-}
-
-var ProcessLocationOrViewId = {
-  encode: encode,
-  classify: classify$4
-};
-
-var ProgressOptions = {
-  ProcessLocationOrViewId: ProcessLocationOrViewId
-};
-
 var Progress = {};
+
+var ProgressLocation = {};
+
+var ProgressOptions = {};
+
+var ProcessOptionsWithViewIdAsLocation = {};
 
 function make$3(preserveFocus, preview, selection, viewColumn, param) {
   return {
@@ -644,7 +604,7 @@ function locationLinks(v) {
   return v;
 }
 
-function classify$5(v) {
+function classify$4(v) {
   if ((function (a) { return a.targetRange === undefined})(v)) {
     return {
             TAG: "Location",
@@ -663,7 +623,7 @@ function classify$5(v) {
 var LocationLinkOrLocation = {
   locations: locations,
   locationLinks: locationLinks,
-  classify: classify$5
+  classify: classify$4
 };
 
 var DefinitionProvider = {};
@@ -782,8 +742,10 @@ exports.CancellationTokenSource = CancellationTokenSource;
 exports.OpenDialogOptions = OpenDialogOptions;
 exports.SaveDialogOptions = SaveDialogOptions;
 exports.WorkspaceFolderPickOptions = WorkspaceFolderPickOptions;
-exports.ProgressOptions = ProgressOptions;
 exports.Progress = Progress;
+exports.ProgressLocation = ProgressLocation;
+exports.ProgressOptions = ProgressOptions;
+exports.ProcessOptionsWithViewIdAsLocation = ProcessOptionsWithViewIdAsLocation;
 exports.TextDocumentShowOptions = TextDocumentShowOptions;
 exports.ColorThemeKind = ColorThemeKind;
 exports.ColorTheme = ColorTheme;

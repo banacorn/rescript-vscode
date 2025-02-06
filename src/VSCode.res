@@ -168,7 +168,7 @@ module Memento = {
   // methods
   @send external get: (t, string) => option<'a> = "get"
   @send external getWithDefault: (t, string, 'a) => 'a = "get"
-  @send external keys: (t) => array<string> = "keys"
+  @send external keys: t => array<string> = "keys"
   @send external update: (t, string, 'a) => promise<unit> = "update"
 }
 
@@ -1580,7 +1580,7 @@ module MessageItem = {
 module MessageOptions = {
   type t = {
     modal?: bool,
-    detail?: string
+    detail?: string,
   }
 }
 
@@ -1671,59 +1671,42 @@ module WorkspaceFolderPickOptions = {
   @get external placeHolder: t => option<string> = "placeHolder"
 }
 
-// https://code.visualstudio.com/api/references/vscode-api#ProgressOptions
-// 1.5560
-module ProgressOptions = {
-  // "ProcessLocation | {viewId: string}"
-  module ProcessLocationOrViewId: {
-    type t
-    type case =
-      | Notification
-      | SourceControl
-      | Window
-      | ViewId(string)
-    let encode: case => t
-    let classify: t => case
-  } = {
-    @unboxed
-    type rec t = Any('x): t
-    type case =
-      | Notification
-      | SourceControl
-      | Window
-      | ViewId(string)
-    let encode = x =>
-      switch x {
-      | Notification => Any(15)
-      | SourceControl => Any(1)
-      | Window => Any(10)
-      | ViewId(string) => Any({"viewId": string})
-      }
-    let classify = (Any(v): t): case =>
-      if Js.typeof(v) == "int" {
-        switch (Obj.magic(v): int) {
-        | 15 => Notification
-        | 1 => SourceControl
-        | _ => Window
-        }
-      } else {
-        ViewId(Obj.magic(v))
-      }
-  }
-
-  type t
-  // properties
-  @get external cancellable: t => option<bool> = "cancellable"
-  @get external location: t => ProcessLocationOrViewId.t = "location"
-  @get external title: t => option<string> = "title"
-}
-
 // https://code.visualstudio.com/api/references/vscode-api#Progress
-// 1.56.0
+// 1.96
 module Progress = {
   type t<'a>
   // methods
   @send external report: (t<'a>, 'a) => unit = "report"
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#ProgressLocation
+// 1.96
+module ProgressLocation = {
+  type t =
+    | @as(1) SourceControl
+    | @as(10) Window
+    | @as(15) Notification
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#ProgressOptions
+// 1.96
+module ProgressOptions = {
+  type t = {
+    cancellable?: bool,
+    location: ProgressLocation.t,
+    title?: string,
+  }
+}
+
+
+// https://code.visualstudio.com/api/references/vscode-api#ProgressOptions
+// 1.96
+module ProcessOptionsWithViewIdAsLocation = {
+  type t = {
+    cancellable?: bool,
+    location: {"viewId": string},
+    title?: string,
+  }
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#TextDocumentShowOptions;
@@ -2070,8 +2053,10 @@ module Window = {
     array<string>,
   ) => promise<option<string>> = "showErrorMessage"
   @module("vscode") @scope("window") @variadic
-  external showErrorMessageWithMessageItem: (string, array<MessageItem.t>) => promise<option<MessageItem.t>> =
-    "showErrorMessage"
+  external showErrorMessageWithMessageItem: (
+    string,
+    array<MessageItem.t>,
+  ) => promise<option<MessageItem.t>> = "showErrorMessage"
   @module("vscode") @scope("window") @variadic
   external showErrorMessageWithOptionsAndMessageItem: (
     string,
@@ -2088,8 +2073,10 @@ module Window = {
     array<string>,
   ) => promise<option<string>> = "showInformationMessage"
   @module("vscode") @scope("window") @variadic
-  external showInformationMessageWithMessageItem: (string, array<MessageItem.t>) => promise<option<MessageItem.t>> =
-    "showInformationMessage"
+  external showInformationMessageWithMessageItem: (
+    string,
+    array<MessageItem.t>,
+  ) => promise<option<MessageItem.t>> = "showInformationMessage"
   @module("vscode") @scope("window") @variadic
   external showInformationMessageWithOptionsAndMessageItem: (
     string,
@@ -2138,8 +2125,10 @@ module Window = {
     array<string>,
   ) => promise<option<string>> = "showWarningMessage"
   @module("vscode") @scope("window") @variadic
-  external showWarningMessageWithMessageItem: (string, array<MessageItem.t>) => promise<option<MessageItem.t>> =
-    "showWarningMessage"
+  external showWarningMessageWithMessageItem: (
+    string,
+    array<MessageItem.t>,
+  ) => promise<option<MessageItem.t>> = "showWarningMessage"
   @module("vscode") @scope("window") @variadic
   external showWarningMessageWithOptionsAndMessageItem: (
     string,
