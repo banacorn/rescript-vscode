@@ -2224,6 +2224,30 @@ module FileStat = {
   @get external type_: t => FileType.t = "type"
 }
 
+// https://code.visualstudio.com/api/references/vscode-api#FoldingRangeKind
+// 1.101
+module FoldingRangeKind = {
+  type t =
+    | @as(1) Comment
+    | @as(2) Imports
+    | @as(3) Region
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#FoldingRange
+// 1.101
+module FoldingRange = {
+  type t
+  
+  // constructors
+  @module("vscode") @new
+  external make: (int, int, ~kind: FoldingRangeKind.t=?) => t = "FoldingRange"
+  
+  // properties
+  @get external end_: t => int = "end"
+  @get external kind: t => option<FoldingRangeKind.t> = "kind"
+  @get external start: t => int = "start"
+}
+
 // https://code.visualstudio.com/api/references/vscode-api#FileSystemError
 // 1.101
 module FileSystemError = {

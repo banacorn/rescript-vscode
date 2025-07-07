@@ -495,6 +495,10 @@ var FileDeleteEvent = {};
 
 var FileStat = {};
 
+var FoldingRangeKind = {};
+
+var FoldingRange = {};
+
 var FileSystemError = {};
 
 var FileSystem = {};
@@ -779,6 +783,8 @@ exports.FilePermission = FilePermission;
 exports.FileRenameEvent = FileRenameEvent;
 exports.FileDeleteEvent = FileDeleteEvent;
 exports.FileStat = FileStat;
+exports.FoldingRangeKind = FoldingRangeKind;
+exports.FoldingRange = FoldingRange;
 exports.FileSystemError = FileSystemError;
 exports.FileSystem = FileSystem;
 exports.ConfigurationChangeEvent = ConfigurationChangeEvent;
