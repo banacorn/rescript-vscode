@@ -487,6 +487,10 @@ var FileType = {};
 
 var FilePermission = {};
 
+var FileRenameEvent = {};
+
+var FileDeleteEvent = {};
+
 var FileStat = {};
 
 var FileSystem = {};
@@ -500,10 +504,6 @@ var TextDocumentChangeEvent = {};
 var WorkspaceFoldersChangeEvent = {};
 
 var FileCreateEvent = {};
-
-var FileDeleteEvent = {};
-
-var FileRenameEvent = {};
 
 var FileChangeType = {};
 
@@ -769,6 +769,8 @@ exports.FileDecorationProvider = FileDecorationProvider;
 exports.$$Window = $$Window;
 exports.FileType = FileType;
 exports.FilePermission = FilePermission;
+exports.FileRenameEvent = FileRenameEvent;
+exports.FileDeleteEvent = FileDeleteEvent;
 exports.FileStat = FileStat;
 exports.FileSystem = FileSystem;
 exports.ConfigurationChangeEvent = ConfigurationChangeEvent;
@@ -776,8 +778,6 @@ exports.TextDocumentContentChangeEvent = TextDocumentContentChangeEvent;
 exports.TextDocumentChangeEvent = TextDocumentChangeEvent;
 exports.WorkspaceFoldersChangeEvent = WorkspaceFoldersChangeEvent;
 exports.FileCreateEvent = FileCreateEvent;
-exports.FileDeleteEvent = FileDeleteEvent;
-exports.FileRenameEvent = FileRenameEvent;
 exports.FileChangeType = FileChangeType;
 exports.FileChangeEvent = FileChangeEvent;
 exports.WorkspaceEditEntryMetadata = WorkspaceEditEntryMetadata;

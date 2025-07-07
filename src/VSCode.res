@@ -2149,7 +2149,7 @@ module Window = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#FileType
-// 1.95
+// 1.101
 module FileType = {
   type t =
     | @as(0) Unknown
@@ -2163,6 +2163,23 @@ module FileType = {
 module FilePermission = {
   type t =
     | @as(1) Readonly
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#FileRenameEvent
+// 1.101
+module FileRenameEvent = {
+  type t
+  // properties
+  @get
+  external files: t => array<{"newUri": Uri.t, "oldUri": Uri.t}> = "files"
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#FileDeleteEvent
+// 1.101
+module FileDeleteEvent = {
+  type t
+  // properties
+  @get external files: t => array<Uri.t> = "files"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#FileStat
@@ -2252,21 +2269,6 @@ module FileCreateEvent = {
   type t
   // properties
   @get external files: t => array<Uri.t> = "files"
-}
-
-// https://code.visualstudio.com/api/references/vscode-api#FileDeleteEvent
-module FileDeleteEvent = {
-  type t
-  // properties
-  @get external files: t => array<Uri.t> = "files"
-}
-
-// https://code.visualstudio.com/api/references/vscode-api#FileRenameEvent
-module FileRenameEvent = {
-  type t
-  // properties
-  @get
-  external files: t => array<{"newUri": Uri.t, "oldUri": Uri.t}> = "files"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#FileChangeType
