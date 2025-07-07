@@ -791,9 +791,12 @@ module EndOfLine = {
     | @as(2) CRLF
 }
 
+// https://code.visualstudio.com/api/references/vscode-api#TextDocument
+// 1.101
 module TextDocument = {
   type t
   // properties
+  @get external encoding: t => string = "encoding"
   @get external eol: t => EndOfLine.t = "eol"
   @get external fileName: t => string = "fileName"
   @get external isClosed: t => bool = "isClosed"
@@ -806,7 +809,7 @@ module TextDocument = {
   // methods
   @send external getText: (t, option<Range.t>) => string = "getText"
   @send
-  external getWordRangeAtPosition: (t, Position.t, option<Js.Re.t>) => option<Range.t> =
+  external getWordRangeAtPosition: (t, Position.t, option<Js.Re.t>) => Range.t =
     "getWordRangeAtPosition"
   @send external lineAt: (t, int) => TextLine.t = "lineAt"
   @send external lineAtPosition: (t, Position.t) => TextLine.t = "lineAt"
