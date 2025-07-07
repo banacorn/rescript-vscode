@@ -691,58 +691,41 @@ module Webview = {
   @send external postMessage: (t, 'a) => promise<bool> = "postMessage"
 }
 
+// https://code.visualstudio.com/api/references/vscode-api#WebviewPanelOnDidChangeViewStateEvent
+// 1.101
+module WebviewPanelOnDidChangeViewStateEvent = {
+  type t
+  // properties
+  @get external webviewPanel: t => 'webviewPanel = "webviewPanel"
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#WebviewPanel
+// 1.101
 module WebviewPanel = {
   type t
-
-  // https://code.visualstudio.com/api/references/vscode-api#WebviewPanelOnDidChangeViewStateEvent
-  module OnDidChangeViewStateEvent = {
-    type webviewPanel = t
-    type t
-    // properties
-    @get external webviewPanel: t => webviewPanel = "webviewPanel"
-  }
-
-  // https://code.visualstudio.com/api/references/vscode-api#WebviewPanelOptions
-  module Options = {
-    type t
-    // properties
-    @get
-    external enableFindWidget: t => option<bool> = "enableFindWidget"
-    @get
-    external retainContextWhenHidden: t => option<bool> = "retainContextWhenHidden"
-  }
+  type iconPathValue = 
+    | @unboxed Uri(Uri.t)
+    | @unboxed LightAndDark({dark: Uri.t, light: Uri.t})
 
   // events
   @send
-  external onDidChangeViewState: (t, OnDidChangeViewStateEvent.t => unit) => Disposable.t =
+  external onDidChangeViewState: (t, WebviewPanelOnDidChangeViewStateEvent.t => unit) => Disposable.t =
     "onDidChangeViewState"
   @send
   external onDidDispose: (t, unit => unit) => Disposable.t = "onDidDispose"
 
   // properties
   @get external active: t => bool = "active"
-  type uriOrLightAndDark =
-    | Uri(Uri.t)
-    | LightAndDark({"dark": Uri.t, "light": Uri.t})
-
-  @get
-  external iconPath_raw: t => option<Js.Dict.t<Uri.t>> = "iconPath"
-  let iconPath = (self): option<uriOrLightAndDark> =>
-    iconPath_raw(self)->Belt.Option.map(case =>
-      if Belt.Option.isSome(Js.Dict.get(case, "dark")) {
-        LightAndDark((Obj.magic(case): {"dark": Uri.t, "light": Uri.t}))
-      } else {
-        Uri((Obj.magic(case): Uri.t))
-      }
-    )
-  @get external options: t => Options.t = "options"
+  @get external iconPath: t => option<iconPathValue> = "iconPath"
+  @get external options: t => 'webviewPanelOptions = "options"
   @get external title: t => string = "title"
-  @get external viewColumn: t => option<ViewColumn.t> = "viewColumn"
+  @get external viewColumn: t => ViewColumn.t = "viewColumn"
   @get external viewType: t => string = "viewType"
   @get external visible: t => bool = "visible"
   @get external webview: t => Webview.t = "webview"
+  
   // methods
-  @send external dispose: t => unit = "dispose"
+  @send external dispose: t => 'any = "dispose"
   @send
   external reveal: (t, ~viewColumn: ViewColumn.t=?, ~preserveFocus: bool=?) => unit = "reveal"
 }
@@ -2052,7 +2035,7 @@ module Window = {
   external registerCustomTextEditorProviderWithOptions: (
     string,
     CustomTextEditorProvider.t,
-    {"supportsMultipleEditorsPerDocument": bool, "webviewOption": WebviewPanel.Options.t},
+    {"supportsMultipleEditorsPerDocument": bool, "webviewOption": 'webviewPanelOptions},
   ) => Disposable.t = "registerCustomEditorProvider"
 
   @module("vscode") @scope("window")
@@ -2064,7 +2047,7 @@ module Window = {
   external registerCustomReadonlyEditorProviderWithOptions: (
     string,
     CustomReadonlyEditorProvider.t<'a>,
-    {"supportsMultipleEditorsPerDocument": bool, "webviewOption": WebviewPanel.Options.t},
+    {"supportsMultipleEditorsPerDocument": bool, "webviewOption": 'webviewPanelOptions},
   ) => Disposable.t = "registerCustomEditorProvider"
 
   @module("vscode") @scope("window")
@@ -2074,7 +2057,7 @@ module Window = {
   external registerCustomEditorProviderWithOptions: (
     string,
     CustomEditorProvider.t<'a>,
-    {"supportsMultipleEditorsPerDocument": bool, "webviewOption": WebviewPanel.Options.t},
+    {"supportsMultipleEditorsPerDocument": bool, "webviewOption": 'webviewPanelOptions},
   ) => Disposable.t = "registerCustomEditorProvider"
   @module("vscode") @scope("window")
   external registerFileDecorationProvider: FileDecorationProvider.t => Disposable.t =
