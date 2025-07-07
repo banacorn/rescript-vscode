@@ -2520,8 +2520,10 @@ module GlobPattern = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#FileSystemWatcher
+// 1.101
 module FileSystemWatcher = {
   type t
+  
   // events
   @send
   external onDidChange: (t, Uri.t => unit) => Disposable.t = "onDidChange"
@@ -2529,16 +2531,12 @@ module FileSystemWatcher = {
   external onDidCreate: (t, Uri.t => unit) => Disposable.t = "onDidCreate"
   @send
   external onDidDelete: (t, Uri.t => unit) => Disposable.t = "onDidDelete"
-  // static
-  @module("vscode") @scope("FileSystemWatcher")
-  external from: array<{"dispose": unit => 'a}> => Disposable.t = "from"
-  // constructors
-  @module("vscode") @new
-  external make: (unit => unit) => t = "FileSystemWatcher"
+  
   // properties
   @get external ignoreChangeEvents: t => bool = "ignoreChangeEvents"
   @get external ignoreCreateEvents: t => bool = "ignoreCreateEvents"
   @get external ignoreDeleteEvents: t => bool = "ignoreDeleteEvents"
+  
   // methods
   @send external dispose: t => 'a = "dispose"
 }
