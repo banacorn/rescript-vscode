@@ -1698,7 +1698,6 @@ module ProgressOptions = {
   }
 }
 
-
 // https://code.visualstudio.com/api/references/vscode-api#ProgressOptions
 // 1.96
 module ProcessOptionsWithViewIdAsLocation = {
@@ -2184,13 +2183,13 @@ module FileSystem = {
   @send
   external readDirectory: (t, Uri.t) => promise<array<(string, FileType.t)>> = "readDirectory"
   @send
-  external readFile: (t, Uri.t) => promise<Js.TypedArray2.Int8Array.t> = "readFile"
+  external readFile: (t, Uri.t) => promise<Int8Array.t> = "readFile"
   @send external rename: (t, Uri.t, Uri.t) => promise<unit> = "rename"
   @send
   external renameWithOptions: (t, Uri.t, Uri.t, {"overwrite": bool}) => promise<unit> = "rename"
   @send external stat: (t, Uri.t) => promise<FileStat.t> = "stat"
   @send
-  external stwriteFileat: (t, Uri.t, Js.TypedArray2.Uint8Array.t) => promise<unit> = "writeFile"
+  external stwriteFileat: (t, Uri.t, Uint8Array.t) => promise<unit> = "writeFile"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#ConfigurationChangeEvent
@@ -2521,32 +2520,43 @@ module TaskProvider = {
 // https://code.visualstudio.com/api/references/vscode-api#FileSystemProvider
 module FileSystemProvider = {
   type t
-  
+
   // Required methods
   @send
   external stat: (t, Uri.t) => ProviderResult.t<FileStat.t> = "stat"
   @send
-  external readDirectory: (t, Uri.t) => ProviderResult.t<array<(string, FileType.t)>> = "readDirectory"
+  external readDirectory: (t, Uri.t) => ProviderResult.t<array<(string, FileType.t)>> =
+    "readDirectory"
   @send
-  external readFile: (t, Uri.t) => ProviderResult.t<Js.TypedArray2.Uint8Array.t> = "readFile"
+  external readFile: (t, Uri.t) => ProviderResult.t<Uint8Array.t> = "readFile"
   @send
-  external writeFile: (t, Uri.t, Js.TypedArray2.Uint8Array.t, {"create": bool, "overwrite": bool}) => ProviderResult.t<unit> = "writeFile"
+  external writeFile: (
+    t,
+    Uri.t,
+    Uint8Array.t,
+    {"create": bool, "overwrite": bool},
+  ) => ProviderResult.t<unit> = "writeFile"
   @send
   external delete: (t, Uri.t, {"recursive": bool}) => ProviderResult.t<unit> = "delete"
   @send
   external rename: (t, Uri.t, Uri.t, {"overwrite": bool}) => ProviderResult.t<unit> = "rename"
   @send
   external createDirectory: (t, Uri.t) => ProviderResult.t<unit> = "createDirectory"
-  
+
   // Optional method
   @send
   external copy: (t, Uri.t, Uri.t, {"overwrite": bool}) => ProviderResult.t<unit> = "copy"
-  
+
   // Event handling
   @send
-  external onDidChangeFile: (t, array<FileChangeEvent.t> => unit) => Disposable.t = "onDidChangeFile"
+  external onDidChangeFile: (t, array<FileChangeEvent.t> => unit) => Disposable.t =
+    "onDidChangeFile"
   @send
-  external watch: (t, Uri.t, {"recursive": option<bool>, "excludes": option<array<string>>}) => Disposable.t = "watch"
+  external watch: (
+    t,
+    Uri.t,
+    {"recursive": option<bool>, "excludes": option<array<string>>},
+  ) => Disposable.t = "watch"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#workspace
