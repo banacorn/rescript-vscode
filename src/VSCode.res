@@ -2323,6 +2323,33 @@ module FunctionBreakpoint = {
   @get external logMessage: t => option<string> = "logMessage"
 }
 
+// https://code.visualstudio.com/api/references/vscode-api#TelemetrySender
+// 1.101
+module TelemetrySender = {
+  type t
+  
+  // methods
+  @send
+  external flush: t => PromiseOr.t<unit> = "flush"
+  @send
+  external sendErrorData: (t, Js.Exn.t, ~data: Js.Dict.t<'any>=?) => unit = "sendErrorData"
+  @send
+  external sendEventData: (t, string, ~data: Js.Dict.t<'any>=?) => unit = "sendEventData"
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#TelemetryTrustedValue
+// 1.101
+module TelemetryTrustedValue = {
+  type t<'a>
+  
+  // constructors
+  @module("vscode") @new
+  external make: 'a => t<'a> = "TelemetryTrustedValue"
+  
+  // properties
+  @get external value: t<'a> => 'a = "value"
+}
+
 // https://code.visualstudio.com/api/references/vscode-api#FileSystemError
 // 1.101
 module FileSystemError = {

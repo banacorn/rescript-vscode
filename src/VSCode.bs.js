@@ -484,6 +484,10 @@ var FormattingOptions = {};
 
 var FunctionBreakpoint = {};
 
+var TelemetrySender = {};
+
+var TelemetryTrustedValue = {};
+
 var FileSystemError = {};
 
 var FileSystem = {};
@@ -776,6 +780,8 @@ exports.FoldingContext = FoldingContext;
 exports.FoldingRangeProvider = FoldingRangeProvider;
 exports.FormattingOptions = FormattingOptions;
 exports.FunctionBreakpoint = FunctionBreakpoint;
+exports.TelemetrySender = TelemetrySender;
+exports.TelemetryTrustedValue = TelemetryTrustedValue;
 exports.FileSystemError = FileSystemError;
 exports.FileSystem = FileSystem;
 exports.ConfigurationChangeEvent = ConfigurationChangeEvent;
