@@ -2689,19 +2689,26 @@ module TextDocumentWillSaveEvent = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#RelativePattern
+// 1.101
 module RelativePattern = {
   type t
+  
   // constructors
   @module("vscode") @new
   external make: (string, string) => t = "RelativePattern"
   @module("vscode") @new
+  external makeWithUri: (Uri.t, string) => t = "RelativePattern"
+  @module("vscode") @new
   external makeWithWorkspaceFolder: (WorkspaceFolder.t, string) => t = "RelativePattern"
+  
   // properties
   @get external base: t => string = "base"
+  @get external baseUri: t => Uri.t = "baseUri"
   @get external pattern: t => string = "pattern"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#GlobPattern
+// 1.101
 module GlobPattern = {
   type t = StringOr.t<RelativePattern.t>
 }
