@@ -919,18 +919,29 @@ module TextEditorDecorationType = {
   @send external dispose: t => unit = "dispose"
 }
 
-// https://code.visualstudio.com/api/references/vscode-api#MarkedString;
+// https://code.visualstudio.com/api/references/vscode-api#MarkdownString
+// 1.101
 module MarkdownString = {
   type t
+  type trustedOptions = {enabledCommands: array<string>}
+  type isTrustedValue = 
+    | @unboxed Bool(bool)
+    | @unboxed TrustedOptions(trustedOptions)
+  
   // constructors
   @module("vscode") @new
-  external make: (string, bool) => t = "MarkdownString"
+  external make: (~value: string=?, ~supportThemeIcons: bool=?) => t = "MarkdownString"
+  
   // properties
-  @get external isTrusted: t => option<bool> = "isTrusted"
+  @get external baseUri: t => option<Uri.t> = "baseUri"
+  @get external isTrusted: t => option<isTrustedValue> = "isTrusted"
+  @get external supportHtml: t => option<bool> = "supportHtml"
+  @get external supportThemeIcons: t => option<bool> = "supportThemeIcons"
   @get external value: t => string = "value"
+  
   // methods
   @send
-  external appendCodeblock: (t, string, option<string>) => t = "appendCodeblock"
+  external appendCodeblock: (t, string, ~language: string=?) => t = "appendCodeblock"
   @send external appendMarkdown: (t, string) => t = "appendMarkdown"
   @send external appendText: (t, string) => t = "appendText"
 }
