@@ -1075,9 +1075,32 @@ module TerminalOptions = {
   @get external strictEnv: t => option<bool> = "strictEnv"
 }
 
+// https://code.visualstudio.com/api/references/vscode-api#TerminalDimensions
+// 1.101
+module TerminalDimensions = {
+  type t
+  @get external columns: t => int = "columns"
+  @get external rows: t => int = "rows"
+}
+
 // https://code.visualstudio.com/api/references/vscode-api#Pseudoterminal
+// 1.101
 module Pseudoterminal = {
   type t
+  
+  // Events (required)
+  @get external onDidWrite: t => (string => unit) => Disposable.t = "onDidWrite"
+  
+  // Events (optional)
+  @get external onDidClose: t => option<(option<int> => unit) => Disposable.t> = "onDidClose"
+  @get external onDidChangeName: t => option<(string => unit) => Disposable.t> = "onDidChangeName"
+  @get external onDidOverrideDimensions: t => option<(option<TerminalDimensions.t> => unit) => Disposable.t> = "onDidOverrideDimensions"
+  
+  // Methods (optional)
+  @send external \"open": (t, TerminalDimensions.t) => unit = "open"
+  @send external close: t => unit = "close"
+  @send external handleInput: (t, string) => unit = "handleInput"
+  @send external setDimensions: (t, TerminalDimensions.t) => unit = "setDimensions"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#ExtensionTerminalOptions

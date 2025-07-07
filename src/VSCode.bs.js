@@ -282,6 +282,8 @@ var TextEditor = {};
 
 var TerminalOptions = {};
 
+var TerminalDimensions = {};
+
 var Pseudoterminal = {};
 
 var ExtensionTerminalOptions = {};
@@ -708,6 +710,7 @@ exports.DecorationInstanceRenderOptions = DecorationInstanceRenderOptions;
 exports.DecorationOptions = DecorationOptions;
 exports.TextEditor = TextEditor;
 exports.TerminalOptions = TerminalOptions;
+exports.TerminalDimensions = TerminalDimensions;
 exports.Pseudoterminal = Pseudoterminal;
 exports.ExtensionTerminalOptions = ExtensionTerminalOptions;
 exports.TerminalOptionsOrExtensionTerminalOptions = TerminalOptionsOrExtensionTerminalOptions;
