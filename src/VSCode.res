@@ -1309,7 +1309,7 @@ module IconPath = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#QuickInput
-// 1.95
+// 1.101
 module QuickInput = {
   type t
 
@@ -1736,6 +1736,16 @@ module CancellationTokenSource = {
   // methods
   @send external cancel: t => unit = "cancel"
   @send external dispose: t => unit = "dispose"
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#QuickDiffProvider
+// 1.101
+module QuickDiffProvider = {
+  type t
+  
+  // methods
+  @send
+  external provideOriginalResource: (t, Uri.t, CancellationToken.t) => ProviderResult.t<Uri.t> = "provideOriginalResource"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#OpenDialogOptions

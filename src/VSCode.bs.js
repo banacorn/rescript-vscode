@@ -409,6 +409,8 @@ var CancellationToken = {};
 
 var CancellationTokenSource = {};
 
+var QuickDiffProvider = {};
+
 var OpenDialogOptions = {};
 
 var SaveDialogOptions = {};
@@ -758,6 +760,7 @@ exports.InputBoxValidationMessage = InputBoxValidationMessage;
 exports.InputBoxOptions = InputBoxOptions;
 exports.CancellationToken = CancellationToken;
 exports.CancellationTokenSource = CancellationTokenSource;
+exports.QuickDiffProvider = QuickDiffProvider;
 exports.OpenDialogOptions = OpenDialogOptions;
 exports.SaveDialogOptions = SaveDialogOptions;
 exports.WorkspaceFolderPickOptions = WorkspaceFolderPickOptions;
