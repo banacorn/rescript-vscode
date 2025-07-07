@@ -2248,6 +2248,31 @@ module FoldingRange = {
   @get external start: t => int = "start"
 }
 
+// https://code.visualstudio.com/api/references/vscode-api#FoldingContext
+// 1.101
+module FoldingContext = {
+  type t
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#FoldingRangeProvider
+// 1.101
+module FoldingRangeProvider = {
+  type t
+  
+  // events
+  @get
+  external onDidChangeFoldingRanges: t => option<(unit => unit) => Disposable.t> = "onDidChangeFoldingRanges"
+  
+  // methods
+  @send
+  external provideFoldingRanges: (
+    t,
+    TextDocument.t,
+    FoldingContext.t,
+    CancellationToken.t,
+  ) => ProviderResult.t<array<FoldingRange.t>> = "provideFoldingRanges"
+}
+
 // https://code.visualstudio.com/api/references/vscode-api#FileSystemError
 // 1.101
 module FileSystemError = {
