@@ -2622,6 +2622,33 @@ module WorkspaceEdit = {
   @send external set: (t, Uri.t, array<TextEdit.t>) => unit = "set"
 }
 
+// https://code.visualstudio.com/api/references/vscode-api#RenameProvider
+// 1.101
+module RenameProvider = {
+  type t
+  type prepareRenameResult = 
+    | @unboxed Range(Range.t)
+    | @unboxed PlaceholderAndRange({placeholder: string, range: Range.t})
+  
+  // methods
+  @send
+  external prepareRename: (
+    t,
+    TextDocument.t,
+    Position.t,
+    CancellationToken.t,
+  ) => ProviderResult.t<prepareRenameResult> = "prepareRename"
+  
+  @send
+  external provideRenameEdits: (
+    t,
+    TextDocument.t,
+    Position.t,
+    string,
+    CancellationToken.t,
+  ) => ProviderResult.t<WorkspaceEdit.t> = "provideRenameEdits"
+}
+
 // https://code.visualstudio.com/api/references/vscode-api#FileWillCreateEvent
 // 1.101
 module FileWillCreateEvent = {

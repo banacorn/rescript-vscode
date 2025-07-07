@@ -531,6 +531,8 @@ var WorkspaceEdit = {
   entries: entries
 };
 
+var RenameProvider = {};
+
 var FileWillCreateEvent = {};
 
 var FileWillDeleteEvent = {};
@@ -801,6 +803,7 @@ exports.FileChangeEvent = FileChangeEvent;
 exports.WorkspaceEditEntryMetadata = WorkspaceEditEntryMetadata;
 exports.TextEdit = TextEdit;
 exports.WorkspaceEdit = WorkspaceEdit;
+exports.RenameProvider = RenameProvider;
 exports.FileWillCreateEvent = FileWillCreateEvent;
 exports.FileWillDeleteEvent = FileWillDeleteEvent;
 exports.FileWillRenameEvent = FileWillRenameEvent;
