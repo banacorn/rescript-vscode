@@ -2545,10 +2545,12 @@ module WorkspaceEditEntryMetadata = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#TextEdit
+// https://code.visualstudio.com/api/references/vscode-api#TextEdit
+// 1.101
 module TextEdit = {
   type t
 
-  // static
+  // static methods
   @module("vscode") @scope("TextEdit")
   external delete: Range.t => t = "delete"
   @module("vscode") @scope("TextEdit")
