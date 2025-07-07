@@ -305,7 +305,7 @@ module SecretStorage = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#ExtensionMode
-// 1.95
+// 1.101
 module ExtensionMode = {
   type t =
     | @as(1) Production
@@ -314,7 +314,7 @@ module ExtensionMode = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#ExtensionKind
-// 1.95
+// 1.101
 module ExtensionKind = {
   type t =
     | @as(1) UI
@@ -322,7 +322,7 @@ module ExtensionKind = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#Extension
-// 1.95
+// 1.101
 module Extension = {
   type t<'a>
 
