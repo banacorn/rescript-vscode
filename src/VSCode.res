@@ -1081,10 +1081,14 @@ module Pseudoterminal = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#ExtensionTerminalOptions
-// 1.51.0
+// 1.101
 module ExtensionTerminalOptions = {
   type t
   // properties
+  @get external color: t => option<'a> = "color"
+  @get external iconPath: t => option<'b> = "iconPath"
+  @get external isTransient: t => option<bool> = "isTransient"
+  @get external location: t => option<'c> = "location"
   @get external name: t => string = "name"
   @get external pty: t => Pseudoterminal.t = "pty"
 }
@@ -2284,6 +2288,7 @@ module FileCreateEvent = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#FileChangeType
+// 1.101
 module FileChangeType = {
   type t =
     | @as(1) Changed
@@ -2292,6 +2297,7 @@ module FileChangeType = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#FileChangeEvent
+// 1.101
 module FileChangeEvent = {
   type t
   // properties
