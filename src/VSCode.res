@@ -646,27 +646,46 @@ module ViewColumn = {
     | @as(8) Eight
     | @as(9) Nine
 }
-module WebviewOptions = {
-  type portMapping
+// https://code.visualstudio.com/api/references/vscode-api#WebviewPortMapping
+// 1.101
+module WebviewPortMapping = {
   type t = {
-    enableCommandUris: option<bool>,
+    extensionHostPort: int,
+    webviewPort: int,
+  }
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#WebviewOptions
+// 1.101
+module WebviewOptions = {
+  type enableCommandUrisValue = 
+    | @unboxed Bool(bool)
+    | @unboxed StringArray(array<string>)
+  
+  type t = {
+    enableCommandUris: option<enableCommandUrisValue>,
+    enableForms: option<bool>,
     enableScripts: option<bool>,
     localResourceRoots: option<array<Uri.t>>,
-    portMapping: option<array<portMapping>>,
+    portMapping: option<array<WebviewPortMapping.t>>,
   }
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#Webview
+// 1.101
 module Webview = {
   type t
+  
   // events
   @send
   external onDidReceiveMessage: (t, 'a => unit) => Disposable.t = "onDidReceiveMessage"
+  
   // properties
   @get external cspSource: t => string = "cspSource"
   @get external html: t => string = "html"
   @set external setHtml: (t, string) => unit = "html"
   @get external options: t => WebviewOptions.t = "options"
+  
   // methods
   @send external asWebviewUri: (t, Uri.t) => Uri.t = "asWebviewUri"
   @send external postMessage: (t, 'a) => promise<bool> = "postMessage"
@@ -1575,7 +1594,7 @@ module WebviewAndWebviewPanelOptions = {
     enableCommandUris: option<bool>,
     enableScripts: option<bool>,
     localResourceRoots: option<array<Uri.t>>,
-    portMapping: option<array<WebviewOptions.portMapping>>,
+    portMapping: option<array<WebviewPortMapping.t>>,
     enableFindWidget: option<bool>,
     retainContextWhenHidden: option<bool>,
   }

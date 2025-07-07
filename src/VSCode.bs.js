@@ -210,6 +210,8 @@ var Env = {};
 
 var ViewColumn = {};
 
+var WebviewPortMapping = {};
+
 var WebviewOptions = {};
 
 var Webview = {};
@@ -701,6 +703,7 @@ exports.Clipboard = Clipboard;
 exports.UIKind = UIKind;
 exports.Env = Env;
 exports.ViewColumn = ViewColumn;
+exports.WebviewPortMapping = WebviewPortMapping;
 exports.WebviewOptions = WebviewOptions;
 exports.Webview = Webview;
 exports.WebviewPanel = WebviewPanel;
