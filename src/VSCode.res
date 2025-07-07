@@ -748,6 +748,7 @@ module Position = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#Range
+// 1.101
 module Range = {
   type t
   // constructor
@@ -2221,6 +2222,33 @@ module FileStat = {
   @get external permissions: t => option<FilePermission.t> = "permissions"
   @get external size: t => int = "size"
   @get external type_: t => FileType.t = "type"
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#FileSystemError
+// 1.101
+module FileSystemError = {
+  type t
+  
+  // Constructors
+  @module("vscode") @new
+  external make: (~messageOrUri: StringOr.t<Uri.t>=?) => t = "FileSystemError"
+  
+  // Properties
+  @get external code: t => string = "code"
+  
+  // Static methods
+  @module("vscode") @scope("FileSystemError")
+  external fileExists: (~messageOrUri: StringOr.t<Uri.t>=?) => t = "FileExists"
+  @module("vscode") @scope("FileSystemError")
+  external fileIsADirectory: (~messageOrUri: StringOr.t<Uri.t>=?) => t = "FileIsADirectory"
+  @module("vscode") @scope("FileSystemError")
+  external fileNotADirectory: (~messageOrUri: StringOr.t<Uri.t>=?) => t = "FileNotADirectory"
+  @module("vscode") @scope("FileSystemError")
+  external fileNotFound: (~messageOrUri: StringOr.t<Uri.t>=?) => t = "FileNotFound"
+  @module("vscode") @scope("FileSystemError")
+  external noPermissions: (~messageOrUri: StringOr.t<Uri.t>=?) => t = "NoPermissions"
+  @module("vscode") @scope("FileSystemError")
+  external unavailable: (~messageOrUri: StringOr.t<Uri.t>=?) => t = "Unavailable"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#FileSystem

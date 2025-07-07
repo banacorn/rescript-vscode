@@ -495,6 +495,8 @@ var FileDeleteEvent = {};
 
 var FileStat = {};
 
+var FileSystemError = {};
+
 var FileSystem = {};
 
 var ConfigurationChangeEvent = {};
@@ -777,6 +779,7 @@ exports.FilePermission = FilePermission;
 exports.FileRenameEvent = FileRenameEvent;
 exports.FileDeleteEvent = FileDeleteEvent;
 exports.FileStat = FileStat;
+exports.FileSystemError = FileSystemError;
 exports.FileSystem = FileSystem;
 exports.ConfigurationChangeEvent = ConfigurationChangeEvent;
 exports.TextDocumentContentChangeEvent = TextDocumentContentChangeEvent;
