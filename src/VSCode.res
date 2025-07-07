@@ -2350,6 +2350,47 @@ module TelemetryTrustedValue = {
   @get external value: t<'a> => 'a = "value"
 }
 
+// https://code.visualstudio.com/api/references/vscode-api#LogLevel
+// 1.101
+module LogLevel = {
+  type t =
+    | @as(0) Off
+    | @as(1) Trace
+    | @as(2) Debug
+    | @as(3) Info
+    | @as(4) Warning
+    | @as(5) Error
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#LogOutputChannel
+// 1.101
+module LogOutputChannel = {
+  type t
+  
+  // events
+  @send
+  external onDidChangeLogLevel: (t, LogLevel.t => unit) => Disposable.t = "onDidChangeLogLevel"
+  
+  // properties
+  @get external logLevel: t => LogLevel.t = "logLevel"
+  @get external name: t => string = "name"
+  
+  // methods
+  @send external append: (t, string) => unit = "append"
+  @send external appendLine: (t, string) => unit = "appendLine"
+  @send external clear: t => unit = "clear"
+  @send @variadic external debug: (t, string, array<'any>) => unit = "debug"
+  @send external dispose: t => unit = "dispose"
+  @send @variadic external error: (t, StringOr.t<Js.Exn.t>, array<'any>) => unit = "error"
+  @send external hide: t => unit = "hide"
+  @send @variadic external info: (t, string, array<'any>) => unit = "info"
+  @send external replace: (t, string) => unit = "replace"
+  @send external show: (t, ~preserveFocus: bool=?) => unit = "show"
+  @send external showWithColumn: (t, ~column: ViewColumn.t=?, ~preserveFocus: bool=?) => unit = "show"
+  @send @variadic external trace: (t, string, array<'any>) => unit = "trace"
+  @send @variadic external warn: (t, string, array<'any>) => unit = "warn"
+}
+
 // https://code.visualstudio.com/api/references/vscode-api#FileSystemError
 // 1.101
 module FileSystemError = {

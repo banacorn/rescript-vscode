@@ -488,6 +488,10 @@ var TelemetrySender = {};
 
 var TelemetryTrustedValue = {};
 
+var LogLevel = {};
+
+var LogOutputChannel = {};
+
 var FileSystemError = {};
 
 var FileSystem = {};
@@ -782,6 +786,8 @@ exports.FormattingOptions = FormattingOptions;
 exports.FunctionBreakpoint = FunctionBreakpoint;
 exports.TelemetrySender = TelemetrySender;
 exports.TelemetryTrustedValue = TelemetryTrustedValue;
+exports.LogLevel = LogLevel;
+exports.LogOutputChannel = LogOutputChannel;
 exports.FileSystemError = FileSystemError;
 exports.FileSystem = FileSystem;
 exports.ConfigurationChangeEvent = ConfigurationChangeEvent;
