@@ -2158,11 +2158,20 @@ module FileType = {
     | @as(64) SymbolicLink
 }
 
+// https://code.visualstudio.com/api/references/vscode-api#FilePermission
+// 1.101
+module FilePermission = {
+  type t =
+    | @as(1) Readonly
+}
+
 // https://code.visualstudio.com/api/references/vscode-api#FileStat
+// 1.101
 module FileStat = {
   type t
   @get external ctime: t => int = "ctime"
   @get external mtime: t => int = "mtime"
+  @get external permissions: t => option<FilePermission.t> = "permissions"
   @get external size: t => int = "size"
   @get external type_: t => FileType.t = "type"
 }

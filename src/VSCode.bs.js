@@ -485,6 +485,8 @@ var $$Window = {};
 
 var FileType = {};
 
+var FilePermission = {};
+
 var FileStat = {};
 
 var FileSystem = {};
@@ -766,6 +768,7 @@ exports.FileDecoration = FileDecoration;
 exports.FileDecorationProvider = FileDecorationProvider;
 exports.$$Window = $$Window;
 exports.FileType = FileType;
+exports.FilePermission = FilePermission;
 exports.FileStat = FileStat;
 exports.FileSystem = FileSystem;
 exports.ConfigurationChangeEvent = ConfigurationChangeEvent;
