@@ -2260,6 +2260,22 @@ module FileRenameEvent = {
   external files: t => array<{"newUri": Uri.t, "oldUri": Uri.t}> = "files"
 }
 
+// https://code.visualstudio.com/api/references/vscode-api#FileChangeType
+module FileChangeType = {
+  type t =
+    | @as(1) Changed
+    | @as(2) Created
+    | @as(3) Deleted
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#FileChangeEvent
+module FileChangeEvent = {
+  type t
+  // properties
+  @get external type_: t => FileChangeType.t = "type"
+  @get external uri: t => Uri.t = "uri"
+}
+
 // https://code.visualstudio.com/api/references/vscode-api#WorkspaceEditEntryMetadata;
 module WorkspaceEditEntryMetadata = {
   type t
@@ -2505,6 +2521,32 @@ module TaskProvider = {
 // https://code.visualstudio.com/api/references/vscode-api#FileSystemProvider
 module FileSystemProvider = {
   type t
+  
+  // Required methods
+  @send
+  external stat: (t, Uri.t) => ProviderResult.t<FileStat.t> = "stat"
+  @send
+  external readDirectory: (t, Uri.t) => ProviderResult.t<array<(string, FileType.t)>> = "readDirectory"
+  @send
+  external readFile: (t, Uri.t) => ProviderResult.t<Js.TypedArray2.Uint8Array.t> = "readFile"
+  @send
+  external writeFile: (t, Uri.t, Js.TypedArray2.Uint8Array.t, {"create": bool, "overwrite": bool}) => ProviderResult.t<unit> = "writeFile"
+  @send
+  external delete: (t, Uri.t, {"recursive": bool}) => ProviderResult.t<unit> = "delete"
+  @send
+  external rename: (t, Uri.t, Uri.t, {"overwrite": bool}) => ProviderResult.t<unit> = "rename"
+  @send
+  external createDirectory: (t, Uri.t) => ProviderResult.t<unit> = "createDirectory"
+  
+  // Optional method
+  @send
+  external copy: (t, Uri.t, Uri.t, {"overwrite": bool}) => ProviderResult.t<unit> = "copy"
+  
+  // Event handling
+  @send
+  external onDidChangeFile: (t, array<FileChangeEvent.t> => unit) => Disposable.t = "onDidChangeFile"
+  @send
+  external watch: (t, Uri.t, {"recursive": option<bool>, "excludes": option<array<string>>}) => Disposable.t = "watch"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#workspace

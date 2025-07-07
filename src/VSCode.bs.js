@@ -503,6 +503,10 @@ var FileDeleteEvent = {};
 
 var FileRenameEvent = {};
 
+var FileChangeType = {};
+
+var FileChangeEvent = {};
+
 var WorkspaceEditEntryMetadata = {};
 
 var TextEdit = {};
@@ -771,6 +775,8 @@ exports.WorkspaceFoldersChangeEvent = WorkspaceFoldersChangeEvent;
 exports.FileCreateEvent = FileCreateEvent;
 exports.FileDeleteEvent = FileDeleteEvent;
 exports.FileRenameEvent = FileRenameEvent;
+exports.FileChangeType = FileChangeType;
+exports.FileChangeEvent = FileChangeEvent;
 exports.WorkspaceEditEntryMetadata = WorkspaceEditEntryMetadata;
 exports.TextEdit = TextEdit;
 exports.WorkspaceEdit = WorkspaceEdit;
