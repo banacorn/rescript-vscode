@@ -2448,31 +2448,43 @@ module WorkspaceEdit = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#FileWillCreateEvent
+// 1.101
 module FileWillCreateEvent = {
   type t
+  
   // properties
   @get external files: t => array<Uri.t> = "files"
+  @get external token: t => CancellationToken.t = "token"
+  
   // methods
   @send
   external waitUntilWithWorkspaceEdit: (t, promise<WorkspaceEdit.t>) => unit = "waitUntil"
   @send external waitUntil: (t, promise<'a>) => unit = "waitUntil"
 }
 // https://code.visualstudio.com/api/references/vscode-api#FileWillDeleteEvent
+// 1.101
 module FileWillDeleteEvent = {
   type t
+  
   // properties
   @get external files: t => array<Uri.t> = "files"
+  @get external token: t => CancellationToken.t = "token"
+  
   // methods
   @send
   external waitUntilWithWorkspaceEdit: (t, promise<WorkspaceEdit.t>) => unit = "waitUntil"
   @send external waitUntil: (t, promise<'a>) => unit = "waitUntil"
 }
 // https://code.visualstudio.com/api/references/vscode-api#FileWillRenameEvent
+// 1.101
 module FileWillRenameEvent = {
   type t
+  
   // properties
   @get
   external files: t => array<{"newUri": Uri.t, "oldUri": Uri.t}> = "files"
+  @get external token: t => CancellationToken.t = "token"
+  
   // methods
   @send
   external waitUntilWithWorkspaceEdit: (t, promise<WorkspaceEdit.t>) => unit = "waitUntil"
