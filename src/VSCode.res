@@ -906,8 +906,55 @@ module TextEditorEdit = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#SnippetString
+// 1.101
 module SnippetString = {
   type t
+  type placeholderValue = 
+    | @unboxed String(string)
+    | @unboxed Function(t => unit)
+  type variableDefaultValue = 
+    | @unboxed String(string)
+    | @unboxed Function(t => unit)
+  
+  // constructors
+  @module("vscode") @new
+  external make: (~value: string=?) => t = "SnippetString"
+  
+  // properties
+  @get external value: t => string = "value"
+  
+  // methods
+  @send
+  external appendChoice: (t, array<string>, ~number: int=?) => t = "appendChoice"
+  @send
+  external appendPlaceholder: (t, placeholderValue, ~number: int=?) => t = "appendPlaceholder"
+  @send
+  external appendTabstop: (t, ~number: int=?) => t = "appendTabstop"
+  @send
+  external appendText: (t, string) => t = "appendText"
+  @send
+  external appendVariable: (t, string, variableDefaultValue) => t = "appendVariable"
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#SnippetTextEdit
+// 1.101
+module SnippetTextEdit = {
+  type t
+  
+  // static methods
+  @module("vscode") @scope("SnippetTextEdit")
+  external insert: (Position.t, SnippetString.t) => t = "insert"
+  @module("vscode") @scope("SnippetTextEdit")
+  external replace: (Range.t, SnippetString.t) => t = "replace"
+  
+  // constructors
+  @module("vscode") @new
+  external make: (Range.t, SnippetString.t) => t = "SnippetTextEdit"
+  
+  // properties
+  @get external keepWhitespace: t => option<bool> = "keepWhitespace"
+  @get external range: t => Range.t = "range"
+  @get external snippet: t => SnippetString.t = "snippet"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#TextEditorRevealType
@@ -2545,7 +2592,6 @@ module WorkspaceEditEntryMetadata = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#TextEdit
-// https://code.visualstudio.com/api/references/vscode-api#TextEdit
 // 1.101
 module TextEdit = {
   type t
@@ -3019,6 +3065,30 @@ module Location = {
   // properties
   @get external range: t => Range.t = "range"
   @get external uri: t => Uri.t = "uri"
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#SourceBreakpoint
+// 1.101
+module SourceBreakpoint = {
+  type t
+  
+  // constructors
+  @module("vscode") @new
+  external make: (
+    Location.t,
+    ~enabled: bool=?,
+    ~condition: string=?,
+    ~hitCondition: string=?,
+    ~logMessage: string=?,
+  ) => t = "SourceBreakpoint"
+  
+  // properties
+  @get external condition: t => option<string> = "condition"
+  @get external enabled: t => bool = "enabled"
+  @get external hitCondition: t => option<string> = "hitCondition"
+  @get external id: t => string = "id"
+  @get external location: t => Location.t = "location"
+  @get external logMessage: t => option<string> = "logMessage"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#LocationLink

@@ -241,6 +241,8 @@ var TextEditorEdit = {};
 
 var SnippetString = {};
 
+var SnippetTextEdit = {};
+
 var TextEditorRevealType = {};
 
 var TextEditorDecorationType = {};
@@ -565,6 +567,8 @@ var DiagnosticChangeEvent = {};
 
 var $$Location = {};
 
+var SourceBreakpoint = {};
+
 var LocationLink = {};
 
 var DiagnosticRelatedInformation = {};
@@ -704,6 +708,7 @@ exports.TextEditorOptions = TextEditorOptions;
 exports.$$Selection = $$Selection;
 exports.TextEditorEdit = TextEditorEdit;
 exports.SnippetString = SnippetString;
+exports.SnippetTextEdit = SnippetTextEdit;
 exports.TextEditorRevealType = TextEditorRevealType;
 exports.TextEditorDecorationType = TextEditorDecorationType;
 exports.MarkdownString = MarkdownString;
@@ -820,6 +825,7 @@ exports.Workspace = Workspace;
 exports.Extensions = Extensions;
 exports.DiagnosticChangeEvent = DiagnosticChangeEvent;
 exports.$$Location = $$Location;
+exports.SourceBreakpoint = SourceBreakpoint;
 exports.LocationLink = LocationLink;
 exports.DiagnosticRelatedInformation = DiagnosticRelatedInformation;
 exports.DiagnosticSeverity = DiagnosticSeverity;
