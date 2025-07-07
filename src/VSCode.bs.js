@@ -499,6 +499,8 @@ var ConfigurationChangeEvent = {};
 
 var TextDocumentContentChangeEvent = {};
 
+var TextDocumentChangeReason = {};
+
 var TextDocumentChangeEvent = {};
 
 var WorkspaceFoldersChangeEvent = {};
@@ -775,6 +777,7 @@ exports.FileStat = FileStat;
 exports.FileSystem = FileSystem;
 exports.ConfigurationChangeEvent = ConfigurationChangeEvent;
 exports.TextDocumentContentChangeEvent = TextDocumentContentChangeEvent;
+exports.TextDocumentChangeReason = TextDocumentChangeReason;
 exports.TextDocumentChangeEvent = TextDocumentChangeEvent;
 exports.WorkspaceFoldersChangeEvent = WorkspaceFoldersChangeEvent;
 exports.FileCreateEvent = FileCreateEvent;

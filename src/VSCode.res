@@ -2220,6 +2220,7 @@ module FileSystem = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#ConfigurationChangeEvent
+// 1.101
 module ConfigurationChangeEvent = {
   type t
 
@@ -2238,22 +2239,33 @@ module ConfigurationChangeEvent = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#TextDocumentContentChangeEvent
+// 1.101
 module TextDocumentContentChangeEvent = {
   type t
   // properties
-  @get external range: t => Range.t = "range"
-  @get external rangeLength: t => int = "rangeLength"
-  @get external rangeOffset: t => int = "rangeOffset"
+  @get external range: t => option<Range.t> = "range"
+  @get external rangeLength: t => option<int> = "rangeLength"
+  @get external rangeOffset: t => option<int> = "rangeOffset"
   @get external text: t => string = "text"
 }
 
+// https://code.visualstudio.com/api/references/vscode-api#TextDocumentChangeReason
+// 1.101
+module TextDocumentChangeReason = {
+  type t =
+    | @as(1) Undo
+    | @as(2) Redo
+}
+
 // https://code.visualstudio.com/api/references/vscode-api#TextDocumentChangeEvent
+// 1.101
 module TextDocumentChangeEvent = {
   type t
   // properties
   @get
   external contentChanges: t => array<TextDocumentContentChangeEvent.t> = "contentChanges"
   @get external document: t => TextDocument.t = "document"
+  @get external reason: t => option<TextDocumentChangeReason.t> = "reason"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#WorkspaceFoldersChangeEvent
