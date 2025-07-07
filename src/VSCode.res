@@ -601,31 +601,39 @@ module UIKind = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#env
-// 1.52.0
+// 1.101
 module Env = {
   type t
 
   // variables
+  @module("vscode") @scope("env") external appHost: string = "appHost"
   @module("vscode") @scope("env") external appName: string = "appName"
   @module("vscode") @scope("env") external appRoot: string = "appRoot"
-  @module("vscode") @scope("env")
-  external clipboard: Clipboard.t = "clipboard"
-  @module("vscode") @scope("env")
-  external language: string = "language"
-  @module("vscode") @scope("env")
-  external machineId: string = "machineId"
-  @module("vscode") @scope("env")
-  external remoteName: option<string> = "remoteName"
-  @module("vscode") @scope("env")
-  external sessionId: string = "sessionId"
+  @module("vscode") @scope("env") external clipboard: Clipboard.t = "clipboard"
+  @module("vscode") @scope("env") external isNewAppInstall: bool = "isNewAppInstall"
+  @module("vscode") @scope("env") external isTelemetryEnabled: bool = "isTelemetryEnabled"
+  @module("vscode") @scope("env") external language: string = "language"
+  @module("vscode") @scope("env") external logLevel: 'logLevel = "logLevel"
+  @module("vscode") @scope("env") external machineId: string = "machineId"
+  @module("vscode") @scope("env") external remoteName: option<string> = "remoteName"
+  @module("vscode") @scope("env") external sessionId: string = "sessionId"
   @module("vscode") @scope("env") external shell: string = "shell"
   @module("vscode") @scope("env") external uiKind: UIKind.t = "uiKind"
+  @module("vscode") @scope("env") external uriScheme: string = "uriScheme"
+
+  // events
   @module("vscode") @scope("env")
-  external uriScheme: string = "uriScheme"
+  external onDidChangeLogLevel: ('logLevel => unit) => Disposable.t = "onDidChangeLogLevel"
+  @module("vscode") @scope("env")
+  external onDidChangeShell: (string => unit) => Disposable.t = "onDidChangeShell"
+  @module("vscode") @scope("env")
+  external onDidChangeTelemetryEnabled: (bool => unit) => Disposable.t = "onDidChangeTelemetryEnabled"
 
   // functions
   @module("vscode") @scope("env")
   external asExternalUri: Uri.t => promise<Uri.t> = "asExternalUri"
+  @module("vscode") @scope("env")
+  external createTelemetryLogger: ('telemetrySender, ~options: 'telemetryLoggerOptions=?) => 'telemetryLogger = "createTelemetryLogger"
   @module("vscode") @scope("env")
   external openExternal: Uri.t => promise<bool> = "openExternal"
 }
