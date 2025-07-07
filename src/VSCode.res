@@ -2182,7 +2182,7 @@ module FileSystem = {
   external deleteWithOptions: (t, Uri.t, {"recursive": bool, "useTrash": bool}) => promise<unit> =
     "delete"
   @send
-  external readDirectory: (t, Uri.t) => promise<array<StringOr.t<FileType.t>>> = "readDirectory"
+  external readDirectory: (t, Uri.t) => promise<array<(string, FileType.t)>> = "readDirectory"
   @send
   external readFile: (t, Uri.t) => promise<Js.TypedArray2.Int8Array.t> = "readFile"
   @send external rename: (t, Uri.t, Uri.t) => promise<unit> = "rename"
