@@ -503,6 +503,10 @@ var FoldingContext = {};
 
 var FoldingRangeProvider = {};
 
+var FormattingOptions = {};
+
+var FunctionBreakpoint = {};
+
 var FileSystemError = {};
 
 var FileSystem = {};
@@ -791,6 +795,8 @@ exports.FoldingRangeKind = FoldingRangeKind;
 exports.FoldingRange = FoldingRange;
 exports.FoldingContext = FoldingContext;
 exports.FoldingRangeProvider = FoldingRangeProvider;
+exports.FormattingOptions = FormattingOptions;
+exports.FunctionBreakpoint = FunctionBreakpoint;
 exports.FileSystemError = FileSystemError;
 exports.FileSystem = FileSystem;
 exports.ConfigurationChangeEvent = ConfigurationChangeEvent;

@@ -2273,6 +2273,40 @@ module FoldingRangeProvider = {
   ) => ProviderResult.t<array<FoldingRange.t>> = "provideFoldingRanges"
 }
 
+// https://code.visualstudio.com/api/references/vscode-api#FormattingOptions
+// 1.101
+module FormattingOptions = {
+  type t
+  
+  // properties
+  @get external insertSpaces: t => bool = "insertSpaces"
+  @get external tabSize: t => int = "tabSize"
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#FunctionBreakpoint
+// 1.101
+module FunctionBreakpoint = {
+  type t
+  
+  // constructors
+  @module("vscode") @new
+  external make: (
+    string,
+    ~enabled: bool=?,
+    ~condition: string=?,
+    ~hitCondition: string=?,
+    ~logMessage: string=?,
+  ) => t = "FunctionBreakpoint"
+  
+  // properties
+  @get external condition: t => option<string> = "condition"
+  @get external enabled: t => bool = "enabled"
+  @get external functionName: t => string = "functionName"
+  @get external hitCondition: t => option<string> = "hitCondition"
+  @get external id: t => string = "id"
+  @get external logMessage: t => option<string> = "logMessage"
+}
+
 // https://code.visualstudio.com/api/references/vscode-api#FileSystemError
 // 1.101
 module FileSystemError = {
