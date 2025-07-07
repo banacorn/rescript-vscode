@@ -1865,12 +1865,12 @@ module UriHandler = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#FileDecoration
-// 1.56.0
+// 1.101
 module FileDecoration = {
   type t
   // constructors
   @module("vscode") @new
-  external make: (option<string>, option<string>, option<ThemeColor.t>) => t = "FileDecoration"
+  external make: (~badge: option<string>=?, ~tooltip: option<string>=?, ~color: option<ThemeColor.t>=?) => t = "FileDecoration"
   // properties
   @get external badge: t => option<string> = "badge"
   @get external color: t => option<ThemeColor.t> = "color"
@@ -1879,7 +1879,7 @@ module FileDecoration = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#FileDecorationProvider
-// 1.56.0
+// 1.101
 module FileDecorationProvider = {
   type t
   // events
@@ -1892,7 +1892,7 @@ module FileDecorationProvider = {
     t,
     Uri.t,
     CancellationToken.t,
-  ) => ProviderResult.t<FileDecoration.t> = "show"
+  ) => ProviderResult.t<FileDecoration.t> = "provideFileDecoration"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#window
