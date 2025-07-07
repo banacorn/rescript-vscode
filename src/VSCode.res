@@ -2168,6 +2168,7 @@ module FileStat = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#FileSystem
+// 1.101
 module FileSystem = {
   type t
   // methods
@@ -2183,13 +2184,13 @@ module FileSystem = {
   @send
   external readDirectory: (t, Uri.t) => promise<array<(string, FileType.t)>> = "readDirectory"
   @send
-  external readFile: (t, Uri.t) => promise<Int8Array.t> = "readFile"
+  external readFile: (t, Uri.t) => promise<Uint8Array.t> = "readFile"
   @send external rename: (t, Uri.t, Uri.t) => promise<unit> = "rename"
   @send
   external renameWithOptions: (t, Uri.t, Uri.t, {"overwrite": bool}) => promise<unit> = "rename"
   @send external stat: (t, Uri.t) => promise<FileStat.t> = "stat"
   @send
-  external stwriteFileat: (t, Uri.t, Uint8Array.t) => promise<unit> = "writeFile"
+  external writeFile: (t, Uri.t, Uint8Array.t) => promise<unit> = "writeFile"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#ConfigurationChangeEvent
