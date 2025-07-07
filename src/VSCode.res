@@ -1855,24 +1855,27 @@ module TerminalLinkProvider = {
   type t
 }
 
-// https://code.visualstudio.com/api/references/vscode-api#WebviewViewProvider
-// 1.51.0
+// https://code.visualstudio.com/api/references/vscode-api#WebviewView
+// 1.101
 module WebviewView = {
   type t
+  
   // events
   @send
   external onDidChangeVisibility: (t, unit => unit) => Disposable.t = "onDidChangeVisibility"
   @send
   external onDidDispose: (t, unit => unit) => Disposable.t = "onDidDispose"
+  
   // properties
+  @get external badge: t => option<'badge> = "badge"
   @get external description: t => option<string> = "description"
   @get external title: t => option<string> = "title"
   @get external viewType: t => string = "viewType"
   @get external visible: t => bool = "visible"
   @get external webview: t => Webview.t = "webview"
+  
   // methods
-  @send external show: t => unit = "show"
-  @send external showWithOptions: (t, bool) => unit = "show"
+  @send external show: (t, ~preserveFocus: bool=?) => unit = "show"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#WebviewViewResolveContext
