@@ -575,6 +575,8 @@ var SourceBreakpoint = {};
 
 var ReferenceProvider = {};
 
+var RunOptions = {};
+
 var LocationLink = {};
 
 var DiagnosticRelatedInformation = {};
@@ -835,6 +837,7 @@ exports.DiagnosticChangeEvent = DiagnosticChangeEvent;
 exports.$$Location = $$Location;
 exports.SourceBreakpoint = SourceBreakpoint;
 exports.ReferenceProvider = ReferenceProvider;
+exports.RunOptions = RunOptions;
 exports.LocationLink = LocationLink;
 exports.DiagnosticRelatedInformation = DiagnosticRelatedInformation;
 exports.DiagnosticSeverity = DiagnosticSeverity;

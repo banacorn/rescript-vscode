@@ -3125,6 +3125,14 @@ module ReferenceProvider = {
   ) => ProviderResult.t<array<Location.t>> = "provideReferences"
 }
 
+// https://code.visualstudio.com/api/references/vscode-api#RunOptions
+// 1.101
+module RunOptions = {
+  type t = {
+    reevaluateOnRerun?: bool,
+  }
+}
+
 // https://code.visualstudio.com/api/references/vscode-api#LocationLink
 module LocationLink = {
   type t = {
