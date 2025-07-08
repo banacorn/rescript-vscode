@@ -627,13 +627,17 @@ module Env = {
   @module("vscode") @scope("env")
   external onDidChangeShell: (string => unit) => Disposable.t = "onDidChangeShell"
   @module("vscode") @scope("env")
-  external onDidChangeTelemetryEnabled: (bool => unit) => Disposable.t = "onDidChangeTelemetryEnabled"
+  external onDidChangeTelemetryEnabled: (bool => unit) => Disposable.t =
+    "onDidChangeTelemetryEnabled"
 
   // functions
   @module("vscode") @scope("env")
   external asExternalUri: Uri.t => promise<Uri.t> = "asExternalUri"
   @module("vscode") @scope("env")
-  external createTelemetryLogger: ('telemetrySender, ~options: 'telemetryLoggerOptions=?) => 'telemetryLogger = "createTelemetryLogger"
+  external createTelemetryLogger: (
+    'telemetrySender,
+    ~options: 'telemetryLoggerOptions=?,
+  ) => 'telemetryLogger = "createTelemetryLogger"
   @module("vscode") @scope("env")
   external openExternal: Uri.t => promise<bool> = "openExternal"
 }
@@ -666,10 +670,10 @@ module WebviewPortMapping = {
 // https://code.visualstudio.com/api/references/vscode-api#WebviewOptions
 // 1.101
 module WebviewOptions = {
-  type enableCommandUrisValue = 
+  type enableCommandUrisValue =
     | @unboxed Bool(bool)
     | @unboxed StringArray(array<string>)
-  
+
   type t = {
     enableCommandUris: option<enableCommandUrisValue>,
     enableForms: option<bool>,
@@ -683,17 +687,17 @@ module WebviewOptions = {
 // 1.101
 module Webview = {
   type t
-  
+
   // events
   @send
   external onDidReceiveMessage: (t, 'a => unit) => Disposable.t = "onDidReceiveMessage"
-  
+
   // properties
   @get external cspSource: t => string = "cspSource"
   @get external html: t => string = "html"
   @set external setHtml: (t, string) => unit = "html"
   @get external options: t => WebviewOptions.t = "options"
-  
+
   // methods
   @send external asWebviewUri: (t, Uri.t) => Uri.t = "asWebviewUri"
   @send external postMessage: (t, 'a) => promise<bool> = "postMessage"
@@ -711,14 +715,16 @@ module WebviewPanelOnDidChangeViewStateEvent = {
 // 1.101
 module WebviewPanel = {
   type t
-  type iconPathValue = 
+  type iconPathValue =
     | @unboxed Uri(Uri.t)
     | @unboxed LightAndDark({dark: Uri.t, light: Uri.t})
 
   // events
   @send
-  external onDidChangeViewState: (t, WebviewPanelOnDidChangeViewStateEvent.t => unit) => Disposable.t =
-    "onDidChangeViewState"
+  external onDidChangeViewState: (
+    t,
+    WebviewPanelOnDidChangeViewStateEvent.t => unit,
+  ) => Disposable.t = "onDidChangeViewState"
   @send
   external onDidDispose: (t, unit => unit) => Disposable.t = "onDidDispose"
 
@@ -731,7 +737,7 @@ module WebviewPanel = {
   @get external viewType: t => string = "viewType"
   @get external visible: t => bool = "visible"
   @get external webview: t => Webview.t = "webview"
-  
+
   // methods
   @send external dispose: t => 'any = "dispose"
   @send
@@ -909,20 +915,20 @@ module TextEditorEdit = {
 // 1.101
 module SnippetString = {
   type t
-  type placeholderValue = 
+  type placeholderValue =
     | @unboxed String(string)
     | @unboxed Function(t => unit)
-  type variableDefaultValue = 
+  type variableDefaultValue =
     | @unboxed String(string)
     | @unboxed Function(t => unit)
-  
+
   // constructors
   @module("vscode") @new
   external make: (~value: string=?) => t = "SnippetString"
-  
+
   // properties
   @get external value: t => string = "value"
-  
+
   // methods
   @send
   external appendChoice: (t, array<string>, ~number: int=?) => t = "appendChoice"
@@ -940,17 +946,17 @@ module SnippetString = {
 // 1.101
 module SnippetTextEdit = {
   type t
-  
+
   // static methods
   @module("vscode") @scope("SnippetTextEdit")
   external insert: (Position.t, SnippetString.t) => t = "insert"
   @module("vscode") @scope("SnippetTextEdit")
   external replace: (Range.t, SnippetString.t) => t = "replace"
-  
+
   // constructors
   @module("vscode") @new
   external make: (Range.t, SnippetString.t) => t = "SnippetTextEdit"
-  
+
   // properties
   @get external keepWhitespace: t => option<bool> = "keepWhitespace"
   @get external range: t => Range.t = "range"
@@ -981,21 +987,21 @@ module TextEditorDecorationType = {
 module MarkdownString = {
   type t
   type trustedOptions = {enabledCommands: array<string>}
-  type isTrustedValue = 
+  type isTrustedValue =
     | @unboxed Bool(bool)
     | @unboxed TrustedOptions(trustedOptions)
-  
+
   // constructors
   @module("vscode") @new
   external make: (~value: string=?, ~supportThemeIcons: bool=?) => t = "MarkdownString"
-  
+
   // properties
   @get external baseUri: t => option<Uri.t> = "baseUri"
   @get external isTrusted: t => option<isTrustedValue> = "isTrusted"
   @get external supportHtml: t => option<bool> = "supportHtml"
   @get external supportThemeIcons: t => option<bool> = "supportThemeIcons"
   @get external value: t => string = "value"
-  
+
   // methods
   @send
   external appendCodeblock: (t, string, ~language: string=?) => t = "appendCodeblock"
@@ -1159,15 +1165,18 @@ module TerminalDimensions = {
 // 1.101
 module Pseudoterminal = {
   type t
-  
+
   // Events (required)
   @get external onDidWrite: t => (string => unit) => Disposable.t = "onDidWrite"
-  
+
   // Events (optional)
   @get external onDidClose: t => option<(option<int> => unit) => Disposable.t> = "onDidClose"
   @get external onDidChangeName: t => option<(string => unit) => Disposable.t> = "onDidChangeName"
-  @get external onDidOverrideDimensions: t => option<(option<TerminalDimensions.t> => unit) => Disposable.t> = "onDidOverrideDimensions"
-  
+  @get
+  external onDidOverrideDimensions: t => option<
+    (option<TerminalDimensions.t> => unit) => Disposable.t,
+  > = "onDidOverrideDimensions"
+
   // Methods (optional)
   @send external \"open": (t, TerminalDimensions.t) => unit = "open"
   @send external close: t => unit = "close"
@@ -1742,18 +1751,17 @@ module CancellationTokenSource = {
 // 1.101
 module QuickDiffProvider = {
   type t
-  
+
   // methods
   @send
-  external provideOriginalResource: (t, Uri.t, CancellationToken.t) => ProviderResult.t<Uri.t> = "provideOriginalResource"
+  external provideOriginalResource: (t, Uri.t, CancellationToken.t) => ProviderResult.t<Uri.t> =
+    "provideOriginalResource"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#ReferenceContext
 // 1.101
 module ReferenceContext = {
-  type t = {
-    includeDeclaration: bool,
-  }
+  type t = {includeDeclaration: bool}
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#OpenDialogOptions
@@ -1934,13 +1942,13 @@ module TerminalLinkProvider = {
 // 1.101
 module WebviewView = {
   type t
-  
+
   // events
   @send
   external onDidChangeVisibility: (t, unit => unit) => Disposable.t = "onDidChangeVisibility"
   @send
   external onDidDispose: (t, unit => unit) => Disposable.t = "onDidDispose"
-  
+
   // properties
   @get external badge: t => option<'badge> = "badge"
   @get external description: t => option<string> = "description"
@@ -1948,7 +1956,7 @@ module WebviewView = {
   @get external viewType: t => string = "viewType"
   @get external visible: t => bool = "visible"
   @get external webview: t => Webview.t = "webview"
-  
+
   // methods
   @send external show: (t, ~preserveFocus: bool=?) => unit = "show"
 }
@@ -1990,7 +1998,11 @@ module FileDecoration = {
   type t
   // constructors
   @module("vscode") @new
-  external make: (~badge: option<string>=?, ~tooltip: option<string>=?, ~color: option<ThemeColor.t>=?) => t = "FileDecoration"
+  external make: (
+    ~badge: option<string>=?,
+    ~tooltip: option<string>=?,
+    ~color: option<ThemeColor.t>=?,
+  ) => t = "FileDecoration"
   // properties
   @get external badge: t => option<string> = "badge"
   @get external color: t => option<ThemeColor.t> = "color"
@@ -2281,8 +2293,7 @@ module FileType = {
 // https://code.visualstudio.com/api/references/vscode-api#FilePermission
 // 1.101
 module FilePermission = {
-  type t =
-    | @as(1) Readonly
+  type t = | @as(1) Readonly
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#FileRenameEvent
@@ -2326,11 +2337,11 @@ module FoldingRangeKind = {
 // 1.101
 module FoldingRange = {
   type t
-  
+
   // constructors
   @module("vscode") @new
   external make: (int, int, ~kind: FoldingRangeKind.t=?) => t = "FoldingRange"
-  
+
   // properties
   @get external end_: t => int = "end"
   @get external kind: t => option<FoldingRangeKind.t> = "kind"
@@ -2347,11 +2358,12 @@ module FoldingContext = {
 // 1.101
 module FoldingRangeProvider = {
   type t
-  
+
   // events
   @get
-  external onDidChangeFoldingRanges: t => option<(unit => unit) => Disposable.t> = "onDidChangeFoldingRanges"
-  
+  external onDidChangeFoldingRanges: t => option<(unit => unit) => Disposable.t> =
+    "onDidChangeFoldingRanges"
+
   // methods
   @send
   external provideFoldingRanges: (
@@ -2366,7 +2378,7 @@ module FoldingRangeProvider = {
 // 1.101
 module FormattingOptions = {
   type t
-  
+
   // properties
   @get external insertSpaces: t => bool = "insertSpaces"
   @get external tabSize: t => int = "tabSize"
@@ -2376,7 +2388,7 @@ module FormattingOptions = {
 // 1.101
 module FunctionBreakpoint = {
   type t
-  
+
   // constructors
   @module("vscode") @new
   external make: (
@@ -2386,7 +2398,7 @@ module FunctionBreakpoint = {
     ~hitCondition: string=?,
     ~logMessage: string=?,
   ) => t = "FunctionBreakpoint"
-  
+
   // properties
   @get external condition: t => option<string> = "condition"
   @get external enabled: t => bool = "enabled"
@@ -2400,10 +2412,10 @@ module FunctionBreakpoint = {
 // 1.101
 module TelemetrySender = {
   type t
-  
+
   // methods
   @send
-  external flush: t => PromiseOr.t<unit> = "flush"
+  external flush: t => option<promise<unit>> = "flush"
   @send
   external sendErrorData: (t, Js.Exn.t, ~data: Js.Dict.t<'any>=?) => unit = "sendErrorData"
   @send
@@ -2414,11 +2426,11 @@ module TelemetrySender = {
 // 1.101
 module TelemetryTrustedValue = {
   type t<'a>
-  
+
   // constructors
   @module("vscode") @new
   external make: 'a => t<'a> = "TelemetryTrustedValue"
-  
+
   // properties
   @get external value: t<'a> => 'a = "value"
 }
@@ -2439,15 +2451,15 @@ module LogLevel = {
 // 1.101
 module LogOutputChannel = {
   type t
-  
+
   // events
   @send
   external onDidChangeLogLevel: (t, LogLevel.t => unit) => Disposable.t = "onDidChangeLogLevel"
-  
+
   // properties
   @get external logLevel: t => LogLevel.t = "logLevel"
   @get external name: t => string = "name"
-  
+
   // methods
   @send external append: (t, string) => unit = "append"
   @send external appendLine: (t, string) => unit = "appendLine"
@@ -2459,7 +2471,8 @@ module LogOutputChannel = {
   @send @variadic external info: (t, string, array<'any>) => unit = "info"
   @send external replace: (t, string) => unit = "replace"
   @send external show: (t, ~preserveFocus: bool=?) => unit = "show"
-  @send external showWithColumn: (t, ~column: ViewColumn.t=?, ~preserveFocus: bool=?) => unit = "show"
+  @send
+  external showWithColumn: (t, ~column: ViewColumn.t=?, ~preserveFocus: bool=?) => unit = "show"
   @send @variadic external trace: (t, string, array<'any>) => unit = "trace"
   @send @variadic external warn: (t, string, array<'any>) => unit = "warn"
 }
@@ -2468,14 +2481,14 @@ module LogOutputChannel = {
 // 1.101
 module FileSystemError = {
   type t
-  
+
   // Constructors
   @module("vscode") @new
   external make: (~messageOrUri: StringOr.t<Uri.t>=?) => t = "FileSystemError"
-  
+
   // Properties
   @get external code: t => string = "code"
-  
+
   // Static methods
   @module("vscode") @scope("FileSystemError")
   external fileExists: (~messageOrUri: StringOr.t<Uri.t>=?) => t = "FileExists"
@@ -2499,14 +2512,17 @@ module FileSystem = {
   @send external copy: (t, Uri.t, Uri.t, ~options: {"overwrite": bool}=?) => promise<unit> = "copy"
   @send
   external createDirectory: (t, Uri.t) => promise<unit> = "createDirectory"
-  @send external delete: (t, Uri.t, ~options: {"recursive": bool, "useTrash": bool}=?) => promise<unit> = "delete"
+  @send
+  external delete: (t, Uri.t, ~options: {"recursive": bool, "useTrash": bool}=?) => promise<unit> =
+    "delete"
   @send
   external isWritableFileSystem: (t, string) => bool = "isWritableFileSystem"
   @send
   external readDirectory: (t, Uri.t) => promise<array<(string, FileType.t)>> = "readDirectory"
   @send
   external readFile: (t, Uri.t) => promise<Uint8Array.t> = "readFile"
-  @send external rename: (t, Uri.t, Uri.t, ~options: {"overwrite": bool}=?) => promise<unit> = "rename"
+  @send
+  external rename: (t, Uri.t, Uri.t, ~options: {"overwrite": bool}=?) => promise<unit> = "rename"
   @send external stat: (t, Uri.t) => promise<FileStat.t> = "stat"
   @send
   external writeFile: (t, Uri.t, Uint8Array.t) => promise<unit> = "writeFile"
@@ -2687,10 +2703,10 @@ module WorkspaceEdit = {
 // 1.101
 module RenameProvider = {
   type t
-  type prepareRenameResult = 
+  type prepareRenameResult =
     | @unboxed Range(Range.t)
     | @unboxed PlaceholderAndRange({placeholder: string, range: Range.t})
-  
+
   // methods
   @send
   external prepareRename: (
@@ -2699,7 +2715,7 @@ module RenameProvider = {
     Position.t,
     CancellationToken.t,
   ) => ProviderResult.t<prepareRenameResult> = "prepareRename"
-  
+
   @send
   external provideRenameEdits: (
     t,
@@ -2714,11 +2730,11 @@ module RenameProvider = {
 // 1.101
 module FileWillCreateEvent = {
   type t
-  
+
   // properties
   @get external files: t => array<Uri.t> = "files"
   @get external token: t => CancellationToken.t = "token"
-  
+
   // methods
   @send
   external waitUntilWithWorkspaceEdit: (t, promise<WorkspaceEdit.t>) => unit = "waitUntil"
@@ -2728,11 +2744,11 @@ module FileWillCreateEvent = {
 // 1.101
 module FileWillDeleteEvent = {
   type t
-  
+
   // properties
   @get external files: t => array<Uri.t> = "files"
   @get external token: t => CancellationToken.t = "token"
-  
+
   // methods
   @send
   external waitUntilWithWorkspaceEdit: (t, promise<WorkspaceEdit.t>) => unit = "waitUntil"
@@ -2742,12 +2758,12 @@ module FileWillDeleteEvent = {
 // 1.101
 module FileWillRenameEvent = {
   type t
-  
+
   // properties
   @get
   external files: t => array<{"newUri": Uri.t, "oldUri": Uri.t}> = "files"
   @get external token: t => CancellationToken.t = "token"
-  
+
   // methods
   @send
   external waitUntilWithWorkspaceEdit: (t, promise<WorkspaceEdit.t>) => unit = "waitUntil"
@@ -2780,7 +2796,7 @@ module TextDocumentWillSaveEvent = {
 // 1.101
 module RelativePattern = {
   type t
-  
+
   // constructors
   @module("vscode") @new
   external make: (string, string) => t = "RelativePattern"
@@ -2788,7 +2804,7 @@ module RelativePattern = {
   external makeWithUri: (Uri.t, string) => t = "RelativePattern"
   @module("vscode") @new
   external makeWithWorkspaceFolder: (WorkspaceFolder.t, string) => t = "RelativePattern"
-  
+
   // properties
   @get external base: t => string = "base"
   @get external baseUri: t => Uri.t = "baseUri"
@@ -2805,7 +2821,7 @@ module GlobPattern = {
 // 1.101
 module FileSystemWatcher = {
   type t
-  
+
   // events
   @send
   external onDidChange: (t, Uri.t => unit) => Disposable.t = "onDidChange"
@@ -2813,12 +2829,12 @@ module FileSystemWatcher = {
   external onDidCreate: (t, Uri.t => unit) => Disposable.t = "onDidCreate"
   @send
   external onDidDelete: (t, Uri.t => unit) => Disposable.t = "onDidDelete"
-  
+
   // properties
   @get external ignoreChangeEvents: t => bool = "ignoreChangeEvents"
   @get external ignoreCreateEvents: t => bool = "ignoreCreateEvents"
   @get external ignoreDeleteEvents: t => bool = "ignoreDeleteEvents"
-  
+
   // methods
   @send external dispose: t => 'a = "dispose"
 }
@@ -2873,7 +2889,7 @@ module TextDocumentContentProvider = {
 // 1.101
 module TaskProvider = {
   type t<'a>
-  
+
   // methods
   @send
   external provideTasks: (t<'a>, CancellationToken.t) => ProviderResult.t<array<'a>> =
@@ -2909,11 +2925,8 @@ module FileSystemProvider = {
   @send
   external stat: (t, Uri.t) => option<promise<FileStat.t>> = "stat"
   @send
-  external watch: (
-    t,
-    Uri.t,
-    {"excludes": array<string>, "recursive": bool},
-  ) => Disposable.t = "watch"
+  external watch: (t, Uri.t, {"excludes": array<string>, "recursive": bool}) => Disposable.t =
+    "watch"
   @send
   external writeFile: (
     t,
@@ -3084,7 +3097,7 @@ module Location = {
 // 1.101
 module SourceBreakpoint = {
   type t
-  
+
   // constructors
   @module("vscode") @new
   external make: (
@@ -3094,7 +3107,7 @@ module SourceBreakpoint = {
     ~hitCondition: string=?,
     ~logMessage: string=?,
   ) => t = "SourceBreakpoint"
-  
+
   // properties
   @get external condition: t => option<string> = "condition"
   @get external enabled: t => bool = "enabled"
@@ -3108,7 +3121,7 @@ module SourceBreakpoint = {
 // 1.101
 module ReferenceProvider = {
   type t
-  
+
   // methods
   @send
   external provideReferences: (
@@ -3123,17 +3136,13 @@ module ReferenceProvider = {
 // https://code.visualstudio.com/api/references/vscode-api#RunOptions
 // 1.101
 module RunOptions = {
-  type t = {
-    reevaluateOnRerun?: bool,
-  }
+  type t = {reevaluateOnRerun?: bool}
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#TaskDefinition
 // 1.101
 module TaskDefinition = {
-  type t = {
-    \"type": string,
-  }
+  type t = {\"type": string}
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#TaskFilter
@@ -3149,7 +3158,7 @@ module TaskFilter = {
 // 1.101
 module TaskGroup = {
   type t
-  
+
   // static properties
   @module("vscode") @scope("TaskGroup")
   external build: t = "Build"
@@ -3159,11 +3168,11 @@ module TaskGroup = {
   external rebuild: t = "Rebuild"
   @module("vscode") @scope("TaskGroup")
   external test: t = "Test"
-  
+
   // constructors
   @module("vscode") @new
   external make: (string, string) => t = "TaskGroup"
-  
+
   // properties
   @get external id: t => string = "id"
   @get external isDefault: t => bool = "isDefault"
@@ -3213,11 +3222,11 @@ module TaskScope = {
 // 1.101
 module TaskExecution = {
   type t
-  
+
   // properties
   @get external task: t => 'task = "task"
   @get external terminateRequested: t => bool = "terminateRequested"
-  
+
   // methods
   @send external terminate: t => unit = "terminate"
 }
@@ -3225,9 +3234,7 @@ module TaskExecution = {
 // https://code.visualstudio.com/api/references/vscode-api#TaskStartEvent
 // 1.101
 module TaskStartEvent = {
-  type t = {
-    execution: TaskExecution.t,
-  }
+  type t = {execution: TaskExecution.t}
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#TaskProcessEndEvent
@@ -3261,13 +3268,14 @@ module ProcessExecutionOptions = {
 // 1.101
 module ProcessExecution = {
   type t
-  
+
   // constructors
   @module("vscode") @new
   external make: (string, ~options: ProcessExecutionOptions.t=?) => t = "ProcessExecution"
   @module("vscode") @new
-  external makeWithArgs: (string, array<string>, ~options: ProcessExecutionOptions.t=?) => t = "ProcessExecution"
-  
+  external makeWithArgs: (string, array<string>, ~options: ProcessExecutionOptions.t=?) => t =
+    "ProcessExecution"
+
   // properties
   @get external args: t => array<string> = "args"
   @get external options: t => option<ProcessExecutionOptions.t> = "options"
