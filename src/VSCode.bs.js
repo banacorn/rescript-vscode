@@ -583,6 +583,16 @@ var TaskFilter = {};
 
 var TaskGroup = {};
 
+var TaskPanelKind = {};
+
+var TaskRevealKind = {};
+
+var TaskPresentationOptions = {};
+
+var TaskScope = {};
+
+var TaskStartEvent = {};
+
 var LocationLink = {};
 
 var DiagnosticRelatedInformation = {};
@@ -847,6 +857,11 @@ exports.RunOptions = RunOptions;
 exports.TaskDefinition = TaskDefinition;
 exports.TaskFilter = TaskFilter;
 exports.TaskGroup = TaskGroup;
+exports.TaskPanelKind = TaskPanelKind;
+exports.TaskRevealKind = TaskRevealKind;
+exports.TaskPresentationOptions = TaskPresentationOptions;
+exports.TaskScope = TaskScope;
+exports.TaskStartEvent = TaskStartEvent;
 exports.LocationLink = LocationLink;
 exports.DiagnosticRelatedInformation = DiagnosticRelatedInformation;
 exports.DiagnosticSeverity = DiagnosticSeverity;

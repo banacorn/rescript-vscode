@@ -3174,6 +3174,54 @@ module TaskGroup = {
   @get external isDefault: t => bool = "isDefault"
 }
 
+// https://code.visualstudio.com/api/references/vscode-api#TaskPanelKind
+// 1.101
+module TaskPanelKind = {
+  type t =
+    | @as(1) Shared
+    | @as(2) Dedicated
+    | @as(3) New
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#TaskRevealKind
+// 1.101
+module TaskRevealKind = {
+  type t =
+    | @as(0) Always
+    | @as(1) Silent
+    | @as(2) Never
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#TaskPresentationOptions
+// 1.101
+module TaskPresentationOptions = {
+  type t = {
+    clear?: bool,
+    close?: bool,
+    echo?: bool,
+    focus?: bool,
+    panel?: TaskPanelKind.t,
+    reveal?: TaskRevealKind.t,
+    showReuseMessage?: bool,
+  }
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#TaskScope
+// 1.101
+module TaskScope = {
+  type t =
+    | @as(1) Global
+    | @as(2) Workspace
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#TaskStartEvent
+// 1.101
+module TaskStartEvent = {
+  type t<'taskExecution> = {
+    execution: 'taskExecution,
+  }
+}
+
 // https://code.visualstudio.com/api/references/vscode-api#LocationLink
 module LocationLink = {
   type t = {
