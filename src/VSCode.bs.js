@@ -411,6 +411,8 @@ var CancellationTokenSource = {};
 
 var QuickDiffProvider = {};
 
+var ReferenceContext = {};
+
 var OpenDialogOptions = {};
 
 var SaveDialogOptions = {};
@@ -570,6 +572,8 @@ var DiagnosticChangeEvent = {};
 var $$Location = {};
 
 var SourceBreakpoint = {};
+
+var ReferenceProvider = {};
 
 var LocationLink = {};
 
@@ -761,6 +765,7 @@ exports.InputBoxOptions = InputBoxOptions;
 exports.CancellationToken = CancellationToken;
 exports.CancellationTokenSource = CancellationTokenSource;
 exports.QuickDiffProvider = QuickDiffProvider;
+exports.ReferenceContext = ReferenceContext;
 exports.OpenDialogOptions = OpenDialogOptions;
 exports.SaveDialogOptions = SaveDialogOptions;
 exports.WorkspaceFolderPickOptions = WorkspaceFolderPickOptions;
@@ -829,6 +834,7 @@ exports.Extensions = Extensions;
 exports.DiagnosticChangeEvent = DiagnosticChangeEvent;
 exports.$$Location = $$Location;
 exports.SourceBreakpoint = SourceBreakpoint;
+exports.ReferenceProvider = ReferenceProvider;
 exports.LocationLink = LocationLink;
 exports.DiagnosticRelatedInformation = DiagnosticRelatedInformation;
 exports.DiagnosticSeverity = DiagnosticSeverity;

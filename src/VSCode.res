@@ -1748,6 +1748,14 @@ module QuickDiffProvider = {
   external provideOriginalResource: (t, Uri.t, CancellationToken.t) => ProviderResult.t<Uri.t> = "provideOriginalResource"
 }
 
+// https://code.visualstudio.com/api/references/vscode-api#ReferenceContext
+// 1.101
+module ReferenceContext = {
+  type t = {
+    includeDeclaration: bool,
+  }
+}
+
 // https://code.visualstudio.com/api/references/vscode-api#OpenDialogOptions
 // 1.96
 module OpenDialogOptions = {
@@ -3099,6 +3107,22 @@ module SourceBreakpoint = {
   @get external id: t => string = "id"
   @get external location: t => Location.t = "location"
   @get external logMessage: t => option<string> = "logMessage"
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#ReferenceProvider
+// 1.101
+module ReferenceProvider = {
+  type t
+  
+  // methods
+  @send
+  external provideReferences: (
+    t,
+    TextDocument.t,
+    Position.t,
+    ReferenceContext.t,
+    CancellationToken.t,
+  ) => ProviderResult.t<array<Location.t>> = "provideReferences"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#LocationLink
