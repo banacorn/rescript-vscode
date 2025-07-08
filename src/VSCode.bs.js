@@ -599,6 +599,10 @@ var TaskProcessEndEvent = {};
 
 var TaskProcessStartEvent = {};
 
+var ProcessExecutionOptions = {};
+
+var ProcessExecution = {};
+
 var LocationLink = {};
 
 var DiagnosticRelatedInformation = {};
@@ -871,6 +875,8 @@ exports.TaskExecution = TaskExecution;
 exports.TaskStartEvent = TaskStartEvent;
 exports.TaskProcessEndEvent = TaskProcessEndEvent;
 exports.TaskProcessStartEvent = TaskProcessStartEvent;
+exports.ProcessExecutionOptions = ProcessExecutionOptions;
+exports.ProcessExecution = ProcessExecution;
 exports.LocationLink = LocationLink;
 exports.DiagnosticRelatedInformation = DiagnosticRelatedInformation;
 exports.DiagnosticSeverity = DiagnosticSeverity;

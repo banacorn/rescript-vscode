@@ -3254,6 +3254,32 @@ module TaskProcessStartEvent = {
   }
 }
 
+// https://code.visualstudio.com/api/references/vscode-api#ProcessExecutionOptions
+// 1.101
+module ProcessExecutionOptions = {
+  type t = {
+    cwd?: string,
+    env?: Js.Dict.t<string>,
+  }
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#ProcessExecution
+// 1.101
+module ProcessExecution = {
+  type t
+  
+  // constructors
+  @module("vscode") @new
+  external make: (string, ~options: ProcessExecutionOptions.t=?) => t = "ProcessExecution"
+  @module("vscode") @new
+  external makeWithArgs: (string, array<string>, ~options: ProcessExecutionOptions.t=?) => t = "ProcessExecution"
+  
+  // properties
+  @get external args: t => array<string> = "args"
+  @get external options: t => option<ProcessExecutionOptions.t> = "options"
+  @get external process: t => string = "process"
+}
+
 // https://code.visualstudio.com/api/references/vscode-api#LocationLink
 module LocationLink = {
   type t = {
