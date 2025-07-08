@@ -591,7 +591,13 @@ var TaskPresentationOptions = {};
 
 var TaskScope = {};
 
+var TaskExecution = {};
+
 var TaskStartEvent = {};
+
+var TaskProcessEndEvent = {};
+
+var TaskProcessStartEvent = {};
 
 var LocationLink = {};
 
@@ -861,7 +867,10 @@ exports.TaskPanelKind = TaskPanelKind;
 exports.TaskRevealKind = TaskRevealKind;
 exports.TaskPresentationOptions = TaskPresentationOptions;
 exports.TaskScope = TaskScope;
+exports.TaskExecution = TaskExecution;
 exports.TaskStartEvent = TaskStartEvent;
+exports.TaskProcessEndEvent = TaskProcessEndEvent;
+exports.TaskProcessStartEvent = TaskProcessStartEvent;
 exports.LocationLink = LocationLink;
 exports.DiagnosticRelatedInformation = DiagnosticRelatedInformation;
 exports.DiagnosticSeverity = DiagnosticSeverity;

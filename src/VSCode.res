@@ -2875,9 +2875,10 @@ module TextDocumentContentProvider = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#TaskProvider
-// 1.59.0
+// 1.101
 module TaskProvider = {
   type t<'a>
+  
   // methods
   @send
   external provideTasks: (t<'a>, CancellationToken.t) => ProviderResult.t<array<'a>> =
@@ -3214,11 +3215,42 @@ module TaskScope = {
     | @as(2) Workspace
 }
 
+// https://code.visualstudio.com/api/references/vscode-api#TaskExecution
+// 1.101
+module TaskExecution = {
+  type t
+  
+  // properties
+  @get external task: t => 'task = "task"
+  @get external terminateRequested: t => bool = "terminateRequested"
+  
+  // methods
+  @send external terminate: t => unit = "terminate"
+}
+
 // https://code.visualstudio.com/api/references/vscode-api#TaskStartEvent
 // 1.101
 module TaskStartEvent = {
-  type t<'taskExecution> = {
-    execution: 'taskExecution,
+  type t = {
+    execution: TaskExecution.t,
+  }
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#TaskProcessEndEvent
+// 1.101
+module TaskProcessEndEvent = {
+  type t = {
+    execution: TaskExecution.t,
+    exitCode: int,
+  }
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#TaskProcessStartEvent
+// 1.101
+module TaskProcessStartEvent = {
+  type t = {
+    execution: TaskExecution.t,
+    processId: int,
   }
 }
 
