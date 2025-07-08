@@ -2883,45 +2883,44 @@ module TaskProvider = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#FileSystemProvider
+// 1.101
 module FileSystemProvider = {
   type t
 
-  // Required methods
+  // events
   @send
-  external stat: (t, Uri.t) => ProviderResult.t<FileStat.t> = "stat"
+  external onDidChangeFile: (t, array<FileChangeEvent.t> => unit) => Disposable.t =
+    "onDidChangeFile"
+
+  // methods
   @send
-  external readDirectory: (t, Uri.t) => ProviderResult.t<array<(string, FileType.t)>> =
+  external copy: (t, Uri.t, Uri.t, {"overwrite": bool}) => option<promise<unit>> = "copy"
+  @send
+  external createDirectory: (t, Uri.t) => option<promise<unit>> = "createDirectory"
+  @send
+  external delete: (t, Uri.t, {"recursive": bool}) => option<promise<unit>> = "delete"
+  @send
+  external readDirectory: (t, Uri.t) => option<promise<array<(string, FileType.t)>>> =
     "readDirectory"
   @send
-  external readFile: (t, Uri.t) => ProviderResult.t<Uint8Array.t> = "readFile"
+  external readFile: (t, Uri.t) => option<promise<Uint8Array.t>> = "readFile"
+  @send
+  external rename: (t, Uri.t, Uri.t, {"overwrite": bool}) => option<promise<unit>> = "rename"
+  @send
+  external stat: (t, Uri.t) => option<promise<FileStat.t>> = "stat"
+  @send
+  external watch: (
+    t,
+    Uri.t,
+    {"excludes": array<string>, "recursive": bool},
+  ) => Disposable.t = "watch"
   @send
   external writeFile: (
     t,
     Uri.t,
     Uint8Array.t,
     {"create": bool, "overwrite": bool},
-  ) => ProviderResult.t<unit> = "writeFile"
-  @send
-  external delete: (t, Uri.t, {"recursive": bool}) => ProviderResult.t<unit> = "delete"
-  @send
-  external rename: (t, Uri.t, Uri.t, {"overwrite": bool}) => ProviderResult.t<unit> = "rename"
-  @send
-  external createDirectory: (t, Uri.t) => ProviderResult.t<unit> = "createDirectory"
-
-  // Optional method
-  @send
-  external copy: (t, Uri.t, Uri.t, {"overwrite": bool}) => ProviderResult.t<unit> = "copy"
-
-  // Event handling
-  @send
-  external onDidChangeFile: (t, array<FileChangeEvent.t> => unit) => Disposable.t =
-    "onDidChangeFile"
-  @send
-  external watch: (
-    t,
-    Uri.t,
-    {"recursive": option<bool>, "excludes": option<array<string>>},
-  ) => Disposable.t = "watch"
+  ) => option<promise<unit>> = "writeFile"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#workspace
