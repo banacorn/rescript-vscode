@@ -2541,9 +2541,9 @@ module ConfigurationChangeEvent = {
 module TextDocumentContentChangeEvent = {
   type t
   // properties
-  @get external range: t => option<Range.t> = "range"
-  @get external rangeLength: t => option<int> = "rangeLength"
-  @get external rangeOffset: t => option<int> = "rangeOffset"
+  @get external range: t => Range.t = "range"
+  @get external rangeLength: t => int = "rangeLength"
+  @get external rangeOffset: t => int = "rangeOffset"
   @get external text: t => string = "text"
 }
 
