@@ -577,6 +577,12 @@ var ReferenceProvider = {};
 
 var RunOptions = {};
 
+var TaskDefinition = {};
+
+var TaskFilter = {};
+
+var TaskGroup = {};
+
 var LocationLink = {};
 
 var DiagnosticRelatedInformation = {};
@@ -838,6 +844,9 @@ exports.$$Location = $$Location;
 exports.SourceBreakpoint = SourceBreakpoint;
 exports.ReferenceProvider = ReferenceProvider;
 exports.RunOptions = RunOptions;
+exports.TaskDefinition = TaskDefinition;
+exports.TaskFilter = TaskFilter;
+exports.TaskGroup = TaskGroup;
 exports.LocationLink = LocationLink;
 exports.DiagnosticRelatedInformation = DiagnosticRelatedInformation;
 exports.DiagnosticSeverity = DiagnosticSeverity;

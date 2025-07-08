@@ -3133,6 +3133,47 @@ module RunOptions = {
   }
 }
 
+// https://code.visualstudio.com/api/references/vscode-api#TaskDefinition
+// 1.101
+module TaskDefinition = {
+  type t = {
+    \"type": string,
+  }
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#TaskFilter
+// 1.101
+module TaskFilter = {
+  type t = {
+    \"type"?: string,
+    version?: string,
+  }
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#TaskGroup
+// 1.101
+module TaskGroup = {
+  type t
+  
+  // static properties
+  @module("vscode") @scope("TaskGroup")
+  external build: t = "Build"
+  @module("vscode") @scope("TaskGroup")
+  external clean: t = "Clean"
+  @module("vscode") @scope("TaskGroup")
+  external rebuild: t = "Rebuild"
+  @module("vscode") @scope("TaskGroup")
+  external test: t = "Test"
+  
+  // constructors
+  @module("vscode") @new
+  external make: (string, string) => t = "TaskGroup"
+  
+  // properties
+  @get external id: t => string = "id"
+  @get external isDefault: t => bool = "isDefault"
+}
+
 // https://code.visualstudio.com/api/references/vscode-api#LocationLink
 module LocationLink = {
   type t = {
