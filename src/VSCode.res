@@ -2496,22 +2496,17 @@ module FileSystemError = {
 module FileSystem = {
   type t
   // methods
-  @send external copy: (t, Uri.t, Uri.t) => promise<unit> = "copy"
-  @send
-  external copyWithOptions: (t, Uri.t, Uri.t, {"overwrite": bool}) => promise<unit> = "copy"
+  @send external copy: (t, Uri.t, Uri.t, ~options: {"overwrite": bool}=?) => promise<unit> = "copy"
   @send
   external createDirectory: (t, Uri.t) => promise<unit> = "createDirectory"
-  @send external delete: (t, Uri.t) => promise<unit> = "delete"
+  @send external delete: (t, Uri.t, ~options: {"recursive": bool, "useTrash": bool}=?) => promise<unit> = "delete"
   @send
-  external deleteWithOptions: (t, Uri.t, {"recursive": bool, "useTrash": bool}) => promise<unit> =
-    "delete"
+  external isWritableFileSystem: (t, string) => bool = "isWritableFileSystem"
   @send
   external readDirectory: (t, Uri.t) => promise<array<(string, FileType.t)>> = "readDirectory"
   @send
   external readFile: (t, Uri.t) => promise<Uint8Array.t> = "readFile"
-  @send external rename: (t, Uri.t, Uri.t) => promise<unit> = "rename"
-  @send
-  external renameWithOptions: (t, Uri.t, Uri.t, {"overwrite": bool}) => promise<unit> = "rename"
+  @send external rename: (t, Uri.t, Uri.t, ~options: {"overwrite": bool}=?) => promise<unit> = "rename"
   @send external stat: (t, Uri.t) => promise<FileStat.t> = "stat"
   @send
   external writeFile: (t, Uri.t, Uint8Array.t) => promise<unit> = "writeFile"
