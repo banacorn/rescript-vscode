@@ -244,34 +244,7 @@ module Command = {
 //   }
 // }
 
-// https://code.visualstudio.com/api/references/vscode-api#EnvironmentVariableMutator
-// 1.52.0
-module EnvironmentVariableMutator = {
-  type t
-  // properties
-  @get external type_: EnvironmentVariableMutatorType.t => int = "type"
-  @get external value: t => bool = "value"
-}
 
-// https://code.visualstudio.com/api/references/vscode-api#EnvironmentVariableCollection
-// 1.52.0
-module EnvironmentVariableCollection = {
-  type t
-  // properties
-  @get external persistent: t => bool = "persistent"
-  // methods
-  @send external append: (t, string, string) => unit = "append"
-  @send external clear: t => unit = "clear"
-  @send external delete: (t, string) => unit = "delete"
-  @send
-  external forEach: (t, (string, EnvironmentVariableMutator.t, t) => 'a) => unit = "forEach"
-  @send
-  external forEachWithThisArg: (t, (string, EnvironmentVariableMutator.t, t) => 'a, 'b) => unit =
-    "forEach"
-  @send external get: (t, string) => option<EnvironmentVariableMutator.t> = "get"
-  @send external prepend: (t, string, string) => unit = "prepend"
-  @send external replace: (t, string, string) => unit = "replace"
-}
 
 // https://code.visualstudio.com/api/references/vscode-api#LanguageModelAccessInformation
 // 1.95
@@ -339,31 +312,6 @@ module Extension = {
   @send external activate: t<'a> => promise<'a> = "activate"
 }
 
-// https://code.visualstudio.com/api/references/vscode-api#ExtensionContext
-module ExtensionContext = {
-  type t
-  // properties
-  @get
-  external environmentVariableCollection: t => EnvironmentVariableCollection.t =
-    "environmentVariableCollection"
-  @get external extension: t => Extension.t<'a> = "extension"
-  @get external extensionMode: t => ExtensionMode.t = "extensionMode"
-  @get external extensionPath: t => string = "extensionPath"
-  @get external extensionUri: t => Uri.t = "extensionUri"
-  @get external globalState: t => Memento.t = "globalState"
-  @get external globalStorageUri: t => Uri.t = "globalStorageUri"
-  @get
-  external languageModelAccessInformation: t => LanguageModelAccessInformation.t =
-    "languageModelAccessInformation"
-  @get external logUri: t => Uri.t = "logUri"
-  @get external secrets: t => SecretStorage.t = "secrets"
-  @get external storageUri: t => option<Uri.t> = "storageUri"
-  @get
-  external subscriptions: t => array<Disposable.t> = "subscriptions"
-  @get external workspaceState: t => Memento.t = "workspaceState"
-  // methods
-  @send external asAbsolutePath: (t, string) => string = "asAbsolutePath"
-}
 
 module Commands = {
   module Layout = {
@@ -538,6 +486,7 @@ module DebugAdapterDescriptorFactory = {
     option<DebugAdapterExecutable.t>,
   ) => ProviderResult.t<'a> = "createDebugAdapterDescriptor"
 }
+
 
 // https://code.visualstudio.com/api/references/vscode-api#debug
 // 1.52.0 (WIP)
@@ -784,6 +733,18 @@ module Range = {
   @send external isEqual: (t, t) => bool = "isEqual"
   @send external union: (t, t) => t = "union"
   @send external with_: (t, Position.t, Position.t) => t = "with"
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#EvaluatableExpression
+// 1.101
+module EvaluatableExpression = {
+  type t
+  // constructors
+  @module("vscode") @new
+  external make: (Range.t, option<string>) => t = "EvaluatableExpression"
+  // properties
+  @get external expression: t => option<string> = "expression"
+  @get external range: t => Range.t = "range"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#TextLine
@@ -3289,6 +3250,62 @@ module EnvironmentVariableMutatorOptions = {
     applyAtProcessCreation?: bool,
     applyAtShellIntegration?: bool,
   }
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#EnvironmentVariableMutator
+// 1.101
+module EnvironmentVariableMutator = {
+  type t
+  // properties
+  @get external options: t => EnvironmentVariableMutatorOptions.t = "options"
+  @get external type_: t => EnvironmentVariableMutatorType.t = "type"
+  @get external value: t => string = "value"
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#EnvironmentVariableCollection
+// 1.52.0
+module EnvironmentVariableCollection = {
+  type t
+  // properties
+  @get external persistent: t => bool = "persistent"
+  // methods
+  @send external append: (t, string, string) => unit = "append"
+  @send external clear: t => unit = "clear"
+  @send external delete: (t, string) => unit = "delete"
+  @send
+  external forEach: (t, (string, EnvironmentVariableMutator.t, t) => 'a) => unit = "forEach"
+  @send
+  external forEachWithThisArg: (t, (string, EnvironmentVariableMutator.t, t) => 'a, 'b) => unit =
+    "forEach"
+  @send external get: (t, string) => option<EnvironmentVariableMutator.t> = "get"
+  @send external prepend: (t, string, string) => unit = "prepend"
+  @send external replace: (t, string, string) => unit = "replace"
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#ExtensionContext
+module ExtensionContext = {
+  type t
+  // properties
+  @get
+  external environmentVariableCollection: t => EnvironmentVariableCollection.t =
+    "environmentVariableCollection"
+  @get external extension: t => Extension.t<'a> = "extension"
+  @get external extensionMode: t => ExtensionMode.t = "extensionMode"
+  @get external extensionPath: t => string = "extensionPath"
+  @get external extensionUri: t => Uri.t = "extensionUri"
+  @get external globalState: t => Memento.t = "globalState"
+  @get external globalStorageUri: t => Uri.t = "globalStorageUri"
+  @get
+  external languageModelAccessInformation: t => LanguageModelAccessInformation.t =
+    "languageModelAccessInformation"
+  @get external logUri: t => Uri.t = "logUri"
+  @get external secrets: t => SecretStorage.t = "secrets"
+  @get external storageUri: t => option<Uri.t> = "storageUri"
+  @get
+  external subscriptions: t => array<Disposable.t> = "subscriptions"
+  @get external workspaceState: t => Memento.t = "workspaceState"
+  // methods
+  @send external asAbsolutePath: (t, string) => string = "asAbsolutePath"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#EnvironmentVariableScope

@@ -142,10 +142,6 @@ var EnvironmentVariableMutatorType = {};
 
 var Command = {};
 
-var EnvironmentVariableMutator = {};
-
-var EnvironmentVariableCollection = {};
-
 var LanguageModelAccessInformation = {};
 
 var SecretStorageChangeEvent = {};
@@ -157,8 +153,6 @@ var ExtensionMode = {};
 var ExtensionKind = {};
 
 var Extension = {};
-
-var ExtensionContext = {};
 
 var simple = {};
 
@@ -222,6 +216,8 @@ var WebviewPanel = {};
 var Position = {};
 
 var $$Range = {};
+
+var EvaluatableExpression = {};
 
 var TextLine = {};
 
@@ -605,6 +601,12 @@ var ProcessExecution = {};
 
 var EnvironmentVariableMutatorOptions = {};
 
+var EnvironmentVariableMutator = {};
+
+var EnvironmentVariableCollection = {};
+
+var ExtensionContext = {};
+
 var EnvironmentVariableScope = {};
 
 var GlobalEnvironmentVariableCollection = {};
@@ -705,15 +707,12 @@ exports.Memento = Memento;
 exports.Uri = Uri;
 exports.EnvironmentVariableMutatorType = EnvironmentVariableMutatorType;
 exports.Command = Command;
-exports.EnvironmentVariableMutator = EnvironmentVariableMutator;
-exports.EnvironmentVariableCollection = EnvironmentVariableCollection;
 exports.LanguageModelAccessInformation = LanguageModelAccessInformation;
 exports.SecretStorageChangeEvent = SecretStorageChangeEvent;
 exports.SecretStorage = SecretStorage;
 exports.ExtensionMode = ExtensionMode;
 exports.ExtensionKind = ExtensionKind;
 exports.Extension = Extension;
-exports.ExtensionContext = ExtensionContext;
 exports.Commands = Commands;
 exports.DebugConsole = DebugConsole;
 exports.DebugConfiguration = DebugConfiguration;
@@ -739,6 +738,7 @@ exports.WebviewPanelOnDidChangeViewStateEvent = WebviewPanelOnDidChangeViewState
 exports.WebviewPanel = WebviewPanel;
 exports.Position = Position;
 exports.$$Range = $$Range;
+exports.EvaluatableExpression = EvaluatableExpression;
 exports.TextLine = TextLine;
 exports.EndOfLine = EndOfLine;
 exports.TextDocument = TextDocument;
@@ -884,6 +884,9 @@ exports.TaskProcessStartEvent = TaskProcessStartEvent;
 exports.ProcessExecutionOptions = ProcessExecutionOptions;
 exports.ProcessExecution = ProcessExecution;
 exports.EnvironmentVariableMutatorOptions = EnvironmentVariableMutatorOptions;
+exports.EnvironmentVariableMutator = EnvironmentVariableMutator;
+exports.EnvironmentVariableCollection = EnvironmentVariableCollection;
+exports.ExtensionContext = ExtensionContext;
 exports.EnvironmentVariableScope = EnvironmentVariableScope;
 exports.GlobalEnvironmentVariableCollection = GlobalEnvironmentVariableCollection;
 exports.LocationLink = LocationLink;
