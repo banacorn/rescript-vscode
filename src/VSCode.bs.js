@@ -603,6 +603,12 @@ var ProcessExecutionOptions = {};
 
 var ProcessExecution = {};
 
+var EnvironmentVariableMutatorOptions = {};
+
+var EnvironmentVariableScope = {};
+
+var GlobalEnvironmentVariableCollection = {};
+
 var LocationLink = {};
 
 var DiagnosticRelatedInformation = {};
@@ -877,6 +883,9 @@ exports.TaskProcessEndEvent = TaskProcessEndEvent;
 exports.TaskProcessStartEvent = TaskProcessStartEvent;
 exports.ProcessExecutionOptions = ProcessExecutionOptions;
 exports.ProcessExecution = ProcessExecution;
+exports.EnvironmentVariableMutatorOptions = EnvironmentVariableMutatorOptions;
+exports.EnvironmentVariableScope = EnvironmentVariableScope;
+exports.GlobalEnvironmentVariableCollection = GlobalEnvironmentVariableCollection;
 exports.LocationLink = LocationLink;
 exports.DiagnosticRelatedInformation = DiagnosticRelatedInformation;
 exports.DiagnosticSeverity = DiagnosticSeverity;

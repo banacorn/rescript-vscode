@@ -3282,6 +3282,51 @@ module ProcessExecution = {
   @get external process: t => string = "process"
 }
 
+// https://code.visualstudio.com/api/references/vscode-api#EnvironmentVariableMutatorOptions
+// 1.101
+module EnvironmentVariableMutatorOptions = {
+  type t = {
+    applyAtProcessCreation?: bool,
+    applyAtShellIntegration?: bool,
+  }
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#EnvironmentVariableScope
+// 1.101
+module EnvironmentVariableScope = {
+  type t = {
+    workspaceFolder?: WorkspaceFolder.t,
+  }
+}
+
+// https://code.visualstudio.com/api/references/vscode-api#GlobalEnvironmentVariableCollection
+// 1.101
+module GlobalEnvironmentVariableCollection = {
+  type t
+  
+  // properties
+  @get external description: t => StringOr.t<MarkdownString.t> = "description"
+  @get external persistent: t => bool = "persistent"
+  
+  // methods
+  @send
+  external append: (t, string, string, ~options: EnvironmentVariableMutatorOptions.t=?) => unit = "append"
+  @send external clear: t => unit = "clear"
+  @send external delete: (t, string) => unit = "delete"
+  @send
+  external forEach: (
+    t,
+    (string, EnvironmentVariableMutator.t, EnvironmentVariableCollection.t) => 'any,
+    ~thisArg: 'any=?,
+  ) => unit = "forEach"
+  @send external get: (t, string) => EnvironmentVariableMutator.t = "get"
+  @send external getScoped: (t, EnvironmentVariableScope.t) => EnvironmentVariableCollection.t = "getScoped"
+  @send
+  external prepend: (t, string, string, ~options: EnvironmentVariableMutatorOptions.t=?) => unit = "prepend"
+  @send
+  external replace: (t, string, string, ~options: EnvironmentVariableMutatorOptions.t=?) => unit = "replace"
+}
+
 // https://code.visualstudio.com/api/references/vscode-api#LocationLink
 module LocationLink = {
   type t = {
