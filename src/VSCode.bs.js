@@ -142,6 +142,8 @@ var EnvironmentVariableMutatorType = {};
 
 var Command = {};
 
+var LanguageModelChat = {};
+
 var LanguageModelAccessInformation = {};
 
 var SecretStorageChangeEvent = {};
@@ -707,6 +709,7 @@ exports.Memento = Memento;
 exports.Uri = Uri;
 exports.EnvironmentVariableMutatorType = EnvironmentVariableMutatorType;
 exports.Command = Command;
+exports.LanguageModelChat = LanguageModelChat;
 exports.LanguageModelAccessInformation = LanguageModelAccessInformation;
 exports.SecretStorageChangeEvent = SecretStorageChangeEvent;
 exports.SecretStorage = SecretStorage;

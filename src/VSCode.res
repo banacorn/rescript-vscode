@@ -246,14 +246,20 @@ module Command = {
 
 
 
+// https://code.visualstudio.com/api/references/vscode-api#LanguageModelChat
+// 1.101
+module LanguageModelChat = {
+  type t
+}
+
 // https://code.visualstudio.com/api/references/vscode-api#LanguageModelAccessInformation
-// 1.95
+// 1.101
 module LanguageModelAccessInformation = {
   type t
   // events
   @send external onDidChange: (t, unit => unit) => Disposable.t = "onDidChange"
   // methods
-  // @send external canSendRequests: (t, %todo) => bool = "canSendRequests"
+  @send external canSendRequest: (t, LanguageModelChat.t) => bool = "canSendRequest"
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#SecretStorageChangeEvent
@@ -265,7 +271,7 @@ module SecretStorageChangeEvent = {
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#SecretStorage
-// 1.95
+// 1.101
 module SecretStorage = {
   type t
   // events
