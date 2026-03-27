@@ -1370,8 +1370,8 @@ module QuickPickItemButtonEvent = {
 // https://code.visualstudio.com/api/references/vscode-api#QuickPickOptions
 // 1.95
 module QuickPickOptions = {
-  type t = {
-    onDidSelectItem?: StringOr.t<QuickPickItem.t> => unit,
+  type options<'onDidSelectItem> = {
+    onDidSelectItem?: 'onDidSelectItem,
     canPickMany?: bool,
     ignoreFocusOut?: bool,
     matchOnDescription?: bool,
@@ -1379,6 +1379,9 @@ module QuickPickOptions = {
     placeHolder?: string,
     title?: string,
   }
+
+  type t = options<StringOr.t<QuickPickItem.t> => unit>
+  type item<'a> = options<'a => unit>
 }
 
 // https://code.visualstudio.com/api/references/vscode-api#QuickPick
@@ -2194,6 +2197,30 @@ module Window = {
     QuickPickOptions.t,
     option<CancellationToken.t>,
   ) => promise<option<array<string>>> = "showQuickPick"
+  @module("vscode") @scope("window")
+  external showQuickPickWithStringItems: (
+    PromiseOr.t<array<string>>,
+    QuickPickOptions.t,
+    option<CancellationToken.t>,
+  ) => promise<option<string>> = "showQuickPick"
+  @module("vscode") @scope("window")
+  external showQuickPickManyWithStringItems: (
+    PromiseOr.t<array<string>>,
+    QuickPickOptions.t,
+    option<CancellationToken.t>,
+  ) => promise<option<array<string>>> = "showQuickPick"
+  @module("vscode") @scope("window")
+  external showQuickPickWithItems: (
+    PromiseOr.t<array<'a>>,
+    QuickPickOptions.item<'a>,
+    option<CancellationToken.t>,
+  ) => promise<option<'a>> = "showQuickPick"
+  @module("vscode") @scope("window")
+  external showQuickPickManyWithItems: (
+    PromiseOr.t<array<'a>>,
+    QuickPickOptions.item<'a>,
+    option<CancellationToken.t>,
+  ) => promise<option<array<'a>>> = "showQuickPick"
   @module("vscode") @scope("window")
   external showSaveDialog: SaveDialogOptions.t => promise<option<Uri.t>> = "showSaveDialog"
   @module("vscode") @scope("window")
